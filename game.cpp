@@ -57,6 +57,7 @@ public:
                 nod->index.second = j;
                 this->update_neighbours(nod, i, j);
                 temp.push_back(nod);
+                if(i==n && j%i==0) nod->data = -1;
             }
             this->board.push_back(temp);
         }
@@ -75,7 +76,7 @@ public:
                 nod->neighbours.at(k).second = k;
             }
         }
-        else if(j%i==0){
+        else if(j%i==0 && i<n){
             if(i<n-1) {
                 nod->neighbours.at(0).first = i + 1;
                 nod->neighbours.at(0).second = j + (j / i);
@@ -85,8 +86,8 @@ public:
                 nod->neighbours.at(0).second = -1;
             }
 
-            nod->neighbours.at(1).first = (i+1);
-            nod->neighbours.at(1).second = (j+j/i+1)%(6*i+6);
+            nod->neighbours.at(1).first = (i + 1);
+            nod->neighbours.at(1).second = (j + j / i + 1) % (6 * i + 6);
 
             nod->neighbours.at(2).first = i;
             nod->neighbours.at(2).second = (j+1)%(6*i);
@@ -105,19 +106,48 @@ public:
                 nod->neighbours.at(5).second = j-1;
             }
         }
-        else{
-            nod->neighbours.at(0).first = i;
-            nod->neighbours.at(0).second = (j+1)%(6*i);
+        else if(j%i==0 && i==n){
+            nod->neighbours.at(0).first = -1;
+            nod->neighbours.at(0).second = -1;
 
-            nod->neighbours.at(1).first = i+1;
-            nod->neighbours.at(1).second = (j + j/i)%(6*(i+1));
+            nod->neighbours.at(1).first = -1;
+            nod->neighbours.at(1).second = -1;
 
-            nod->neighbours.at(2).first = i+1;
-            nod->neighbours.at(2).second = (j + j/i + 1)%(6*(i+1));
+            nod->neighbours.at(2).first = -1;
+            nod->neighbours.at(2).second = -1;
 
-            nod->neighbours.at(3).first = i;
-            nod->neighbours.at(3).second = (j-1)%(6*i);
+            nod->neighbours.at(3).first = -1;
+            nod->neighbours.at(3).second = -1;
 
+            nod->neighbours.at(4).first = -1;
+            nod->neighbours.at(4).second = -1;
+
+            nod->neighbours.at(5).first = -1;
+            nod->neighbours.at(5).second = -1;
+        }
+        else {
+            if(j%i<i-1) {
+                nod->neighbours.at(0).first = i;
+                nod->neighbours.at(0).second = (j + 1) % (6 * i);
+            }
+            else{
+                nod->neighbours.at(0).first = -1;
+                nod->neighbours.at(0).second = -1;
+            }
+
+            nod->neighbours.at(1).first = -1;
+            nod->neighbours.at(1).second = -1;
+
+            nod->neighbours.at(2).first = -1;
+            nod->neighbours.at(2).second = -1;
+            if(j%i>1) {
+                nod->neighbours.at(3).first = i;
+                nod->neighbours.at(3).second = (j - 1) % (6 * i);
+            }
+            else{
+                nod->neighbours.at(3).first = -1;
+                nod->neighbours.at(3).second = -1;
+            }
             nod->neighbours.at(4).first = i-1;
             nod->neighbours.at(4).second = (j - j/i)%(6*(i-1));
 
@@ -152,7 +182,7 @@ public:
         }
         if(ind==-1) return false;
         auto p = nod->neighbours.at((ind+3)%6);
-
+        if(p.first==-1 || p.second==-1) return false; 
         return move_validity(board.at(p.first).at(p.second), nod->index.first, nod->index.second);
     }
     bool move_possible(Node* nod, int i, int j, bool change){
@@ -252,6 +282,7 @@ public:
         }
         if(ind==-1) return false;
         auto p = nod->neighbours.at((ind+3)%6);
+        if(p.first==-1 || p.second==-1) return false;
         return remove_validity(board.at(p.first).at(p.second), nod->index.first, nod->index.second, x+1);
     }
     void remove_now(Node* nod, int i, int j, int x){
