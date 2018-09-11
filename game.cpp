@@ -42,7 +42,6 @@ public:
         this -> l = l;
         vector<Node*> tem;
         Node* no = new Node();
-        auto pa = make_pair(0, 0);
         no->index.first = 0;
         no->index.second = 0;
         this->update_neighbours(no, 0, 0);
@@ -52,7 +51,6 @@ public:
             vector<Node*> temp;
             for(int j=0; j<i*6; j++){
                 Node* nod = new Node();
-                auto pa = make_pair(i, j);
                 nod->index.first = i;
                 nod->index.second = j;
                 this->update_neighbours(nod, i, j);
@@ -68,6 +66,19 @@ public:
         this->rings_placed = 0;
         this->beginning.first = -1;
         this->beginning.second = -1;
+        print_neighbours();
+    }
+    void print_neighbours(){
+        for (auto u:board){
+            for(auto v:u){
+                cout << "( " << v->index.first << ", " << v->index.second << " ):  ";
+                for (auto w:v->neighbours){
+                    cout << "( " << w.first << ", " << w.second << " )  ";
+                }
+                cout << endl;
+            }
+            cout << endl;
+        }
     }
     void update_neighbours(Node* nod, int i, int j){
         if(i==0){
@@ -103,7 +114,7 @@ public:
             }
             else{
                 nod->neighbours.at(4).second = j-1;
-                nod->neighbours.at(5).second = j-1;
+                nod->neighbours.at(5).second = j + (j / i) -1;
             }
         }
         else if(j%i==0 && i==n){
@@ -125,7 +136,7 @@ public:
             nod->neighbours.at(5).first = -1;
             nod->neighbours.at(5).second = -1;
         }
-        else {
+        else if(i==n) {
             if(j%i<i-1) {
                 nod->neighbours.at(0).first = i;
                 nod->neighbours.at(0).second = (j + 1) % (6 * i);
@@ -154,12 +165,31 @@ public:
             nod->neighbours.at(5).first = i-1;
             nod->neighbours.at(5).second = (j - j/i - 1)%(6*(i-1));
         }
+        else{
+            nod->neighbours.at(0).first = i;
+            nod->neighbours.at(0).second = (j + 1) % (6 * i);
+
+            nod->neighbours.at(1).first = i+1;
+            nod->neighbours.at(1).second = j+j/i;
+
+            nod->neighbours.at(2).first = i+1;
+            nod->neighbours.at(2).second = (j+j/i+1)%(6*(i+1));
+
+            nod->neighbours.at(3).first = i;
+            nod->neighbours.at(3).second = (j - 1) % (6 * i);
+
+            nod->neighbours.at(4).first = i-1;
+            nod->neighbours.at(4).second = (j - j/i)%(6*(i-1));
+
+            nod->neighbours.at(5).first = i-1;
+            nod->neighbours.at(5).second = (j - j/i - 1)%(6*(i-1));
+        }
     }
     bool place_ring(int hexagon, int position){
         if(state!=0) return false;
         if(board.at(hexagon).at(position)->data!=0) return false;
         if(state!=0) return false;
-        board.at(hexagon).at(position) -> data = player;
+        board.at(hexagon).at(position) -> data = player+1;
         rings_placed++;
         if(rings_placed==2*rings) state = 1;
         return true;
@@ -182,7 +212,7 @@ public:
         }
         if(ind==-1) return false;
         auto p = nod->neighbours.at((ind+3)%6);
-        if(p.first==-1 || p.second==-1) return false; 
+        if(p.first==-1 || p.second==-1) return false;
         return move_validity(board.at(p.first).at(p.second), nod->index.first, nod->index.second);
     }
     bool move_possible(Node* nod, int i, int j, bool change){
@@ -317,7 +347,7 @@ public:
         else rings_removed1++;
         return true;
     }
-    int execute_move(vector<string> moves){
+    int execute_move1(vector<string> moves){
         // vector<string> moves = split_string(s);
         if(moves.size()>3) return execute_sequence(moves);
         else player = (player+1)%2;;
@@ -328,8 +358,12 @@ public:
 
         if(mt=="P") success = success && place_ring(hexagon, position);
         else if(mt=="S") success = success && select_ring(hexagon, position);
-        else if(mt=="M") success = success && move_ring(hexagon, position);
-        else if(mt=="RS") success = success && remove_start(hexagon, position);
+        else if(mt=="M") {
+            success = success && move_ring(hexagon, position);
+        }
+        else if(mt=="RS"){
+            success = success && remove_start(hexagon, position);
+        }
         else if(mt=="RE") success = success && remove_end(hexagon, position);
         else if(mt=="X") success = success && remove_ring(hexagon, position);
         else return 0;
@@ -342,27 +376,27 @@ public:
         return 1;
 
     }
-//    vector<string> split_string(string s){
-//        vector<string> moves;
-//        string buff = "";
-//        for(auto i:s){
-//            if(i==" "){
-//                moves.push_back(buff);
-//                burff = " ";
-//            }
-//            else {
-//                buff+=i;
-//            }
-//        }
-//        if(buff!="") moves.push_back(buff);
-//        return moves;
-//    }
+    int execute_move(string s){
+        vector<string> moves;
+        string buff = "";
+        for(auto i:s){
+            if(i == ' '){
+                moves.push_back(buff);
+                buff = "";
+            }
+            else {
+                buff+=i;
+            }
+        }
+        if(!buff.empty()) moves.push_back(buff);
+        return (execute_move1(moves));
+    }
     bool execute_sequence(vector<string> moves){
         vector<string> temp(3);
         for (int i=0; i<moves.size(); i++){
             if(i%3==2){
                 temp.at(2) = moves.at(i);
-                int move_success = execute_move(temp);
+                int move_success = execute_move1(temp);
                 if(move_success == 0) return 0;
                 else if(move_success==2) return 2;
             }
@@ -389,11 +423,63 @@ public:
         return state;
     }
     bool check_move_validity() {
-        return false;
+        return true;
     }
 };
 
 int main(){
     Game game = Game(0);
+    game.execute_move("P 0 0");
+    game.execute_move("P 5 26");
+    game.execute_move("P 4 13");
+    game.execute_move("P 5 19");
+    game.execute_move("P 3 1");
+    game.execute_move("P 1 2");
+    game.execute_move("P 4 5");
+    game.execute_move("P 5 21");
+    game.execute_move("P 3 5");
+    game.execute_move("P 1 4");
+    game.execute_move("S 3 5 M 2 5");
+    game.execute_move("S 5 21 M 3 13");
+    game.execute_move("S 2 5 M 2 4");
+    game.execute_move("S 5 19 M 4 15");
+    game.execute_move("S 0 0 M 2 2");
+    game.execute_move("S 4 15 M 4 14");
+    game.execute_move("S 3 13 M 2 9");
+    game.execute_move("S 2 2 M 4 22");
+    game.execute_move("S 4 14 M 5 17");
+    game.execute_move("S 4 5 M 4 4");
+    game.execute_move("S 5 26 M 1 1");
+    game.execute_move("S 2 3 M 3 2");
+    game.execute_move("S 1 4 M 2 7");
+    game.execute_move("S 3 1 M 3 14");
+    game.execute_move("S 2 9 M 1 5");
+    game.execute_move("S 4 13 M 3 8");
+    game.execute_move("S 1 1 M 4 21");
+    game.execute_move("S 5 17 M 3 9");
+    game.execute_move("S 3 8 M 5 8");
+    game.execute_move("S 4 21 M 1 0");
+    game.execute_move("S 4 22 M 2 8");
+    game.execute_move("S 1 5 M 4 17");
+    game.execute_move("S 2 8 M 3 12");
+    game.execute_move("S 1 2 M 2 1");
+    game.execute_move("S 3 2 M 3 7 RS 2 8 RE 2 2 X 3 7");
+    game.execute_move("S 2 1 M 3 4");
+    game.execute_move("S 1 3 M 0 0");
+    game.execute_move("S 1 0 M 1 1");
+    game.execute_move("S 3 12 M 1 4");
+    game.execute_move("S 3 4 M 2 2");
+    game.execute_move("S 5 8 M 5 9");
+    game.execute_move("S 1 1 M 4 11");
+    game.execute_move("S 0 0 M 2 6");
+    game.execute_move("S 4 17 M 4 16");
+    game.execute_move("S 2 6 M 2 0");
+    game.execute_move("S 2 7 M 3 11");
+    game.execute_move("S 2 0 M 2 11");
+    game.execute_move("S 3 11 M 2 10");
+    game.execute_move("S 2 11 M 3 16");
+    game.execute_move("S 2 2 M 3 7");
+    game.execute_move("S 4 4 M 5 6");
+    game.execute_move("S 3 16 M 3 17");
     int a = 0;
 }
