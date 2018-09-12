@@ -387,10 +387,9 @@ public:
         else if(mt=="X") success = success && remove_ring(hexagon, position);
         else return 0;
 
-        bool valid = check_move_validity();
         bool won = check_won();
 
-        if(!valid) return 0;
+        if(!success) return 0;
         if(won) return 2;
         return 1;
 
@@ -448,60 +447,95 @@ public:
 
 int main(){
     Game game = Game(0);
+//    game.execute_move("P 0 0");
+//    game.execute_move("P 5 26");
+//    game.execute_move("P 4 13");
+//    game.execute_move("P 5 19");
+//    game.execute_move("P 3 1");
+//    game.execute_move("P 1 2");
+//    game.execute_move("P 4 5");
+//    game.execute_move("P 5 21");
+//    game.execute_move("P 3 5");
+//    game.execute_move("P 1 4");
+//    game.execute_move("S 3 5 M 2 5");
+//    game.execute_move("S 5 21 M 3 13");
+//    game.execute_move("S 2 5 M 2 4");
+//    game.execute_move("S 5 19 M 4 15");
+//    game.execute_move("S 0 0 M 2 2");
+//    game.execute_move("S 4 15 M 4 14");
+//    game.print_data();
+////    game.execute_move("S 3 13 M 2 9");
+//    game.print_data();
+////    game.execute_move("S 2 2 M 4 22");
+////    game.execute_move("S 4 14 M 5 17");
+//    game.execute_move("S 4 5 M 4 4");
+//    game.execute_move("S 5 26 M 1 1");
+//    game.execute_move("S 2 3 M 3 2");
+//    game.execute_move("S 1 4 M 2 7");
+//    game.execute_move("S 3 1 M 3 14");
+//    game.execute_move("S 2 9 M 1 5");
+//    game.execute_move("S 4 13 M 3 8");
+//    game.execute_move("S 1 1 M 4 21");
+//    game.execute_move("S 5 17 M 3 9");
+//    game.execute_move("S 3 8 M 5 8");
+//    game.execute_move("S 4 21 M 1 0");
+//    game.execute_move("S 4 22 M 2 8");
+//    game.execute_move("S 1 5 M 4 17");
+//    game.execute_move("S 2 8 M 3 12");
+//    game.execute_move("S 1 2 M 2 1");
+//    game.print_data();
+////    game.execute_move("S 3 2 M 3 7 RS 2 8 RE 2 2 X 3 7");
+////    game.execute_move("S 2 1 M 3 4");
+////    game.execute_move("S 1 3 M 0 0");
+////    game.execute_move("S 1 0 M 1 1");
+////    game.execute_move("S 3 12 M 1 4");
+////    game.execute_move("S 3 4 M 2 2");
+////    game.execute_move("S 5 8 M 5 9");
+////    game.execute_move("S 1 1 M 4 11");
+////    game.execute_move("S 0 0 M 2 6");
+////    game.execute_move("S 4 17 M 4 16");
+////    game.execute_move("S 2 6 M 2 0");
+////    game.execute_move("S 2 7 M 3 11");
+////    game.execute_move("S 2 0 M 2 11");
+////    game.execute_move("S 3 11 M 2 10");
+////    game.execute_move("S 2 11 M 3 16");
+////    game.execute_move("S 2 2 M 3 7");
+////    game.execute_move("S 4 4 M 5 6");
+////    game.execute_move("S 3 16 M 3 17");
+//    game.execute_move("S 2 8 M 2 7");
+//    game.execute_move("S 1 4 M 1 3");
+//    game.print_data();
+//    game.execute_move("S 2 7 M 1 5 RS 2 8 RE 2 2 X 4 4");
     game.execute_move("P 0 0");
-    game.execute_move("P 5 26");
-    game.execute_move("P 4 13");
-    game.execute_move("P 5 19");
-    game.execute_move("P 3 1");
+    game.execute_move("P 1 0");
+    game.execute_move("P 1 1");
     game.execute_move("P 1 2");
-    game.execute_move("P 4 5");
-    game.execute_move("P 5 21");
-    game.execute_move("P 3 5");
+    game.execute_move("P 1 3");
     game.execute_move("P 1 4");
-    game.execute_move("S 3 5 M 2 5");
-    game.execute_move("S 5 21 M 3 13");
-    game.execute_move("S 2 5 M 2 4");
-    game.execute_move("S 5 19 M 4 15");
-    game.execute_move("S 0 0 M 2 2");
-    game.execute_move("S 4 15 M 4 14");
-    game.print_data();
-    game.execute_move("S 3 13 M 2 9");
-    game.print_data();
-    game.execute_move("S 2 2 M 4 22");
-    game.execute_move("S 4 14 M 5 17");
-    game.execute_move("S 4 5 M 4 4");
-    game.execute_move("S 5 26 M 1 1");
-    game.execute_move("S 2 3 M 3 2");
-    game.execute_move("S 1 4 M 2 7");
-    game.execute_move("S 3 1 M 3 14");
-    game.execute_move("S 2 9 M 1 5");
-    game.execute_move("S 4 13 M 3 8");
-    game.execute_move("S 1 1 M 4 21");
-    game.execute_move("S 5 17 M 3 9");
-    game.execute_move("S 3 8 M 5 8");
-    game.execute_move("S 4 21 M 1 0");
-    game.execute_move("S 4 22 M 2 8");
-    game.execute_move("S 1 5 M 4 17");
-    game.execute_move("S 2 8 M 3 12");
-    game.execute_move("S 1 2 M 2 1");
-    game.print_data();
-    game.execute_move("S 3 2 M 3 7 RS 2 8 RE 2 2 X 3 7");
-    game.execute_move("S 2 1 M 3 4");
-    game.execute_move("S 1 3 M 0 0");
-    game.execute_move("S 1 0 M 1 1");
-    game.execute_move("S 3 12 M 1 4");
-    game.execute_move("S 3 4 M 2 2");
-    game.execute_move("S 5 8 M 5 9");
-    game.execute_move("S 1 1 M 4 11");
-    game.execute_move("S 0 0 M 2 6");
-    game.execute_move("S 4 17 M 4 16");
-    game.execute_move("S 2 6 M 2 0");
-    game.execute_move("S 2 7 M 3 11");
-    game.execute_move("S 2 0 M 2 11");
-    game.execute_move("S 3 11 M 2 10");
+    game.execute_move("P 1 5");
+    game.execute_move("P 2 0");
+    game.execute_move("P 2 1");
+    game.execute_move("P 2 2");
+    game.execute_move("S 1 5 M 2 11");
+    game.execute_move("S 1 0 M 2 9");
+    game.execute_move("S 2 1 M 3 1");
+    game.execute_move("S 2 0 M 3 0");
     game.execute_move("S 2 11 M 3 16");
-    game.execute_move("S 2 2 M 3 7");
-    game.execute_move("S 4 4 M 5 6");
-    game.execute_move("S 3 16 M 3 17");
+    game.execute_move("S 2 2 M 3 17");
+    game.execute_move("S 3 1 M 5 3");
+    game.execute_move("S 3 0 M 3 2");
+    game.execute_move("S 5 3 M 2 10");
+    game.execute_move("S 3 2 M 4 23");
+    game.execute_move("S 2 10 M 4 2");
+    game.execute_move("S 1 0 M 2 9");
+    game.execute_move("S 2 8 M 5 24 RS 2 9 RE 3 2 X 4 23");
+
+
+
+
+
+
+
+    game.print_data();
     int a = 0;
 }
