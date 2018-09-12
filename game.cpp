@@ -587,9 +587,9 @@ int main(){
     game.execute_move("S 3 2 M 4 23");
     game.execute_move("S 2 10 M 4 2");
     game.execute_move("S 1 0 M 2 9");
-    game.execute_move("S 2 9 M 5 24 RS 2 9 RE 3 2 X 4 23");
-//    game.possible_paths(1, 3);
-//    cout << endl;
+    // game.execute_move("S 2 9 M 5 24 RS 2 9 RE 3 2 X 4 23");
+   game.possible_paths(1, 3);
+   cout << endl;
 
 
 
