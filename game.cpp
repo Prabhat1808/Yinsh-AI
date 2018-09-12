@@ -195,9 +195,10 @@ public:
         }
     }
 
-    void possible_paths(int i, int j)
+    vector<pair<int, int>> possible_paths(int i, int j)
     {
         Node* curr = board.at(i).at(j);
+        vector<pair<int, int>> out;
         for(auto w:curr->neighbours)
         {
             int r = w.first;
@@ -212,15 +213,18 @@ public:
             {
                 if(data == 0)
                 {
-                    cout << "( " << r << ", " << c << " )  ";
+                    pair<int, int> temp = make_pair(r, c);
+                    out.push_back(temp);
+//                    cout << "( " << r << ", " << c << " )  ";
                 }
-                check_line(r,c,i,j);
+                check_line(r,c,i,j, out);
             }
 
         }
+        return out;
     }
 
-    void check_line(int i, int j, int prev_i, int prev_j)
+    void check_line(int i, int j, int prev_i, int prev_j, vector<pair<int, int>> &out)
     {
         int prev_neighbour = 0;
         if(i==-1 || j==-1)
@@ -251,11 +255,17 @@ public:
         {
             if(data == 0)
             {
-                cout << "( " << r_nxt << ", " << c_nxt << " )  ";
+                pair<int, int> temp = make_pair(r_nxt, c_nxt);
+//                out.at(index) = temp;
+//                out.at(index).first = r_nxt;
+//                out.at(index).second = c_nxt;
+//                index++;
+                out.push_back(temp);
+//                cout << "( " << r_nxt << ", " << c_nxt << " )  ";
                 if (curr->data == 3 || curr->data == 4)
                     return;
             }
-            check_line(r_nxt,c_nxt,i,j);
+            check_line(r_nxt,c_nxt,i,j, out);
         }
     }
 
@@ -386,7 +396,7 @@ public:
         return true;
     }
     bool remove_validity(Node* nod, int i, int j, int x){
-        if(nod->data!=player+2) return false;
+        if(nod->data!=player+3) return false;
         else if(nod->index==ending && x==max_row) return true;
         else if(x==max_row || nod->index==ending) return false;
         pair<int, int> pre = make_pair(i, j);
@@ -408,6 +418,7 @@ public:
                 if(nod->neighbours.at(k)==pre) ind = k;
             }
             auto p = nod->neighbours.at((ind+3)%6);
+            nod->data = 0;
             remove_now(board.at(p.first).at(p.second), nod->index.first, nod->index.second, x+1);
         }
     }
@@ -592,15 +603,37 @@ int main(){
     game.execute_move("S 5 3 M 2 10");
     game.execute_move("S 3 2 M 4 23");
     game.execute_move("S 2 10 M 4 2");
-    game.execute_move("S 1 0 M 2 9");
-   // game.execute_move("S 2 8 M 5 24 RS 2 9 RE 3 2 X 4 23");
-    game.possible_paths(4, 2);
-    cout << endl;
+//    game.print_data();
+    game.execute_move("S 2 9 M 5 24 RS 2 9 RE 3 2 X 4 23");
+//    game.print_data();
+    game.execute_move("S 1 1 M 4 1");
+    game.execute_move("S 1 4 M 3 14");
+//    game.execute_move("S 4 1 M 4 1");
+    game.execute_move("S 4 1 M 5 1");
+//
+//    game.possible_paths(5, 1);
+//    cout << endl;
+    vector<pair<int, int>> out = game.possible_paths(4, 2);
+    for (auto u:out){
+        cout << u.first << " " << u.second << endl;
+    }
+//    cout << endl;
+//    game.possible_paths(3, 17);
+//    cout << endl;
+//    game.possible_paths(3, 16);
+//    cout << endl;
+//    game.possible_paths(5, 24);
+//    cout << endl;
+//    game.possible_paths(3, 14);
+//    cout << endl;
+//    game.possible_paths(0, 0);
+//    cout << endl;
+//    game.possible_paths(1, 2);
+//    cout << endl;
+//    game.possible_paths(1, 3);
+//    cout << endl;
+//    cout << endl;
 
-
-
-
-
-    // game.print_data();
+//    game.print_data();
     int a = 0;
 }
