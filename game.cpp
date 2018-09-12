@@ -194,6 +194,62 @@ public:
             nod->neighbours.at(5).second = (j - j/i - 1)%(6*(i-1));
         }
     }
+
+    void possible_paths(int i, int j)
+    {
+        Node* curr = board.at(i).at(j);
+        for(auto w:curr->neighbours)
+        {
+            int r = w.first;
+            int c = w.second;
+            int data = board.at(r).at(c)->data;
+
+            if(data == -1 || data == 1 || data == 2)
+                continue;
+
+            else
+            {
+                if(data == 0)
+                {
+                    cout << "( " << r << ", " << c << " )  ";
+                }
+                check_line(r,c,i,j);
+            }
+
+        }
+    }
+
+    void check_line(int i, int j, int prev_i, int prev_j)
+    {
+        int prev_neighbour = 0;
+        Node* curr = board.at(i).at(j);
+        for(auto w:curr->neighbours)
+        {
+            int r = w.first;
+            int c = w.second;
+            prev_neighbour++;
+            if(r == prev_i && c == prev_j)
+                break;
+        }
+        int nxt_neighbour = (prev_neighbour+3)%6;
+        int r_nxt = curr->neighbours.at(nxt_neighbour).first;
+        int c_nxt = curr->neighbours.at(nxt_neighbour).second;
+
+        int data = board.at(r_nxt).at(c_nxt)->data;
+
+        if(data == -1 || data == 1 || data == 2);
+
+        else
+        {
+            if(data == 0)
+            {
+                cout << "( " << r_nxt << ", " << c_nxt << " )  ";
+            }
+            check_line(r_nxt,c_nxt,i,j);
+        }
+
+    }
+
     bool place_ring(int hexagon, int position){
         if(state!=0) return false;
         if(board.at(hexagon).at(position)->data!=0) return false;
