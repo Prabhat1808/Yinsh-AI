@@ -379,7 +379,7 @@ public:
         return true;
     }
     bool remove_validity(Node* nod, int i, int j, int x){
-        if(nod->data!=player+2) return false;
+        if(nod->data!=player+3) return false;
         else if(nod->index==ending && x==max_row) return true;
         else if(x==max_row || nod->index==ending) return false;
         pair<int, int> pre = make_pair(i, j);
@@ -401,6 +401,7 @@ public:
                 if(nod->neighbours.at(k)==pre) ind = k;
             }
             auto p = nod->neighbours.at((ind+3)%6);
+            nod->data = 0;
             remove_now(board.at(p.first).at(p.second), nod->index.first, nod->index.second, x+1);
         }
     }
@@ -586,9 +587,9 @@ int main(){
     game.execute_move("S 3 2 M 4 23");
     game.execute_move("S 2 10 M 4 2");
     game.execute_move("S 1 0 M 2 9");
-//    game.execute_move("S 2 8 M 5 24 RS 2 9 RE 3 2 X 4 23");
-    game.possible_paths(1, 3);
-    cout << endl;
+    game.execute_move("S 2 9 M 5 24 RS 2 9 RE 3 2 X 4 23");
+//    game.possible_paths(1, 3);
+//    cout << endl;
 
 
 
