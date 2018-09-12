@@ -66,7 +66,16 @@ public:
         this->rings_placed = 0;
         this->beginning.first = -1;
         this->beginning.second = -1;
-        print_neighbours();
+//        print_neighbours();
+    }
+    void print_data(){
+        for (auto u:board){
+            for(auto v:u){
+                cout << "( " << v->index.first << ", " << v->index.second << " ):  ";
+                cout << v->data <<endl;
+            }
+            cout << endl;
+        }
     }
     void print_neighbours(){
         for (auto u:board){
@@ -208,7 +217,10 @@ public:
         pair<int, int> pre = make_pair(i, j);
         int ind = -1;
         for(int k=0; k<6; k++){
-            if(nod->neighbours.at(k)==pre) ind = k;
+            if(nod->neighbours.at(k)==pre){
+                ind = k;
+                break;
+            }
         }
         if(ind==-1) return false;
         auto p = nod->neighbours.at((ind+3)%6);
@@ -223,7 +235,10 @@ public:
         int ind = -1;
         pair<int, int> pre = make_pair(i, j);
         for(int k=0; k<6; k++){
-            if(nod->neighbours.at(k)==pre) ind = k;
+            if(nod->neighbours.at(k)==pre){
+                ind = k;
+                break;
+            }
         }
         if(ind==-1) return false;
         ind = (ind+3)%6;
@@ -251,7 +266,10 @@ public:
         int ind = -1;
         pair<int, int> pre = make_pair(i, j);
         for(int k=0; k<6; k++){
-            if(nod->neighbours.at(k)==pre) ind = k;
+            if(nod->neighbours.at(k)==pre){
+                ind = k;
+                break;
+            }
         }
         if(ind==-1) return false;
         ind = (ind+3)%6;
@@ -285,6 +303,7 @@ public:
         bool valid = false;
         for(int i=0; i<6; i++){
             auto p = board.at(beginning.first).at(beginning.second)->neighbours.at(i);
+            if(p.first==-1 || p.second==-1) continue;
             if(move_validity(board.at(p.first).at(p.second), beginning.first, beginning.second)){
                 valid = move_possible(board.at(p.first).at(p.second), beginning.first, beginning.second, false);
                 if (valid) valid = place_it(board.at(p.first).at(p.second), beginning.first, beginning.second, false);
@@ -349,8 +368,8 @@ public:
     }
     int execute_move1(vector<string> moves){
         // vector<string> moves = split_string(s);
-        if(moves.size()>3) return execute_sequence(moves);
-        else player = (player+1)%2;;
+//        if(moves.size()>3) return execute_sequence(moves);
+//        else player = (player+1)%2;;
         string mt = moves.at(0);
         int hexagon = stoi(moves.at(1));
         int position = stoi(moves.at(2));
@@ -389,7 +408,7 @@ public:
             }
         }
         if(!buff.empty()) moves.push_back(buff);
-        return (execute_move1(moves));
+        return (execute_sequence(moves));
     }
     bool execute_sequence(vector<string> moves){
         vector<string> temp(3);
@@ -445,7 +464,9 @@ int main(){
     game.execute_move("S 5 19 M 4 15");
     game.execute_move("S 0 0 M 2 2");
     game.execute_move("S 4 15 M 4 14");
+    game.print_data();
     game.execute_move("S 3 13 M 2 9");
+    game.print_data();
     game.execute_move("S 2 2 M 4 22");
     game.execute_move("S 4 14 M 5 17");
     game.execute_move("S 4 5 M 4 4");
@@ -463,6 +484,7 @@ int main(){
     game.execute_move("S 1 5 M 4 17");
     game.execute_move("S 2 8 M 3 12");
     game.execute_move("S 1 2 M 2 1");
+    game.print_data();
     game.execute_move("S 3 2 M 3 7 RS 2 8 RE 2 2 X 3 7");
     game.execute_move("S 2 1 M 3 4");
     game.execute_move("S 1 3 M 0 0");
