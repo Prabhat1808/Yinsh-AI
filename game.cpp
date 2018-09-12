@@ -202,11 +202,12 @@ public:
         {
             int r = w.first;
             int c = w.second;
-            int data = board.at(r).at(c)->data;
-
-            if(data == -1 || data == 1 || data == 2)
+            if (r == -1 || c == -1)
                 continue;
 
+            int data = board.at(r).at(c)->data;
+
+            if(data == -1 || data == 1 || data == 2);
             else
             {
                 if(data == 0)
@@ -219,10 +220,12 @@ public:
         }
     }
 
-    int check_line(int i, int j, int prev_i, int prev_j)
+    void check_line(int i, int j, int prev_i, int prev_j)
     {
         int prev_neighbour = 0;
-        if(i==-1 || j==-1) return 0;
+        if(i==-1 || j==-1)
+            return;
+
         Node* curr = board.at(i).at(j);
         for(auto w:curr->neighbours)
         {
@@ -232,10 +235,14 @@ public:
                 break;
             prev_neighbour++;
         }
+
         int nxt_neighbour = (prev_neighbour+3)%6;
         int r_nxt = curr->neighbours.at(nxt_neighbour).first;
         int c_nxt = curr->neighbours.at(nxt_neighbour).second;
-        if(r_nxt==-1 || c_nxt == -1) return 0;
+
+        if(r_nxt==-1 || c_nxt == -1)
+            return;
+
         int data = board.at(r_nxt).at(c_nxt)->data;
 
         if(data == -1 || data == 1 || data == 2);
@@ -245,11 +252,11 @@ public:
             if(data == 0)
             {
                 cout << "( " << r_nxt << ", " << c_nxt << " )  ";
+                if (curr->data == 3 || curr->data == 4)
+                    return;
             }
             check_line(r_nxt,c_nxt,i,j);
         }
-        return 1;
-
     }
 
     bool place_ring(int hexagon, int position){
@@ -586,14 +593,14 @@ int main(){
     game.execute_move("S 3 2 M 4 23");
     game.execute_move("S 2 10 M 4 2");
     game.execute_move("S 1 0 M 2 9");
-//    game.execute_move("S 2 8 M 5 24 RS 2 9 RE 3 2 X 4 23");
-    game.possible_paths(1, 3);
+   // game.execute_move("S 2 8 M 5 24 RS 2 9 RE 3 2 X 4 23");
+    game.possible_paths(4, 2);
     cout << endl;
 
 
 
 
 
-    game.print_data();
+    // game.print_data();
     int a = 0;
 }
