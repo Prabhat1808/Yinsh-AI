@@ -219,22 +219,23 @@ public:
         }
     }
 
-    void check_line(int i, int j, int prev_i, int prev_j)
+    int check_line(int i, int j, int prev_i, int prev_j)
     {
         int prev_neighbour = 0;
+        if(i==-1 || j==-1) return 0;
         Node* curr = board.at(i).at(j);
         for(auto w:curr->neighbours)
         {
             int r = w.first;
             int c = w.second;
-            prev_neighbour++;
             if(r == prev_i && c == prev_j)
                 break;
+            prev_neighbour++;
         }
         int nxt_neighbour = (prev_neighbour+3)%6;
         int r_nxt = curr->neighbours.at(nxt_neighbour).first;
         int c_nxt = curr->neighbours.at(nxt_neighbour).second;
-
+        if(r_nxt==-1 || c_nxt == -1) return 0;
         int data = board.at(r_nxt).at(c_nxt)->data;
 
         if(data == -1 || data == 1 || data == 2);
@@ -247,6 +248,7 @@ public:
             }
             check_line(r_nxt,c_nxt,i,j);
         }
+        return 1;
 
     }
 
@@ -584,9 +586,9 @@ int main(){
     game.execute_move("S 3 2 M 4 23");
     game.execute_move("S 2 10 M 4 2");
     game.execute_move("S 1 0 M 2 9");
-    game.execute_move("S 2 8 M 5 24 RS 2 9 RE 3 2 X 4 23");
-
-
+//    game.execute_move("S 2 8 M 5 24 RS 2 9 RE 3 2 X 4 23");
+    game.possible_paths(1, 3);
+    cout << endl;
 
 
 
