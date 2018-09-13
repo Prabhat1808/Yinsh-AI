@@ -29,6 +29,8 @@ private:
     int l;
     int max_row;
     int n;
+    vector<pair<int, int>> ring_self;
+    vector<pair<int, int>> ring_opponent;
     int rings_placed;
     int rings;
     int ring_selected;
@@ -41,6 +43,8 @@ public:
         this-> rings = rings;
         this-> max_row = max_row;
         this -> l = l;
+        this->ring_self.resize(rings);
+        this->ring_opponent.resize(rings);
         vector<Node*> tem;
         Node* no = new Node();
         no->index.first = 0;
@@ -353,6 +357,15 @@ public:
         if(board.at(hexagon).at(position)->data!=0) return false;
         if(state!=0) return false;
         board.at(hexagon).at(position) -> data = player+1;
+//        pair<int, int> temp = make_pair(hexagon, position);
+        if(player==my_marker-3) {
+            ring_self.at(rings_placed / 2).first = hexagon;
+            ring_self.at(rings_placed/2).second = position;
+        }
+        else{
+            ring_opponent.at(rings_placed/2).first = hexagon;
+            ring_opponent.at(rings_placed/2).second = position;
+        }
         rings_placed++;
         if(rings_placed==2*rings) state = 1;
         return true;
@@ -626,7 +639,7 @@ public:
 };
 
 int main(){
-Game game = Game(0, 4);
+    Game game = Game(0, 4);
     game.execute_move("P 0 0");
     game.execute_move("P 1 0");
     game.execute_move("P 1 1");
