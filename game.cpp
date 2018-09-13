@@ -223,9 +223,15 @@ public:
         }
     }
 
-    void check5(vector<pair<int, int>> changed)
+    string pair_to_str(pair<pair<int,int>,pair<int,int>> endpts)
+    {
+        return ("RS "+ to_string(endpts.first.first)+" "+to_string(endpts.first.second)+" RE "+to_string(endpts.second.first)+" "+to_string(endpts.second.second));
+    }
+
+    vector<pair<pair<int,int>,pair<int,int>>> check5(vector<pair<int, int>> changed)
     {
         vector<pair<pair<int,int>,pair<int,int>>> sequences;
+        unordered_set<string> endpts;
         for(auto position:changed)
         {
             vector<int> consecutive(6);
@@ -253,12 +259,9 @@ public:
 
                 if(board.at(r).at(c)->data == my_marker)
                 {
-                    //pair<int,int> max_reach = span.at(i);
                     span.at(i).first = r;
                     span.at(i).second = c;
                     consecutive.at(i) = 1 + check_line5(r,c,position.first,position.second,span.at(i));
-                    //cout << "( " << curr->index.first << " , " << curr->index.second <<  " ) - ( " << r << " , " << c << " ) : " << consecutive.at(i) << "  #max_reach index =" << span.at(i).first << "," << span.at(i).second << endl;
-
                 }
                 i++;
             }
@@ -269,21 +272,42 @@ public:
                 if(consecutive.at(iter) + consecutive.at(iter+3) + 1 >= 5)
                 {
 //                    cout << "(" << span.at(iter).first << "," << span.at(iter).second << ") -> " << "(" << span.at(iter+3).first << "," << span.at(iter+3).second << ")" << endl;
-                    sequences.push_back(make_pair(span.at(iter), span.at(iter + 3)));
+                    pair<pair<int,int>,pair<int,int>> tmp = make_pair(span.at(iter), span.at(iter + 3));
+                    pair<pair<int,int>,pair<int,int>> rev_tmp = make_pair(span.at(iter + 3),span.at(iter));
+
+                    if(endpts.count(pair_to_str(tmp)) == 0 && endpts.count(pair_to_str(rev_tmp)) == 0)
+                    {
+                        endpts.insert(pair_to_str(tmp));
+                        sequences.push_back(make_pair(span.at(iter), span.at(iter + 3)));
+                    }
                 }
             }
         }
         for(auto w:sequences)
             cout << "(" << w.first.first << "," << w.first.second << ") -> " << "(" << w.second.first << "," << w.second.second << ")" << endl;
+        return sequences;
+        // vector<pair<pair<int,int>,pair<int,int>>>::iterator it;
+        // it = unique(sequences.begin(),sequences.end());
+        // sequences.erase(it, sequences.end());
 
-        vector<pair<pair<int,int>,pair<int,int>>>::iterator it;
-        it = unique(sequences.begin(),sequences.end());
-        sequences.erase(it, sequences.end());
-
-        cout << "duplicates removed/n";
+        // cout << "duplicates removed\n";
         
-        for(auto w:sequences)
-            cout << "(" << w.first.first << "," << w.first.second << ") -> " << "(" << w.second.first << "," << w.second.second << ")" << endl;
+        // for(auto w:sequences)
+        //     cout << "(" << w.first.first << "," << w.first.second << ") -> " << "(" << w.second.first << "," << w.second.second << ")" << endl;
+
+        // cout << "removing inverted elements\n";
+
+        // for (int i = 0;i<sequences.size()-1;)
+        // {
+        //     pair<pair<int,int>,pair<int,int>> rev = make_pair(sequences.at(i).second,sequences.at(i).first);
+        //     bool found = false;
+        //     for(int j = i+1;j<sequences.size();j++)
+        //     {
+        //         if()
+        //     }
+        //     if(!found)
+        //         i++;
+        // }
     
     }
 
