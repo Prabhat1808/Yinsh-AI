@@ -82,7 +82,7 @@ public:
         this->rings_placed = rings_placed;
     }
     Game copy_board(){
-        Game copied(player, n, rings, max_row, l);
+        Game copied(player, my_marker, n, rings, max_row, l);
         copied.update_state(this->state);
         copied.update_rings(this->rings_removed0, this->rings_removed1, this->rings_placed);
         for(int i=0; i<board.size(); i++){
@@ -555,6 +555,18 @@ public:
     bool check_move_validity() {
         return true;
     }
+    int heuristic(){
+        int out = 0;
+        for(vector<Node*> u: board){
+            for(Node* v : u){
+                if(v->data == my_marker) out++;
+                else if(v->data == my_marker-2) out-=6;
+                else if(v->data<3 && v->data>0) out+=6;
+                else if(v->data>2) out--;
+            }
+        }
+        return out;
+    }
 };
 
 int main(){
@@ -676,6 +688,8 @@ int main(){
 //    int a = 0;
     game.print_data();
     copy.print_data();
+    cout << game.heuristic() << endl;
+    cout << copy.heuristic() << endl;
     int a = 0;
 
 }
