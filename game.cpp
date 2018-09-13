@@ -324,7 +324,7 @@ public:
         if(p.first==-1 || p.second==-1) return false;
         return move_validity(board.at(p.first).at(p.second), nod->index.first, nod->index.second);
     }
-    bool move_possible(Node* nod, int i, int j, bool change){
+    bool move_possible(Node* nod, int i, int j){
         if(nod->index == ending && nod->data==0){
             return true;
         }
@@ -354,12 +354,17 @@ public:
         }
         else return false;
     }
-    bool place_it(Node* nod, int i, int j, bool change){
+    bool place_it(Node* nod, int i, int j, vector<pair<int, int>> &changed){
         if(nod->index == ending && nod->data==0){
             nod->data = player+1;
             return true;
         }
         else if(nod->index == ending) return false;
+        else if(nod->data>2){
+            if(nod->data==3) nod->data = 4;
+            else if(nod->data==4) nod->data = 3;
+            changed.push_back(nod->index);
+        }
         int ind = -1;
         pair<int, int> pre = make_pair(i, j);
         for(int k=0; k<6; k++){
@@ -370,46 +375,52 @@ public:
         }
         if(ind==-1) return false;
         ind = (ind+3)%6;
-        if(change){
-            if(nod->data==3) nod->data = 4;
-            else if(nod->data==4) nod->data = 3;
-            else return false;
-            auto p = nod->neighbours.at(ind);
-            return place_it(board.at(p.first).at(p.second), nod->index.first, nod->index.second, change);
-        }
-        else if(nod->data>2){
-            if(nod->data==3) nod->data = 4;
-            else if(nod->data==4) nod->data = 3;
-            else return false;
-            auto p = nod->neighbours.at(ind);
-            return place_it(board.at(p.first).at(p.second), nod->index.first, nod->index.second, true);
-        }
-        else if(nod->data==0){
-            auto p = nod->neighbours.at(ind);
-            return place_it(board.at(p.first).at(p.second), nod->index.first, nod->index.second, false);
-        }
-        else return false;
+        pair<int, int> p = nod->neighbours.at(ind);
+        return place_it(board.at(p.first).at(p.second), nod->index.first, nod->index.second, changed);
+//        if(change){
+//            if(nod->data==3) nod->data = 4;
+//            else if(nod->data==4) nod->data = 3;
+//            else return false;
+//            auto p = nod->neighbours.at(ind);
+//            return place_it(board.at(p.first).at(p.second), nod->index.first, nod->index.second, change);
+//        }
+//        else if(nod->data>2){
+//            if(nod->data==3) nod->data = 4;
+//            else if(nod->data==4) nod->data = 3;
+//            else return false;
+//            auto p = nod->neighbours.at(ind);
+//            return place_it(board.at(p.first).at(p.second), nod->index.first, nod->index.second, true);
+//        }
+//        else if(nod->data==0){
+//            auto p = nod->neighbours.at(ind);
+//            return place_it(board.at(p.first).at(p.second), nod->index.first, nod->index.second, false);
+//        }
+//        else return false;
     }
-    bool move_ring(int hexagon, int position){
-        if(board.at(hexagon).at(position)->data!=0){
-            board.at(beginning.first).at(beginning.second)->data-=2;
-            return false;
-        }
+    bool move_ring(int hexagon, int position, vector<pair<int, int>> changed){
+//        if(board.at(hexagon).at(position)->data!=0){
+//            board.at(beginning.first).at(beginning.second)->data-=2;
+//            return false;
+//        }
         ending.first = hexagon;
         ending.second = position;
-        bool valid = false;
+//        bool valid = false;
+//        vector<pair<int, int>> changed;
+        pair<int, int> temp = make_pair(beginning.first, beginning.second);
+        changed.push_back(temp);
         for(int i=0; i<6; i++){
             auto p = board.at(beginning.first).at(beginning.second)->neighbours.at(i);
             if(p.first==-1 || p.second==-1) continue;
             if(move_validity(board.at(p.first).at(p.second), beginning.first, beginning.second)){
-                valid = move_possible(board.at(p.first).at(p.second), beginning.first, beginning.second, false);
-                if (valid) valid = place_it(board.at(p.first).at(p.second), beginning.first, beginning.second, false);
+//                valid = move_possible(board.at(p.first).at(p.second), beginning.first, beginning.second, false);
+                place_it(board.at(p.first).at(p.second), beginning.first, beginning.second, changed);
                 break;
             }
         }
-        if (valid) return true;
-        board.at(beginning.first).at(beginning.second)->data-=2;
-        return false;
+        return true;
+//        if (valid) return true;
+//        board.at(beginning.first).at(beginning.second)->data-=2;
+//        return false;
     }
     bool remove_start(int hexagon, int position){
         if(board.at(hexagon).at(position)->data!=player+3) return false;
@@ -464,7 +475,7 @@ public:
         else rings_removed1++;
         return true;
     }
-    int execute_move1(vector<string> moves){
+    int execute_move1(vector<string> moves, vector<pair<int, int>> changed){
         // vector<string> moves = split_string(s);
 //        if(moves.size()>3) return execute_sequence(moves);
 //        else player = (player+1)%2;;
@@ -476,7 +487,7 @@ public:
         if(mt=="P") success = success && place_ring(hexagon, position);
         else if(mt=="S") success = success && select_ring(hexagon, position);
         else if(mt=="M") {
-            success = success && move_ring(hexagon, position);
+            success = success && move_ring(hexagon, position, changed);
         }
         else if(mt=="RS"){
             success = success && remove_start(hexagon, position);
@@ -492,7 +503,7 @@ public:
         return 1;
 
     }
-    int execute_move(string s){
+    vector<pair<int, int>> execute_move(string s){
         vector<string> moves;
         string buff = "";
         for(auto i:s){
@@ -507,21 +518,22 @@ public:
         if(!buff.empty()) moves.push_back(buff);
         return (execute_sequence(moves));
     }
-    bool execute_sequence(vector<string> moves){
+    vector<pair<int, int>> execute_sequence(vector<string> moves){
         vector<string> temp(3);
+        vector<pair<int, int>> changed;
         for (int i=0; i<moves.size(); i++){
             if(i%3==2){
                 temp.at(2) = moves.at(i);
-                int move_success = execute_move1(temp);
-                if(move_success == 0) return 0;
-                else if(move_success==2) return 2;
+                int move_success = execute_move1(temp, changed);
+//                if(move_success == 0) return 0;
+//                else if(move_success==2) return 2;
             }
             else{
                 temp.at(i%3) = moves.at(i);
             }
         }
         player = (player+1)%2;
-        return 1;
+        return changed;
     }
     bool check_won(){
         return (rings_removed1==l || rings_removed0==l);
