@@ -626,7 +626,7 @@ public:
 };
 
 int main(){
-    Game game = Game(0, 4);
+Game game = Game(0, 4);
     game.execute_move("P 0 0");
     game.execute_move("P 1 0");
     game.execute_move("P 1 1");
@@ -647,7 +647,9 @@ int main(){
     game.execute_move("S 3 0 M 3 2");
     game.execute_move("S 5 3 M 2 10");
     game.execute_move("S 3 2 M 4 23");
-    game.execute_move("S 2 10 M 4 2");
+    game.execute_move("S 3 17 M 3 4");
+    game.execute_move("S 3 17 M 3 4");
+    game.execute_move("S 1 1 M 4 1");
     vector<pair<int, int>> changed = game.execute_move("S 2 9 M 5 24");
 //    for (auto u: changed){
 //        cout << u.first << " " << u.second << endl;
