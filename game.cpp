@@ -225,8 +225,18 @@ public:
 
     void check5(vector<pair<int, int>> changed)
     {
+        vector<pair<pair<int,int>,pair<int,int>>> sequences;
         for(auto position:changed)
         {
+            vector<int> consecutive(6);
+            vector<pair<int,int>> span(6);
+            for(int iter=0;iter<6;iter++)
+            {
+                span.at(iter).first = position.first;
+                span.at(iter).second = position.second;
+            }
+
+            int i =0;
             Node* curr = board.at(position.first).at(position.second);
             if(curr->data != my_marker)
                 continue;
@@ -236,17 +246,45 @@ public:
                 int r = w.first;
                 int c = w.second;
                 if (r == -1 || c == -1)
+                {
+                    i++;
                     continue;
+                }
 
                 if(board.at(r).at(c)->data == my_marker)
                 {
+                    //pair<int,int> max_reach = span.at(i);
+                    span.at(i).first = r;
+                    span.at(i).second = c;
+                    consecutive.at(i) = 1 + check_line5(r,c,position.first,position.second,span.at(i));
+                    //cout << "( " << curr->index.first << " , " << curr->index.second <<  " ) - ( " << r << " , " << c << " ) : " << consecutive.at(i) << "  #max_reach index =" << span.at(i).first << "," << span.at(i).second << endl;
 
-                    int consecutive = 2 + check_line5(r,c,position.first,position.second);
-                    cout << "( " << curr->index.first << " , " << curr->index.second <<  " ) - ( " << r << " , " << c << " ) : " << consecutive << endl;
+                }
+                i++;
+            }
 
+            
+            for (int iter=0;iter<3;iter++)
+            {
+                if(consecutive.at(iter) + consecutive.at(iter+3) + 1 >= 5)
+                {
+//                    cout << "(" << span.at(iter).first << "," << span.at(iter).second << ") -> " << "(" << span.at(iter+3).first << "," << span.at(iter+3).second << ")" << endl;
+                    sequences.push_back(make_pair(span.at(iter), span.at(iter + 3)));
                 }
             }
         }
+        for(auto w:sequences)
+            cout << "(" << w.first.first << "," << w.first.second << ") -> " << "(" << w.second.first << "," << w.second.second << ")" << endl;
+
+        vector<pair<pair<int,int>,pair<int,int>>>::iterator it;
+        it = unique(sequences.begin(),sequences.end());
+        sequences.erase(it, sequences.end());
+
+        cout << "duplicates removed/n";
+        
+        for(auto w:sequences)
+            cout << "(" << w.first.first << "," << w.first.second << ") -> " << "(" << w.second.first << "," << w.second.second << ")" << endl;
+    
     }
 
     vector<pair<int, int>> possible_paths(int i, int j)
@@ -277,7 +315,7 @@ public:
         return out;
     }
 
-    int check_line5(int i, int j, int prev_i, int prev_j)
+    int check_line5(int i, int j, int prev_i, int prev_j, pair<int,int> &max_reach)
     {
         int prev_neighbour = 0;
         if(i==-1 || j==-1)
@@ -300,11 +338,13 @@ public:
         if(r_nxt==-1 || c_nxt == -1)
             return 0;
 
-        int data = board.at(r_nxt).at(c_nxt)->data;
+        int data = board.at(r_nxt).at(c_nxt)-> data;
         if (data != my_marker)
             return 0;
 
-        return (1 + check_line5(r_nxt,c_nxt,i,j));
+        max_reach.first = r_nxt;
+        max_reach.second = c_nxt;
+        return (1 + check_line5(r_nxt,c_nxt,i,j,max_reach));
     }
 
     void check_line(int i, int j, int prev_i, int prev_j, vector<pair<int, int>> &out)
@@ -660,10 +700,12 @@ int main(){
     game.execute_move("S 3 0 M 3 2");
     game.execute_move("S 5 3 M 2 10");
     game.execute_move("S 3 2 M 4 23");
-    game.execute_move("S 3 17 M 3 4");
-    game.execute_move("S 3 17 M 3 4");
+//    game.execute_move("S 3 17 M 3 4");
+//    game.execute_move("S 3 17 M 3 4");
     game.execute_move("S 1 1 M 4 1");
-    vector<pair<int, int>> changed = game.execute_move("S 2 9 M 5 24");
+    game.execute_move("S 4 23 M 4 0");
+    game.execute_move("S 4 1 M 5 2");
+    vector<pair<int, int>> changed = game.execute_move("S 1 2 M 5 1");
 //    for (auto u: changed){
 //        cout << u.first << " " << u.second << endl;
 //    }
