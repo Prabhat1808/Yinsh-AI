@@ -223,7 +223,7 @@ public:
     {
         for(auto position:changed)
         {
-            Node* curr = board.at(position.first,position.second)
+            Node* curr = board.at(position.first).at(position.second);
             if(curr->data != my_marker)
                 continue;
 
@@ -234,9 +234,9 @@ public:
                 if (r == -1 || c == -1)
                     continue;
 
-                if(board.at(r).at(c) == my_marker)
+                if(board.at(r).at(c)->data == my_marker)
                 {
-                    int consecutive = 2 + check_line5(r,c,i,j);
+                    int consecutive = 2 + check_line5(r,c,position.first,position.second);
                 }
             }
         }
@@ -340,8 +340,7 @@ public:
 //                cout << "( " << r_nxt << ", " << c_nxt << " )  ";
                 if (curr->data == 3 || curr->data == 4)
                     return;
-            }    vector<pair<int, int>> possible_paths(int i, int j)
-
+            }
             check_line(r_nxt,c_nxt,i,j, out);
         }
     }
