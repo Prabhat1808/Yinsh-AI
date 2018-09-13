@@ -217,6 +217,29 @@ public:
         }
     }
 
+    void check5(vector<pair<int, int>> changed)
+    {
+        for(auto position:changed)
+        {
+            Node* curr = board.at(position.first,position.second)
+            if(curr->data != my_marker)
+                continue;
+
+            for(auto w: curr->neighbours)
+            {
+                int r = w.first;
+                int c = w.second;
+                if (r == -1 || c == -1)
+                    continue;
+
+                if(board.at(r).at(c) == my_marker)
+                {
+                    int consecutive = 2 + check_line5(r,c,i,j);
+                }
+            }
+        }
+    }
+
     vector<pair<int, int>> possible_paths(int i, int j)
     {
         Node* curr = board.at(i).at(j);
@@ -237,13 +260,42 @@ public:
                 {
                     pair<int, int> temp = make_pair(r, c);
                     out.push_back(temp);
-//                    cout << "( " << r << ", " << c << " )  ";
                 }
                 check_line(r,c,i,j, out);
             }
 
         }
         return out;
+    }
+
+    int check_line5(int i, int j, int prev_i, int prev_j)
+    {
+        int prev_neighbour = 0;
+        if(i==-1 || j==-1)
+            return 0;
+
+        Node* curr = board.at(i).at(j);
+        for(auto w:curr->neighbours)
+        {
+            int r = w.first;
+            int c = w.second;
+            if(r == prev_i && c == prev_j)
+                break;
+            prev_neighbour++;
+        }
+
+        int nxt_neighbour = (prev_neighbour+3)%6;
+        int r_nxt = curr->neighbours.at(nxt_neighbour).first;
+        int c_nxt = curr->neighbours.at(nxt_neighbour).second;
+
+        if(r_nxt==-1 || c_nxt == -1)
+            return 0;
+
+        int data = board.at(r_nxt).at(c_nxt)->data;
+        if (data != my_marker)
+            return 0;
+
+        return (1 + check_line5(r_nxt,c_nxt,i,j));
     }
 
     void check_line(int i, int j, int prev_i, int prev_j, vector<pair<int, int>> &out)
@@ -286,7 +338,8 @@ public:
 //                cout << "( " << r_nxt << ", " << c_nxt << " )  ";
                 if (curr->data == 3 || curr->data == 4)
                     return;
-            }
+            }    vector<pair<int, int>> possible_paths(int i, int j)
+
             check_line(r_nxt,c_nxt,i,j, out);
         }
     }
@@ -518,6 +571,7 @@ public:
         if(!buff.empty()) moves.push_back(buff);
         return (execute_sequence(moves));
     }
+
     vector<pair<int, int>> execute_sequence(vector<string> moves){
         vector<string> temp(3);
         vector<pair<int, int>> changed;
