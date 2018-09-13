@@ -68,6 +68,28 @@ public:
         this->beginning.second = -1;
 //        print_neighbours();
     }
+    void update_board(int hexagon, int position, int data){
+        board.at(hexagon).at(position)->data = data;
+    }
+    void update_state(int state1){
+        this->state = state1;
+    }
+    void update_rings(int rings0, int rings1, int rings_placed){
+        this->rings_removed0 = rings0;
+        this->rings_removed1 = rings1;
+        this->rings_placed = rings_placed;
+    }
+    Game copy_board(){
+        Game copied(player, n, rings, max_row, l);
+        copied.update_state(this->state);
+        copied.update_rings(this->rings_removed0, this->rings_removed1, this->rings_placed);
+        for(int i=0; i<board.size(); i++){
+            for (int j=0; j<board.at(i).size(); j++){
+                copied.update_board(i, j, board.at(i).at(j)->data);
+            }
+        }
+        return copied;
+    }
     void print_data(){
         for (auto u:board){
             for(auto v:u){
@@ -610,13 +632,15 @@ int main(){
     game.execute_move("S 1 4 M 3 14");
 //    game.execute_move("S 4 1 M 4 1");
     game.execute_move("S 4 1 M 5 1");
+    Game copy = game.copy_board();
+
 //
 //    game.possible_paths(5, 1);
 //    cout << endl;
-    vector<pair<int, int>> out = game.possible_paths(4, 2);
-    for (auto u:out){
-        cout << u.first << " " << u.second << endl;
-    }
+//    vector<pair<int, int>> out = game.possible_paths(4, 2);
+//    for (auto u:out){
+//        cout << u.first << " " << u.second << endl;
+//    }
 //    cout << endl;
 //    game.possible_paths(3, 17);
 //    cout << endl;
@@ -635,5 +659,9 @@ int main(){
 //    cout << endl;
 
 //    game.print_data();
+//    int a = 0;
+    game.print_data();
+    copy.print_data();
     int a = 0;
+
 }
