@@ -527,6 +527,18 @@ public:
                 break;
             }
         }
+        for(int i=0; i<ring_self.size(); i++){
+            if(my_marker-3==player && beginning==ring_self.at(i)) {
+                ring_self.at(i).first = ending.first;
+                ring_self.at(i).second = ending.second;
+                break;
+            }
+            else if(my_marker-3!=player && beginning==ring_opponent.at(i)){
+                ring_opponent.at(i).first = ending.first;
+                ring_opponent.at(i).second = ending.second;
+                break;
+            }
+        }
         return true;
 //        if (valid) return true;
 //        board.at(beginning.first).at(beginning.second)->data-=2;
@@ -583,6 +595,19 @@ public:
         board.at(hexagon).at(position) -> data = 0;
         if(player==0) rings_removed0++;
         else rings_removed1++;
+        pair<int, int> temp = make_pair(hexagon, position);
+        for(int i=0; i<ring_self.size(); i++){
+            if(my_marker-3==player && temp==ring_self.at(i)) {
+                ring_self.at(i).first = -1;
+                ring_self.at(i).second = -1;
+                break;
+            }
+            else if(my_marker-3!=player && temp==ring_opponent.at(i)){
+                ring_opponent.at(i).first = -1;
+                ring_opponent.at(i).second = -1;
+                break;
+            }
+        }
         return true;
     }
     int execute_move1(vector<string> moves, vector<pair<int, int>> &changed){
