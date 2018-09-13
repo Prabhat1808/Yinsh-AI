@@ -32,10 +32,11 @@ private:
     int rings_placed;
     int rings;
     int ring_selected;
+    int my_marker;
     pair<int, int> beginning;
     pair<int, int> ending;
 public:
-    Game(int player, int n=5, int rings=5, int max_row=5, int l=3){
+    Game(int player, int my_marker, int n=5, int rings=5, int max_row=5, int l=3){
         this-> n = n;
         this-> rings = rings;
         this-> max_row = max_row;
@@ -59,6 +60,7 @@ public:
             }
             this->board.push_back(temp);
         }
+        this->my_marker = my_marker;
         this->state = 0;
         this->rings_removed0 = 0;
         this->rings_removed1 = 0;
@@ -377,7 +379,7 @@ public:
         if(p.first==-1 || p.second==-1) return false;
         return move_validity(board.at(p.first).at(p.second), nod->index.first, nod->index.second);
     }
-    bool move_possible(Node* nod, int i, int j){
+    bool move_possible(Node* nod, int i, int j, bool change){
         if(nod->index == ending && nod->data==0){
             return true;
         }
@@ -610,7 +612,7 @@ public:
 };
 
 int main(){
-    Game game = Game(0);
+    Game game = Game(0, 3);
 //    game.execute_move("P 0 0");
 //    game.execute_move("P 5 26");
 //    game.execute_move("P 4 13");
