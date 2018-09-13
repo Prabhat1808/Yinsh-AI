@@ -283,8 +283,8 @@ public:
                 }
             }
         }
-        for(auto w:sequences)
-            cout << "(" << w.first.first << "," << w.first.second << ") -> " << "(" << w.second.first << "," << w.second.second << ")" << endl;
+        // for(auto w:sequences)
+        //     cout << "(" << w.first.first << "," << w.first.second << ") -> " << "(" << w.second.first << "," << w.second.second << ")" << endl;
         return sequences;
         // vector<pair<pair<int,int>,pair<int,int>>>::iterator it;
         // it = unique(sequences.begin(),sequences.end());
@@ -712,6 +712,12 @@ public:
     }
     bool check_move_validity() {
         return true;
+    }
+    vector<pair<int, int>> my_rings(){
+        return ring_self;
+    }
+    vector<pair<int, int>> opponents_rings(){
+        return ring_opponent;
     }
     int heuristic(){
         int out = 0;
