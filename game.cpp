@@ -234,6 +234,7 @@ public:
         unordered_set<string> endpts;
         for(auto position:changed)
         {
+            // cout << "Checking for : " << position.first << " , " << position.second << endl;
             vector<int> consecutive(6);
             vector<pair<int,int>> span(6);
             for(int iter=0;iter<6;iter++)
@@ -269,9 +270,11 @@ public:
             
             for (int iter=0;iter<3;iter++)
             {
+                // cout << "(" << span.at(iter).first << "," << span.at(iter).second << ") -> " << "(" << span.at(iter+3).first << "," << span.at(iter+3).second << ")" << endl;
+
                 if(consecutive.at(iter) + consecutive.at(iter+3) + 1 >= 5)
                 {
-//                    cout << "(" << span.at(iter).first << "," << span.at(iter).second << ") -> " << "(" << span.at(iter+3).first << "," << span.at(iter+3).second << ")" << endl;
+                   // cout << "(" << span.at(iter).first << "," << span.at(iter).second << ") -> " << "(" << span.at(iter+3).first << "," << span.at(iter+3).second << ")" << endl;
                     pair<pair<int,int>,pair<int,int>> tmp = make_pair(span.at(iter), span.at(iter + 3));
                     pair<pair<int,int>,pair<int,int>> rev_tmp = make_pair(span.at(iter + 3),span.at(iter));
 
@@ -283,8 +286,8 @@ public:
                 }
             }
         }
-        // for(auto w:sequences)
-        //     cout << "(" << w.first.first << "," << w.first.second << ") -> " << "(" << w.second.first << "," << w.second.second << ")" << endl;
+        for(auto w:sequences)
+            cout << "(" << w.first.first << "," << w.first.second << ") -> " << "(" << w.second.first << "," << w.second.second << ")" << endl;
         return sequences;
         // vector<pair<pair<int,int>,pair<int,int>>>::iterator it;
         // it = unique(sequences.begin(),sequences.end());
@@ -739,44 +742,152 @@ public:
 
 int main(){
     Game game = Game(0, 4);
-    game.execute_move("P 0 0");
-    game.execute_move("P 1 0");
-    game.execute_move("P 1 1");
-    game.execute_move("P 1 2");
-    game.execute_move("P 1 3");
-    game.execute_move("P 1 4");
-    game.execute_move("P 1 5");
-    game.execute_move("P 2 0");
-    game.execute_move("P 2 1");
-    game.execute_move("P 2 2");
-    game.execute_move("S 1 5 M 2 11");
-    game.execute_move("S 1 0 M 2 9");
-    game.execute_move("S 2 1 M 3 1");
-    game.execute_move("S 2 0 M 3 0");
-    game.execute_move("S 2 11 M 3 16");
-    game.execute_move("S 2 2 M 3 17");
-    game.execute_move("S 3 1 M 5 3");
-    game.execute_move("S 3 0 M 3 2");
-    game.execute_move("S 5 3 M 2 10");
-    game.execute_move("S 3 2 M 4 23");
-//    game.execute_move("S 3 17 M 3 4");
-//    game.execute_move("S 3 17 M 3 4");
-    game.execute_move("S 1 1 M 4 1");
-    game.execute_move("S 4 23 M 4 0");
-    game.execute_move("S 4 1 M 5 2");
-    vector<pair<int, int>> changed = game.execute_move("S 1 2 M 5 1");
-//    for (auto u: changed){
-//        cout << u.first << " " << u.second << endl;
-//    }
-    game.check5(changed);
-//    game.print_data();
-    game.execute_move("S 2 9 M 5 24 RS 2 9 RE 3 2 X 4 23");
-//    game.print_data();
-    game.execute_move("S 1 1 M 4 1");
-    game.execute_move("S 1 4 M 3 14");
-//    game.execute_move("S 4 1 M 4 1");
-    game.execute_move("S 4 1 M 5 1");
+//     game.execute_move("P 0 0");
+//     game.execute_move("P 1 0");
+//     game.execute_move("P 1 1");
+//     game.execute_move("P 1 2");
+//     game.execute_move("P 1 3");
+//     game.execute_move("P 1 4");
+//     game.execute_move("P 1 5");
+//     game.execute_move("P 2 0");
+//     game.execute_move("P 2 1");
+//     game.execute_move("P 2 2");
+//     game.execute_move("S 1 5 M 2 11");
+//     game.execute_move("S 1 0 M 2 9");
+//     game.execute_move("S 2 1 M 3 1");
+//     game.execute_move("S 2 0 M 3 0");
+//     game.execute_move("S 2 11 M 3 16");
+//     game.execute_move("S 2 2 M 3 17");
+//     game.execute_move("S 3 1 M 5 3");
+//     game.execute_move("S 3 0 M 3 2");
+//     game.execute_move("S 5 3 M 2 10");
+//     game.execute_move("S 3 2 M 4 23");
+// //    game.execute_move("S 3 17 M 3 4");
+// //    game.execute_move("S 3 17 M 3 4");
+//     game.execute_move("S 1 1 M 4 1");
+//     game.execute_move("S 4 23 M 4 0");
+//     game.execute_move("S 4 1 M 5 2");
+//     vector<pair<int, int>> changed = game.execute_move("S 1 2 M 5 1");
+// //    for (auto u: changed){
+// //        cout << u.first << " " << u.second << endl;
+// //    }
+//     game.check5(changed);
+// //    game.print_data();
+//     game.execute_move("S 2 9 M 5 24 RS 2 9 RE 3 2 X 4 23");
+// //    game.print_data();
+//     game.execute_move("S 1 1 M 4 1");
+//     game.execute_move("S 1 4 M 3 14");
+// //    game.execute_move("S 4 1 M 4 1");
+//     game.execute_move("S 4 1 M 5 1");
     Game copy = game.copy_board();
+
+    //TEST MOVES 1
+//     game.execute_move("P 0 0");
+// //     game.execute_move("P 1 0");
+//     game.execute_move("P 1 1");
+//     game.execute_move("P 4 0");
+//     game.execute_move("P 2 2");
+//     game.execute_move("P 5 1");
+//     game.execute_move("P 1 4");
+//     game.execute_move("P 5 29");
+//     game.execute_move("P 2 8");
+//     game.execute_move("P 3 0");
+//     game.execute_move("P 2 10");
+//     game.execute_move("S 0 0 M 1 2");
+//     game.execute_move("S 1 1 M 2 3");
+//     game.execute_move("S 1 2 M 2 4");
+//     game.execute_move("S 2 2 M 3 4");
+//     game.execute_move("S 2 4 M 3 5");
+//     game.execute_move("S 1 4 M 1 3");
+//     game.execute_move("S 3 5 M 4 6");
+//     game.execute_move("S 2 8 M 2 7");
+//     game.execute_move("S 4 0 M 4 1");
+//     game.execute_move("S 2 10 M 1 5");
+//     game.execute_move("S 3 0 M 3 1");
+//     vector<pair<int, int>> changed = game.execute_move("S 1 5 M 3 6");
+//     // for(auto w: changed)
+//     //     cout << "(" << w.first << "," << w.second << ")" << endl;
+//     // game.execute_move("S 1 5 M 3 6");
+//     game.check5(changed);
+
+    // //TEST MOVES 2
+
+    // game.execute_move("P 1 5");
+    // game.execute_move("P 2 9");
+    // game.execute_move("P 1 0");
+    // game.execute_move("P 1 1");
+    // game.execute_move("P 2 0");
+    // game.execute_move("P 0 0");
+    // game.execute_move("P 3 0");
+    // game.execute_move("P 2 11");
+    // game.execute_move("P 4 0");
+    // game.execute_move("P 2 10");
+
+    // game.execute_move("S 1 0 M 2 1");
+    // game.execute_move("S 1 1 M 2 3");
+    // game.execute_move("S 1 5 M 1 4");
+    // game.execute_move("S 0 0 M 1 2");
+    // game.execute_move("S 2 1 M 2 2");
+    // game.execute_move("S 2 3 M 3 5");
+    // game.execute_move("S 2 2 M 3 4");
+    // game.execute_move("S 1 2 M 2 4");
+    // game.execute_move("S 4 0 M 5 1");
+    // game.execute_move("S 2 11 M 3 16");
+    // game.execute_move("S 5 1 M 5 2");
+    // game.execute_move("S 2 10 M 3 15");
+    // game.execute_move("S 5 2 M 5 3");
+    // game.execute_move("S 3 16 M 3 17");
+    // game.execute_move("S 5 3 M 5 4");
+    // game.execute_move("S 3 15 M 4 20");
+    // game.execute_move("S 3 0 M 3 1");
+    // vector<pair<int, int>> changed = game.execute_move("S 2 9 M 3 2");
+    // // game.execute_move("S 2 9 M 3 2");
+    // game.check5(changed);
+
+    //TEST MOVES 3
+
+    game.execute_move("P 2 0");
+    game.execute_move("P 4 0");
+    game.execute_move("P 5 1");
+    game.execute_move("P 1 2");
+    game.execute_move("P 5 2");
+    game.execute_move("P 2 3");
+    game.execute_move("P 5 29");
+    game.execute_move("P 3 4");
+    game.execute_move("P 5 28");
+    game.execute_move("P 4 5");
+
+    game.execute_move("S 2 0 M 1 0");
+    game.execute_move("S 1 2 M 1 1");
+    game.execute_move("S 1 0 M 0 0");
+    game.execute_move("S 2 3 M 2 2");
+    game.execute_move("S 0 0 M 1 3");
+    game.execute_move("S 3 4 M 3 3");
+    game.execute_move("S 1 3 M 2 7");
+    game.execute_move("S 4 5 M 4 4");
+    game.execute_move("S 2 7 M 2 8");
+    game.execute_move("S 4 0 M 3 0");
+    game.execute_move("S 2 8 M 3 15");
+    vector<pair<int, int>> changed = game.execute_move("S 3 0 M 2 6");
+    // game.execute_move("S 3 0 M 2 6");
+    game.check5(changed);
+//     game.execute_move("P 1 2");
+//     game.execute_move("P 1 3");
+//     game.execute_move("P 1 4");
+//     game.execute_move("P 1 5");
+//     game.execute_move("P 2 0");
+//     game.execute_move("P 2 1");
+//     game.execute_move("P 2 2");
+//     game.execute_move("S 1 5 M 2 11");
+//     game.execute_move("S 1 0 M 2 9");
+//     game.execute_move("S 2 1 M 3 1");
+//     game.execute_move("S 2 0 M 3 0");
+//     game.execute_move("S 2 11 M 3 16");
+//     game.execute_move("S 2 2 M 3 17");
+//     game.execute_move("S 3 1 M 5 3");
+//     game.execute_move("S 3 0 M 3 2");
+//     game.execute_move("S 5 3 M 2 10");
+//     game.execute_move("S 3 2 M 4 23");
 
 //
 //    game.possible_paths(5, 1);
@@ -805,9 +916,9 @@ int main(){
 //    game.print_data();
 //    int a = 0;
     game.print_data();
-    copy.print_data();
+    // copy.print_data();
     cout << game.heuristic() << endl;
-    cout << copy.heuristic() << endl;
+    // cout << copy.heuristic() << endl;
     int a = 0;
 
 }
