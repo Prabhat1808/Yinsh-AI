@@ -4,6 +4,7 @@
 
 using namespace std;
 
+pair<int, Game> maxval( pair<pair<int, Game>, vector<pair<int, int>>> mygame, int alpha, int beta, int h);
 
 void do_remove(Game x, pair<pair<int, int>, pair<int, int>> option, vector<Game> &future_possibilities){
     Node *curr = x.board.at(option.first.first).at(option.first.second);
@@ -84,7 +85,7 @@ vector<pair<pair<int, Game>, vector<pair<int, int>>>> get_successors(vector<Game
                             pair<pair<int, Game>, vector<pair<int, int>>> c = make_pair(nextstate, changed);
                             successors.push_back(c);
                         }
-                    } 
+                    }
                     else {
                         int heuristic = temp.heuristic();
                         temp.player = (temp.player + 1) % 2;
@@ -96,14 +97,14 @@ vector<pair<pair<int, Game>, vector<pair<int, int>>>> get_successors(vector<Game
             }
         }
     }
-    
+
     return successors;
 }
 
 
 pair<int, Game> minval(pair<pair<int, Game>, vector<pair<int, int>>> mygame, int alpha, int beta, int h){
     if(h==0) return mygame.first;
-    
+
     vector<pair<int, int>> rings = mygame.first.second.opponents_rings();
     vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.check5(mygame.second, mygame.first.second.player+3);
     vector<Game> newboard;
@@ -114,9 +115,9 @@ pair<int, Game> minval(pair<pair<int, Game>, vector<pair<int, int>>> mygame, int
 
     vector<pair<pair<int, Game>, vector<pair<int, int>>>> successors = get_successors(newboard, rings);
     sort(successors.begin(), successors.end(), greater<>());
-    for (pair<pair<int, Game>, vector<pair<int, int>>> u: successors){
-        pair<int, Game> child = minval(u, alpha, beta, h-1);
-        beta = max(alpha, child.first);
+    for (const pair<pair<int, Game>, vector<pair<int, int>>> &u: successors){
+        pair<int, Game> child = maxval(u, alpha, beta, h-1);
+        beta = min(beta, child.first);
         if(alpha>=beta) return child;
     }
     return successors.at(successors.size()-1).first;
@@ -124,11 +125,11 @@ pair<int, Game> minval(pair<pair<int, Game>, vector<pair<int, int>>> mygame, int
 
 
 
-pair<int, Game> maxval( pair<pair<int, Game>, vector<pair<int, int>>> mygame, int alpha, int beta, int h, const vector<pair<int, int>> &prev_changes){
+pair<int, Game> maxval( pair<pair<int, Game>, vector<pair<int, int>>> mygame, int alpha, int beta, int h){
     if(h==0) return mygame.first;
 //    vector<pair<int, Game>> successors;
     vector<pair<int, int>> rings = mygame.first.second.my_rings();
-    vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.check5(prev_changes, mygame.first.second.player+3);
+    vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.check5(mygame.second, mygame.first.second.player+3);
     vector<Game> newboard;
     if(!before_removal.empty()){
         newboard = remove_rows(before_removal, mygame.first.second);
@@ -136,7 +137,7 @@ pair<int, Game> maxval( pair<pair<int, Game>, vector<pair<int, int>>> mygame, in
     else newboard.push_back(mygame.first.second);
     vector<pair<pair<int, Game>, vector<pair<int, int>>>> successors = get_successors(newboard, rings);
     sort(successors.begin(), successors.end());
-    for (pair<pair<int, Game>, vector<pair<int, int>>> u: successors){
+    for (const pair<pair<int, Game>, vector<pair<int, int>>> &u: successors){
         pair<int, Game> child = minval(u, alpha, beta, h-1);
         alpha = max(alpha, child.first);
         if(alpha>=beta) return child;
