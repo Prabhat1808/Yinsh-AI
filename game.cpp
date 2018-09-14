@@ -20,7 +20,7 @@ public:
 };
 
 class Game{
-private:
+public:
     vector<vector<Node*>> board;
     int state;
     int player;
@@ -37,7 +37,7 @@ private:
     int my_marker;
     pair<int, int> beginning;
     pair<int, int> ending;
-public:
+
     Game(int player, int my_marker, int n=5, int rings=5, int max_row=5, int l=3){
         this-> n = n;
         this-> rings = rings;
@@ -105,6 +105,21 @@ public:
             cout << endl;
         }
     }
+    int removal_len(Node* nod, int i, int j, int x){
+        if(nod->data!=player+3) return 0;
+        else if(nod->index==ending && x==max_row) return x;
+//        else if(x==max_row || nod->index==ending) return false;
+        pair<int, int> pre = make_pair(i, j);
+        int ind = -1;
+        for(int k=0; k<6; k++){
+            if(nod->neighbours.at(k)==pre) ind = k;
+        }
+//        if(ind==-1) return false;
+        auto p = nod->neighbours.at((ind+3)%6);
+        if(p.first==-1 || p.second==-1) return 0;
+        return remove_validity(board.at(p.first).at(p.second), nod->index.first, nod->index.second, x+1);
+    }
+
     void print_neighbours(){
         for (auto u:board){
             for(auto v:u){
@@ -267,14 +282,14 @@ public:
                 i++;
             }
 
-            
+
             for (int iter=0;iter<3;iter++)
             {
                 // cout << "(" << span.at(iter).first << "," << span.at(iter).second << ") -> " << "(" << span.at(iter+3).first << "," << span.at(iter+3).second << ")" << endl;
 
                 if(consecutive.at(iter) + consecutive.at(iter+3) + 1 >= 5)
                 {
-                   // cout << "(" << span.at(iter).first << "," << span.at(iter).second << ") -> " << "(" << span.at(iter+3).first << "," << span.at(iter+3).second << ")" << endl;
+                    // cout << "(" << span.at(iter).first << "," << span.at(iter).second << ") -> " << "(" << span.at(iter+3).first << "," << span.at(iter+3).second << ")" << endl;
                     pair<pair<int,int>,pair<int,int>> tmp = make_pair(span.at(iter), span.at(iter + 3));
                     pair<pair<int,int>,pair<int,int>> rev_tmp = make_pair(span.at(iter + 3),span.at(iter));
 
@@ -294,7 +309,7 @@ public:
         // sequences.erase(it, sequences.end());
 
         // cout << "duplicates removed\n";
-        
+
         // for(auto w:sequences)
         //     cout << "(" << w.first.first << "," << w.first.second << ") -> " << "(" << w.second.first << "," << w.second.second << ")" << endl;
 
@@ -311,7 +326,7 @@ public:
         //     if(!found)
         //         i++;
         // }
-    
+
     }
 
     vector<pair<int, int>> possible_paths(int i, int j)
@@ -698,7 +713,7 @@ public:
         player = (player+1)%2;
         return changed;
     }
-        void update_player(){
+    void update_player(){
         player = (player+1)%2;
     }
 
