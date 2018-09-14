@@ -1,6 +1,5 @@
 #include <bits/stdc++.h>
-//#include <Game.h>
-#include "Game.h"
+#include "Game.cpp"
 
 using namespace std;
 
@@ -147,29 +146,35 @@ pair<int, Game> maxval( pair<pair<int, Game>, vector<pair<int, int>>> mygame, in
 
 int main()
 {
-    Game game(0, 4);
-    game.execute_move("P 0 0");
-    game.execute_move("P 1 0");
-    game.execute_move("P 1 1");
-    game.execute_move("P 4 0");
-    game.execute_move("P 2 2");
-    game.execute_move("P 5 1");
-    game.execute_move("P 1 4");
-    game.execute_move("P 5 29");
-    game.execute_move("P 2 8");
-    game.execute_move("P 3 0");
-    game.execute_move("P 2 10");
-    game.execute_move("S 0 0 M 1 2");
-    game.execute_move("S 1 1 M 2 3");
-    game.execute_move("S 1 2 M 2 4");
-    game.execute_move("S 2 2 M 3 4");
-    game.execute_move("S 2 4 M 3 5");
-    game.execute_move("S 1 4 M 1 3");
-    game.execute_move("S 3 5 M 4 6");
-    game.execute_move("S 2 8 M 2 7");
-    game.execute_move("S 4 0 M 4 1");
-    game.execute_move("S 2 10 M 1 5");
-    game.execute_move("S 3 0 M 3 1");
+    Game* game = new Game(0, 4);
+//    game.execute_move("P 0 0");
+////    game.execute_move("P 1 0");
+//    game.execute_move("P 1 1");
+//    game.execute_move("P 4 0");
+//    game.execute_move("P 2 2");
+//    game.execute_move("P 5 1");
+//    game.execute_move("P 1 4");
+//    game.execute_move("P 5 29");
+//    game.execute_move("P 2 8");
+//    game.execute_move("P 3 0");
+//    game.execute_move("P 2 10");
+//    game.execute_move("S 0 0 M 1 2");
+//    game.execute_move("S 1 1 M 2 3");
+//    game.execute_move("S 1 2 M 2 4");
+//    game.execute_move("S 2 2 M 3 4");
+//    game.execute_move("S 2 4 M 3 5");
+//    game.execute_move("S 1 4 M 1 3");
+//    game.execute_move("S 3 5 M 4 6");
+//    game.execute_move("S 2 8 M 2 7");
+//    game.execute_move("S 4 0 M 4 1");
+//    game.execute_move("S 2 10 M 1 5");
+//    vector<pair<int, int>> changed = game.execute_move("S 3 0 M 3 1");
+//    int heu = game.heuristic();
+//    pair<int, Game> mygame = make_pair(heu, game);
+//    pair<pair<int, Game>, vector<pair<int, int>>> inp = make_pair(mygame, changed);
+//    pair<int, Game> nextMove = maxval(inp, INT_MIN, INT_MAX, 1);
+//    nextMove.second.print_data();
+    int a = 0;
     // vector<pair<int, int>> changed = game.execute_move("S 1 5 M 3 6");
     // for(auto w: changed)
     //     cout << "(" << w.first << "," << w.second << ")" << endl;
