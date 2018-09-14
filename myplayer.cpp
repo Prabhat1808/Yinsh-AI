@@ -84,6 +84,9 @@ vector<pair<pair<int, Game*>, vector<pair<int, int> > > > get_successors(vector<
                             int heur = g->heuristic();
                             pair<int, Game*> nextstate = make_pair(heur, g);
                             pair<pair<int, Game*>, vector<pair<int, int>>> c = make_pair(nextstate, changed);
+                            cout << "heuristic: " << c.first.first <<endl;
+                            cout << "Ring moved -> " << "( " << ring.first << ", " << ring.second << " ) -> ( " << path.first << ", " << path.second << " )" << endl;
+                            c.first.second->print_data();
                             successors.push_back(c);
                         }
                     }
@@ -140,12 +143,43 @@ pair<int, Game*> maxval(pair<pair<int, Game*>, vector<pair<int, int> > > mygame,
         alpha = max(alpha, child.first);
         if (alpha >= beta) return child;
     }
+    // for(auto u: successors){
+    //     cout << "heuristic: " << u.first.first <<endl;
+    //     u.first.second->print_data();
+    // }
     return successors.at(successors.size() - 1).first;
 };
 
 int main()
 {
     Game* game = new Game(0, 4);
+    game->execute_move("P 0 0");
+    game->execute_move("P 1 1");
+    game->execute_move("P 4 0");
+    game->execute_move("P 2 2");
+    game->execute_move("P 5 1");
+    game->execute_move("P 1 4");
+    game->execute_move("P 5 29");
+    game->execute_move("P 2 8");
+    game->execute_move("P 3 0");
+    game->execute_move("P 2 10");
+    game->execute_move("S 0 0 M 1 2");
+    game->execute_move("S 1 1 M 2 3");
+    game->execute_move("S 1 2 M 2 4");
+    game->execute_move("S 2 2 M 3 4");
+    game->execute_move("S 2 4 M 3 5");
+    game->execute_move("S 1 4 M 1 3");
+    game->execute_move("S 3 5 M 4 6");
+    game->execute_move("S 2 8 M 2 7");
+    game->execute_move("S 4 0 M 4 1");
+    game->execute_move("S 2 10 M 1 5");
+    vector<pair<int, int> > changed = game->execute_move("S 3 0 M 3 1");
+    game->print_data();
+    int heur = game->heuristic();
+    pair<int, Game*> mygame = make_pair(heur, game);
+    pair<pair<int, Game*>, vector<pair<int, int>>> inp = make_pair(mygame, changed);
+    pair<int, Game*> max = maxval(inp, INT_MIN, INT_MAX, 1);
+
 
 }
 
