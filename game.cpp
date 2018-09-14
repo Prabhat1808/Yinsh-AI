@@ -695,6 +695,10 @@ public:
         player = (player+1)%2;
         return changed;
     }
+        void update_player(){
+        player = (player+1)%2;
+    }
+
     bool check_won(){
         return (rings_removed1==l || rings_removed0==l);
     }
