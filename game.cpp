@@ -228,7 +228,7 @@ public:
         return ("RS "+ to_string(endpts.first.first)+" "+to_string(endpts.first.second)+" RE "+to_string(endpts.second.first)+" "+to_string(endpts.second.second));
     }
 
-    vector<pair<pair<int,int>,pair<int,int>>> check5(vector<pair<int, int>> changed)
+    vector<pair<pair<int,int>,pair<int,int>>> check5(vector<pair<int, int>> changed, int player_marker)
     {
         vector<pair<pair<int,int>,pair<int,int>>> sequences;
         unordered_set<string> endpts;
@@ -245,7 +245,7 @@ public:
 
             int i =0;
             Node* curr = board.at(position.first).at(position.second);
-            if(curr->data != my_marker)
+            if(curr->data != player_marker)
                 continue;
 
             for(auto w: curr->neighbours)
@@ -258,11 +258,11 @@ public:
                     continue;
                 }
 
-                if(board.at(r).at(c)->data == my_marker)
+                if(board.at(r).at(c)->data == player_marker)
                 {
                     span.at(i).first = r;
                     span.at(i).second = c;
-                    consecutive.at(i) = 1 + check_line5(r,c,position.first,position.second,span.at(i));
+                    consecutive.at(i) = 1 + check_line5(r,c,position.first,position.second,span.at(i), player_marker);
                 }
                 i++;
             }
@@ -342,7 +342,7 @@ public:
         return out;
     }
 
-    int check_line5(int i, int j, int prev_i, int prev_j, pair<int,int> &max_reach)
+    int check_line5(int i, int j, int prev_i, int prev_j, pair<int,int> &max_reach, int player_marker)
     {
         int prev_neighbour = 0;
         if(i==-1 || j==-1)
@@ -366,12 +366,12 @@ public:
             return 0;
 
         int data = board.at(r_nxt).at(c_nxt)-> data;
-        if (data != my_marker)
+        if (data != player_marker)
             return 0;
 
         max_reach.first = r_nxt;
         max_reach.second = c_nxt;
-        return (1 + check_line5(r_nxt,c_nxt,i,j,max_reach));
+        return (1 + check_line5(r_nxt,c_nxt,i,j,max_reach, player_marker));
     }
 
     void check_line(int i, int j, int prev_i, int prev_j, vector<pair<int, int>> &out)
