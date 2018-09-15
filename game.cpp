@@ -5,6 +5,7 @@ class Node{
 public:
     int data;
     pair<int, int> index;
+
     vector<pair<int, int>> neighbours;
     Node(){
         this->data = 0;
@@ -303,8 +304,8 @@ public:
                 }
             }
         }
-        for(auto w:sequences)
-            cout << "(" << w.first.first << "," << w.first.second << ") -> " << "(" << w.second.first << "," << w.second.second << ")" << endl;
+        // for(auto w:sequences)
+        //     cout << "(" << w.first.first << "," << w.first.second << ") -> " << "(" << w.second.first << "," << w.second.second << ")" << endl;
         return sequences;
         // vector<pair<pair<int,int>,pair<int,int>>>::iterator it;
         // it = unique(sequences.begin(),sequences.end());
@@ -748,7 +749,7 @@ public:
         if(p.first==-1 || p.second==-1) return false;
         return remove_validity(board.at(p.first).at(p.second), nod->index.first, nod->index.second, x+1);
     }
-    void remove_now(Node* nod, int i, int j, int x){
+    pair<int, int> remove_now(Node* nod, int i, int j, int x){
         nod->data = 0;
         if(x!=max_row) {
             pair<int, int> pre = make_pair(i, j);
@@ -758,7 +759,11 @@ public:
             }
             auto p = nod->neighbours.at((ind+3)%6);
             nod->data = 0;
-            remove_now(board.at(p.first).at(p.second), nod->index.first, nod->index.second, x+1);
+            return remove_now(board.at(p.first).at(p.second), nod->index.first, nod->index.second, x+1);
+        }
+        else {
+            pair<int, int> out = nod->index;
+            return out;
         }
     }
     bool remove_end(int hexagon, int position){
