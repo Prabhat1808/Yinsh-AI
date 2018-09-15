@@ -112,13 +112,11 @@ public:
     int removal_len(Node* nod, int i, int j, int x){
         if(nod->data!=player+3) return 0;
         else if(x==max_row) return x;
-//        else if(x==max_row || nod->index==ending) return false;
         pair<int, int> pre = make_pair(i, j);
         int ind = -1;
         for(int k=0; k<6; k++){
             if(nod->neighbours.at(k)==pre) ind = k;
         }
-//        if(ind==-1) return false;
         auto p = nod->neighbours.at((ind+3)%6);
         if(p.first==-1 || p.second==-1) return 0;
         return removal_len(board.at(p.first).at(p.second), nod->index.first, nod->index.second, x+1);
@@ -359,6 +357,146 @@ public:
 
         }
         return out;
+    }
+
+    void find_consecutives(vector<pair<pair<int,int>,pair<int,int>>> directions)
+    {
+        for(auto w: directions)
+        {
+            int r1 = w.first.first, c1 = w.first.second, r2 = w.second.first, c2 = w.second.second;
+
+            int count32=0,count33=0,count34=0,count42=0,count43=0,count44=0;
+            bool curr3 = false,curr4 = false;
+            int count3=0,count4=0;
+
+            if(board.at(r1).at(c1)->data == 3)
+            {
+                curr3 = true;
+                count3++;
+            }
+            if(board.at(r1).at(c1)->data == 4)
+            {
+                curr4 = true;
+                count4++;
+            }
+
+            while(true)
+            {
+                Node* curr = board.at(r2).at(c2);
+                if(curr->data == 3)
+                {
+                    count3++;
+                    curr3 = true;
+
+                    if(curr4)
+                    {
+                        curr4 = false;
+                        if(count4 == 2)
+                            count42++;
+                        if(count4 == 3)
+                            count43++;
+                        if(count4 == 4)
+                            count44++;
+                        count4 = 0;
+                    }
+
+                }
+                else if(curr->data == 4)
+                {
+                    count4++;
+                    curr4 = true;
+
+                    if(curr3)
+                    {
+                        curr3 = false;
+                        if(count3 == 2)
+                            count32++;
+                        if(count3 == 3)
+                            count33++;
+                        if(count3 == 4)
+                            count34++;
+                        count3 = 0;
+                    }
+                }
+                else
+                {
+                    if(curr3)
+                    {
+                        // curr3 = false;
+                        if(count3 == 2)
+                            count32++;
+                        if(count3 == 3)
+                            count33++;
+                        if(count3 == 4)
+                            count34++;
+                        count3 = 0;
+                    }
+
+                    if(curr4)
+                    {
+                        // curr4 = false;
+                        if(count4 == 2)
+                            count42++;
+                        if(count4 == 3)
+                            count43++;
+                        if(count4 == 4)
+                            count44++;
+                        count4 = 0;
+                    }
+                    curr3 = false;
+                    curr4 = false;
+                }
+
+                //generating next node along the line
+                int prev_n = 0;
+                for(auto n: curr->neighbours)
+                {
+                    int rt = n.first;
+                    int ct = n.second;
+                    if(rt == r1 && ct == c1)
+                        break;
+                    prev_n++;
+                }
+                int nxt_n = (prev_n+3)%6;
+                int r_nxt = curr->neighbours.at(nxt_n).first;
+                int c_nxt = curr->neighbours.at(nxt_n).second;
+                r1 = r2;
+                c1 = c2;
+                r2 = r_nxt;
+                c2 = c_nxt;
+
+                if(r2 == -1 || c2 == -1)
+                {
+                    if(curr3)
+                    {
+                        curr3 = false;
+                        if(count3 == 2)
+                            count32++;
+                        if(count3 == 3)
+                            count33++;
+                        if(count3 == 4)
+                            count34++;
+                        count3 = 0;
+                    }
+
+                    if(curr4)
+                    {
+                        curr4 = false;
+                        if(count4 == 2)
+                            count42++;
+                        if(count4 == 3)
+                            count43++;
+                        if(count4 == 4)
+                            count44++;
+                        count4 = 0;
+                    }
+                    break;
+                }
+            }
+            cout << "(" << w.first.first << "," << w.first.second << ") -> " << "(" << w.second.first << "," << w.second.second << ")" << endl;
+            cout << count32 << "\t" << count33 << "\t"  << count34 << "\t" << count42 << "\t" << count43 << "\t" << count44 << "\t\n";
+
+        }
     }
 
     int check_line5(int i, int j, int prev_i, int prev_j, pair<int,int> &max_reach, int player_marker)
