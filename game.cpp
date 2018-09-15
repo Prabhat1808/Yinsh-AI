@@ -752,6 +752,31 @@ public:
         }
         return out;
     }
+    void print_board(){
+
+        cout << "   " << "     " << " " << "     " << " " << " " << endl;
+        cout << " " << "     " << " " << "     " << get_position(29,5) << "     " << get_position(1,5) << endl;
+        cout << "   " << "     " << " " << get_position(28,5) << "     " << get_position(0,4) << "     " << get_position(2,5) << endl;
+        cout << " " << "     " << get_position(27,5) << "     " << get_position(23,4) << "     " << get_position(1,4) << "     " << get_position(3,5) << endl;
+        cout << "   " << get_position(26,5) << "     " << get_position(22,4) << "     " << get_position(0,3) << "     " << get_position(2,4) << "     " << get_position(4,5) << endl;
+        cout << " " << "     " << get_position(21,4) << "     " << get_position(17,3) << "     " << get_position(1,3) << "     " << get_position(3,4) << "     " << " " << endl;
+        cout << "   " << get_position(20,4) << "     " << get_position(16,3) << "     " << get_position(0,2) << "     " << get_position(2,3) << "     " << get_position(4,4) << endl;
+        cout << get_position(24,5) << "     " << get_position(15,3) << "     " << get_position(11,2) << "     " << get_position(1,2) << "     " << get_position(3,3) << "     " << get_position(5,4) << endl;
+        cout << "   " << get_position(19,4) << "     " << get_position(10,2) << "     " << get_position(0,1) << "     " << get_position(2,2) << "     " << get_position(4,3) << endl;
+        cout << get_position(23,5) << "     " << get_position(14,3) << "     " << get_position(5,1) << "     " << get_position(1,1) << "     " << get_position(3,2) << "     " << get_position(5,3) << endl;
+        cout << "   " << get_position(18,4) << "     " << get_position(9,2) << "     " << get_position(0,0) << "     " << get_position(2,1) << "     " << get_position(4,2) << endl;
+        cout << get_position(22,5) << "     " << get_position(13,3) << "     " << get_position(4,1) << "     " << get_position(1,0) << "     " << get_position(3,1) << "     " << get_position(5,2) << endl;
+        cout << "   " << get_position(17,4) << "     " << get_position(8,2) << "     " << get_position(3,1) << "     " << get_position(2,0) << "     " << get_position(4,1) << endl;
+        cout << get_position(-5,-4) << "     " << get_position(-3,-3) << "     " << get_position(-1,-2) << "     " << get_position(1,-1) << "     " << get_position(3,0) << "     " << get_position(5,1) << endl;
+        cout << "   " << get_position(-4,-4) << "     " << get_position(-2,-3) << "     " << get_position(0,-2) << "     " << get_position(2,-1) << "     " << get_position(4,0) << endl;
+        cout << " " << "     " << get_position(-3,-4) << "     " << get_position(-1,-3) << "     " << get_position(1,-2) << "     " << get_position(3,-1) << "     " << " " << endl;
+        cout << "   " << get_position(-4,-5) << "     " << get_position(-2,-4) << "     " << get_position(0,-3) << "     " << get_position(2,-2) << "     " << get_position(4,-1) << endl;
+        cout << " " << "     " << get_position(-3,-5) << "     " << get_position(-1,-4) << "     " << get_position(1,-3) << "     " << get_position(3,-2) << endl;
+        cout << "   " << " " << "     " << get_position(-2,-5) << "     " << get_position(0,-4) <<  "     " << get_position(2,-3) <<endl;
+        cout << " " << "     " << " " << "     " << get_position(-1,-5) << "     " << get_position(1,-4) << endl;
+        cout << "   " << "     " << " " << "     " << " " << " " << endl;
+    }
+
 };
 
 // int main(){
