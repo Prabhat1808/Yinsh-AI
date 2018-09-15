@@ -26,7 +26,7 @@ void do_remove(Game* x, pair<pair<int, int>, pair<int, int> > option, vector<Gam
                     if (r.first == -1 || r.second == -1) continue;
                     Game* readytoremove = toremove->copy_board();
                     readytoremove->remove_ring(r.first, r.second);
-                    future_possibilities.push_back(toremove);
+                    future_possibilities.push_back(readytoremove);
                 }
                 int next_index = -1;
                 for (int k = 0; k < 6; k++) {
@@ -95,9 +95,9 @@ vector<pair<pair<int, Game*>, vector<pair<int, int> > > > get_successors(vector<
                         temp->player = (temp->player + 1) % 2;
                         pair<int, Game*> curr = make_pair(heuristic, temp);
                         pair<pair<int, Game*>, vector<pair<int, int>>> c = make_pair(curr, changed);
-                        cout << "heuristic: " << c.first.first <<endl;
-                        cout << "Ring moved -> " << "( " << ring.first << ", " << ring.second << " ) -> ( " << path.first << ", " << path.second << " )" << endl;
-                        c.first.second->print_board();
+//                        cout << "heuristic: " << c.first.first <<endl;
+//                        cout << "Ring moved -> " << "( " << ring.first << ", " << ring.second << " ) -> ( " << path.first << ", " << path.second << " )" << endl;
+//                        c.first.second->print_board();
                         successors.push_back(c);
                     }
                 }

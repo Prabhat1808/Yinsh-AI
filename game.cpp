@@ -88,6 +88,11 @@ public:
         Game* copied = new Game(player, my_marker, n, rings, max_row, l);
         copied->update_state(this->state);
         copied->update_rings(this->rings_removed0, this->rings_removed1, this->rings_placed);
+        for (int i=0; i<5; i++){
+            copied->ring_self.at(i).first = ring_self.at(i).first;
+            copied->ring_self.at(i).second = ring_self.at(i).second;
+            copied->ring_opponent.at(i).first = ring_opponent.at(i).first;
+            copied->ring_opponent.at(i).second = ring_opponent.at(i).second;        }
         for(int i=0; i<board.size(); i++){
             for (int j=0; j<board.at(i).size(); j++){
                 copied->update_board(i, j, board.at(i).at(j)->data);
@@ -106,7 +111,7 @@ public:
     }
     int removal_len(Node* nod, int i, int j, int x){
         if(nod->data!=player+3) return 0;
-        else if(nod->index==ending && x==max_row) return x;
+        else if(x==max_row) return x;
 //        else if(x==max_row || nod->index==ending) return false;
         pair<int, int> pre = make_pair(i, j);
         int ind = -1;
@@ -116,7 +121,7 @@ public:
 //        if(ind==-1) return false;
         auto p = nod->neighbours.at((ind+3)%6);
         if(p.first==-1 || p.second==-1) return 0;
-        return remove_validity(board.at(p.first).at(p.second), nod->index.first, nod->index.second, x+1);
+        return removal_len(board.at(p.first).at(p.second), nod->index.first, nod->index.second, x+1);
     }
 
     void print_neighbours(){
@@ -757,7 +762,7 @@ public:
 //        if(p<0) p+=(6*h);
         return board.at(h).at(p)->data;
     }
-    
+
     void print_board(){
 
         cout << "   " << "     " << " " << "     " << " " << " " << endl;
@@ -765,7 +770,7 @@ public:
         cout << "   " << "     " << " " << get_position(28,5) << "     " << get_position(0,4) << "     " << get_position(2,5) << endl;
         cout << " " << "     " << get_position(27,5) << "     " << get_position(23,4) << "     " << get_position(1,4) << "     " << get_position(3,5) << endl;
         cout << "   " << get_position(26,5) << "     " << get_position(22,4) << "     " << get_position(0,3) << "     " << get_position(2,4) << "     " << get_position(4,5) << endl;
-        cout << " " << "     " << get_position(21,4) << "     " << get_position(17,3) << "     " << get_position(1,3) << "     " << get_position(3,4) << "     " << " " << endl;        
+        cout << " " << "     " << get_position(21,4) << "     " << get_position(17,3) << "     " << get_position(1,3) << "     " << get_position(3,4) << "     " << " " << endl;
         cout << "   " << get_position(20,4) << "     " << get_position(16,3) << "     " << get_position(0,2) << "     " << get_position(2,3) << "     " << get_position(4,4) << endl;
         cout << get_position(24,5) << "     " << get_position(15,3) << "     " << get_position(11,2) << "     " << get_position(1,2) << "     " << get_position(3,3) << "     " << get_position(6,5) << endl;
         cout << "   " << get_position(19,4) << "     " << get_position(10,2) << "     " << get_position(0,1) << "     " << get_position(2,2) << "     " << get_position(5,4) << endl;
