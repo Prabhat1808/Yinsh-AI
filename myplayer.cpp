@@ -3,43 +3,6 @@
 
 using namespace std;
 
-vector<pair<pair<int,int>,pair<int,int>>> directions;
-
-void updateDirections()
-{
-    directions.push_back(make_pair(make_pair(5,29),make_pair(4,0)));
-    for(int i=28;i>20;i--)
-    {
-        if(i%5 == 0)
-        {
-            directions.push_back(make_pair(make_pair(4,i-5),make_pair(3,i-10)));
-            continue;
-        }
-        directions.push_back(make_pair(make_pair(5,i),make_pair(4,i-5)));
-
-        //vertical left half
-        if(i > 25)
-            directions.push_back(make_pair(make_pair(5,i),make_pair(4,i-6)));
-    }
-    directions.push_back(make_pair(make_pair(5,29),make_pair(4,23)));
-    directions.push_back(make_pair(make_pair(4,0),make_pair(3,0)));
-
-    for(int i=1;i<10;i++)
-    {
-        if(i%5==0)
-        {
-            directions.push_back(make_pair(make_pair(4,i-1),make_pair(3,i-2)));
-            continue;
-        }
-        directions.push_back(make_pair(make_pair(5,i),make_pair(4,i-1)));
-
-        //vertical right half
-        if(i < 5)
-            directions.push_back(make_pair(make_pair(5,i),make_pair(4,i)));
-    }
-}
-
-
 pair<int, Game*> maxval( pair<pair<int, Game*>, vector<pair<int, int> > > , int , int , int );
 
 
@@ -213,12 +176,8 @@ pair<int, Game*> maxval(pair<pair<int, Game*>, vector<pair<int, int> > > mygame,
 
 int main()
 {
-    updateDirections();
-    // for(auto w:directions)
-    //     cout << "(" << w.first.first << "," << w.first.second << ") -> " << "(" << w.second.first << "," << w.second.second << ")" << endl;
-    // cout << directions.size();
 
-    Game* game = new Game(0, 4);
+    Game* game = new Game(0, 4);    
     game->execute_move("P 0 0");
     game->execute_move("P 1 1");
     game->execute_move("P 4 0");
@@ -235,24 +194,26 @@ int main()
     game->execute_move("S 2 2 M 3 4");
     game->execute_move("S 2 4 M 3 5");
     game->execute_move("S 1 4 M 1 3");
-    game->execute_move("S 3 5 M 4 6");
-    game->execute_move("S 2 8 M 2 7");
-    game->execute_move("S 4 0 M 4 1");
-    game->execute_move("S 2 10 M 1 5");
+    // game->execute_move("S 3 5 M 4 6");
+    // game->execute_move("S 2 8 M 2 7");
+    // game->execute_move("S 4 0 M 4 1");
+    // game->execute_move("S 2 10 M 1 5");
 
 
-    vector<pair<int, int> > changed = game->execute_move("S 3 0 M 3 1");
+    // vector<pair<int, int> > changed = game->execute_move("S 3 0 M 3 1");
+    vector<pair<int, int> > changed = game->execute_move("S 3 5 M 4 6");
+
+
+    // game->find_consecutives(directions);
     game->print_board();
     int heur = game->heuristic();
     pair<int, Game*> mygame = make_pair(heur, game);
     pair<pair<int, Game*>, vector<pair<int, int>>> inp = make_pair(mygame, changed);
     clock_t tStart = clock();
-    pair<int, Game*> max = minval(inp, INT_MIN, INT_MAX, 2);
+    pair<int, Game*> max = minval(inp, INT_MIN, INT_MAX, 3);
     printf("Time taken: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
 
     cout << "Out Heuristic: " << max.first;
     max.second->print_board();
 
-
 }
-
