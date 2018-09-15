@@ -174,6 +174,7 @@ int main()
     game->execute_move("S 4 0 M 4 1");
     game->execute_move("S 2 10 M 1 5");
     vector<pair<int, int> > changed = game->execute_move("S 3 0 M 3 1");
+    game->print_board();
     game->print_data();
     int heur = game->heuristic();
     pair<int, Game*> mygame = make_pair(heur, game);
