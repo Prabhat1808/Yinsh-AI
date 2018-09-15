@@ -3,6 +3,43 @@
 
 using namespace std;
 
+vector<pair<pair<int,int>,pair<int,int>>> directions;
+
+void updateDirections()
+{
+    directions.push_back(make_pair(make_pair(5,29),make_pair(4,0)));
+    for(int i=28;i>20;i--)
+    {
+        if(i%5 == 0)
+        {
+            directions.push_back(make_pair(make_pair(4,i-5),make_pair(3,i-10)));
+            continue;
+        }
+        directions.push_back(make_pair(make_pair(5,i),make_pair(4,i-5)));
+
+        //vertical left half
+        if(i > 25)
+            directions.push_back(make_pair(make_pair(5,i),make_pair(4,i-6)));
+    }
+    directions.push_back(make_pair(make_pair(5,29),make_pair(4,23)));
+    directions.push_back(make_pair(make_pair(4,0),make_pair(3,0)));
+
+    for(int i=1;i<10;i++)
+    {
+        if(i%5==0)
+        {
+            directions.push_back(make_pair(make_pair(4,i-1),make_pair(3,i-2)));
+            continue;
+        }
+        directions.push_back(make_pair(make_pair(5,i),make_pair(4,i-1)));
+
+        //vertical right half
+        if(i < 5)
+            directions.push_back(make_pair(make_pair(5,i),make_pair(4,i)));
+    }
+}
+
+
 pair<int, Game*> maxval( pair<pair<int, Game*>, vector<pair<int, int> > > , int , int , int );
 
 
@@ -176,6 +213,11 @@ pair<int, Game*> maxval(pair<pair<int, Game*>, vector<pair<int, int> > > mygame,
 
 int main()
 {
+    updateDirections();
+    // for(auto w:directions)
+    //     cout << "(" << w.first.first << "," << w.first.second << ") -> " << "(" << w.second.first << "," << w.second.second << ")" << endl;
+    // cout << directions.size();
+
     Game* game = new Game(0, 4);
     game->execute_move("P 0 0");
     game->execute_move("P 1 1");
@@ -197,9 +239,7 @@ int main()
     game->execute_move("S 2 8 M 2 7");
     game->execute_move("S 4 0 M 4 1");
     game->execute_move("S 2 10 M 1 5");
-//    game->execute_move("S 3 0 M 3 1");
-//    game->execute_move("S 1 5 M 4 17");
-//    game->execute_move("S 3 1 M 3 14");
+
 
     vector<pair<int, int> > changed = game->execute_move("S 3 0 M 3 1");
     game->print_board();
