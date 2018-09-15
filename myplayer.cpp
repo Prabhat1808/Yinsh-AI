@@ -48,20 +48,26 @@ void do_remove(Game* x, pair<pair<int, int>, pair<int, int> > option, vector<Gam
 };
 
 vector<Game*> remove_rows(vector<pair<pair<int, int>, pair<int, int> > > removal, Game* game) {
-    vector<Game*> current_possibilities;
-    current_possibilities.push_back(game);
-    for (pair<pair<int, int>, pair<int, int>> option: removal) {
-        vector<Game*> future_possibilities;
-        for (Game* x: current_possibilities) {
-            do_remove(x, option, future_possibilities);
+    vector<Game*> possibilities;
+    do {
+        vector<Game*> current_possibilities;
+        current_possibilities.push_back(game);
+        for (pair<pair<int, int>, pair<int, int>> option: removal) {
+            vector<Game *> future_possibilities;
+            for (Game *x: current_possibilities) {
+                do_remove(x, option, future_possibilities);
+            }
+            current_possibilities.resize(0);
+            for (Game *x:future_possibilities) {
+                current_possibilities.push_back(x);
+            }
+            future_possibilities.resize(0);
         }
-        current_possibilities.resize(0);
-        for (Game* x:future_possibilities) {
-            current_possibilities.push_back(x);
+        for(Game* u: current_possibilities){
+            possibilities.push_back(u);
         }
-        future_possibilities.resize(0);
-    }
-    return current_possibilities;
+    } while(next_permutation(removal.begin(), removal.end()));
+    return possibilities;
 };
 
 vector<pair<pair<int, Game*>, vector<pair<int, int> > > > get_successors(vector<Game*> newboard, vector<pair<int, int>> rings) {
