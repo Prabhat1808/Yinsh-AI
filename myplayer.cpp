@@ -86,7 +86,7 @@ vector<pair<pair<int, Game*>, vector<pair<int, int> > > > get_successors(vector<
                             pair<pair<int, Game*>, vector<pair<int, int>>> c = make_pair(nextstate, changed);
                             cout << "heuristic: " << c.first.first <<endl;
                             cout << "Ring moved -> " << "( " << ring.first << ", " << ring.second << " ) -> ( " << path.first << ", " << path.second << " )" << endl;
-                            c.first.second->print_data();
+                            c.first.second->print_board();
                             successors.push_back(c);
                         }
                     }
@@ -95,6 +95,9 @@ vector<pair<pair<int, Game*>, vector<pair<int, int> > > > get_successors(vector<
                         temp->player = (temp->player + 1) % 2;
                         pair<int, Game*> curr = make_pair(heuristic, temp);
                         pair<pair<int, Game*>, vector<pair<int, int>>> c = make_pair(curr, changed);
+                        cout << "heuristic: " << c.first.first <<endl;
+                        cout << "Ring moved -> " << "( " << ring.first << ", " << ring.second << " ) -> ( " << path.first << ", " << path.second << " )" << endl;
+                        c.first.second->print_board();
                         successors.push_back(c);
                     }
                 }
@@ -175,7 +178,6 @@ int main()
     game->execute_move("S 2 10 M 1 5");
     vector<pair<int, int> > changed = game->execute_move("S 3 0 M 3 1");
     game->print_board();
-    game->print_data();
     int heur = game->heuristic();
     pair<int, Game*> mygame = make_pair(heur, game);
     pair<pair<int, Game*>, vector<pair<int, int>>> inp = make_pair(mygame, changed);
