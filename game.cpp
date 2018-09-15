@@ -11,6 +11,7 @@ public:
         this->data = 0;
         this->index.first = -1;
         this->index.second = -1;
+
         for(int i=0 ;i<6; i++){
             pair<int, int> temp;
             temp.first = -1;
@@ -135,6 +136,9 @@ public:
             cout << endl;
         }
     }
+    
+
+
     void update_neighbours(Node* nod, int i, int j){
         if(i==0){
             for(int k=0; k<6; k++){
@@ -465,6 +469,8 @@ public:
                 c1 = c2;
                 r2 = r_nxt;
                 c2 = c_nxt;
+
+                // cout << prev_n << "\t";
 
                 if(r2 == -1 || c2 == -1)
                 {
