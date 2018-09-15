@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-#include "Game.cpp"
+#include "game.cpp"
 
 using namespace std;
 
