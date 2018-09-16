@@ -274,6 +274,8 @@ public:
             pair<int,int> en;
             int count = 0;
             bool obtained = false;
+
+            //Diagonal1
             for(auto w: util->elems_on_diagonal1.at(axis_map.at(0).first))
             {
                 if(axes_checked.count("D1"+to_string(d1ax)) != 0)
@@ -301,10 +303,14 @@ public:
                     obtained = false;
                 }
             }
+            if(count >= 5)
+                sequences.push_back(make_pair(st,en));
             axes_checked.insert("D1"+to_string(d1ax));
+            //Diagonal1
 
             count = 0;
             obtained = false;
+            //Diagonal2
             for(auto w: util->elems_on_diagonal2.at(axis_map.at(1).first))
             {
                 if(axes_checked.count("D2"+to_string(d2ax)) != 0)
@@ -322,7 +328,6 @@ public:
                 {
                     if(count >= 5)
                     {
-                        // en = w;
                         obtained = true;
                     }
                     count = 0;
@@ -333,10 +338,14 @@ public:
                     obtained = false;
                 }
             }
+            if(count >= 5)
+                sequences.push_back(make_pair(st,en));
             axes_checked.insert("D2"+to_string(d2ax));
+            //Diagonal2
 
             count = 0;
             obtained = false;
+            //Vertical
             for(auto w: util->elems_on_vertical.at(axis_map.at(2).first))
             {
                 if(axes_checked.count("V"+to_string(vax)) != 0)
@@ -354,7 +363,6 @@ public:
                 {
                     if(count >= 5)
                     {
-                        // en = w;
                         obtained = true;
                     }
                     count = 0;
@@ -365,9 +373,28 @@ public:
                     obtained = false;
                 }
             }
+            if(count >= 5)
+                sequences.push_back(make_pair(st,en));
             axes_checked.insert("V"+to_string(vax));
+            //Vertical
         }
         return sequences;
+    }
+
+    void find_consecutives(vector<pair<pair<int,int>,pair<int,int>>> directions)
+    {
+        int curr3 =0, curr4 =0;
+        for(auto axis: directions)
+        {
+            for(auto w: axis)
+            {
+                int data = board.at(w.first).at(w.second)->data;
+                if(data == 3)
+                {
+                    curr3++;
+                }
+            }
+        }
     }
 
     bool place_ring(int hexagon, int position){
@@ -597,31 +624,32 @@ int main(){
     //     cout << u.first << " " << u.second << endl;
     // }
         //TEST MOVES 1
-    game->execute_move("P 0 0");
-//     game->execute_move("P 1 0");
-    game->execute_move("P 1 1");
+    game->execute_move("P 2 0");
     game->execute_move("P 4 0");
-    game->execute_move("P 2 2");
     game->execute_move("P 5 1");
-    game->execute_move("P 1 4");
+    game->execute_move("P 1 2");
+    game->execute_move("P 5 2");
+    game->execute_move("P 2 3");
     game->execute_move("P 5 29");
-    game->execute_move("P 2 8");
-    game->execute_move("P 3 0");
-    game->execute_move("P 2 10");
-    game->execute_move("S 0 0 M 1 2");
-    game->execute_move("S 1 1 M 2 3");
-    game->execute_move("S 1 2 M 2 4");
-    game->execute_move("S 2 2 M 3 4");
-    game->execute_move("S 2 4 M 3 5");
-    game->execute_move("S 1 4 M 1 3");
-    game->execute_move("S 3 5 M 4 6");
-    game->execute_move("S 2 8 M 2 7");
-    game->execute_move("S 4 0 M 4 1");
-    game->execute_move("S 2 10 M 1 5");
+    game->execute_move("P 3 4");
+    game->execute_move("P 5 28");
+    game->execute_move("P 4 5");
     // game->print_board();
-    game->execute_move("S 3 0 M 3 1");
+    game->execute_move("S 2 0 M 1 0");
+    game->execute_move("S 1 2 M 1 1");
+    game->execute_move("S 1 0 M 0 0");
+    game->execute_move("S 2 3 M 2 2");
+    game->execute_move("S 0 0 M 1 3");
+    game->execute_move("S 3 4 M 3 3");
     // game->print_board();
-    vector<pair<int, int>> changed = game->execute_move("S 1 5 M 3 6");
+    game->execute_move("S 1 3 M 2 7");
+    game->execute_move("S 4 5 M 4 4");
+    game->execute_move("S 2 7 M 2 8");
+    game->execute_move("S 4 0 M 3 0");
+    // game->print_board();
+    game->execute_move("S 2 8 M 3 13");
+    // game->print_board();
+    vector<pair<int, int>> changed = game->execute_move("S 3 0 M 2 6");
     // for(auto w: changed)
     //     cout << "(" << w.first << "," << w.second << ")" << endl;
     // game->execute_move("S 1 5 M 3 6");
