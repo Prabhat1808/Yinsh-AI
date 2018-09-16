@@ -623,13 +623,13 @@ public:
 };
 
 
-int main(){
-    Utility* util = new Utility(5);
-    Game* game = new Game(0, 4, util);
-    cout << sizeof(game) << endl;
-    delete game;
-    cout << sizeof(game) << endl;
-}
+// int main(){
+//     Utility* util = new Utility(5);
+//     Game* game = new Game(0, 4, util);
+//     cout << sizeof(game) << endl;
+//     delete game;
+//     cout << sizeof(game) << endl;
+// }
 
 // int main(){
 //     Utility* util = new Utility(5);
