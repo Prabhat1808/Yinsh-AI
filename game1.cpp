@@ -315,13 +315,14 @@ public:
                 {
                     if(count == 0)
                         st = w;
+                    en = w;
                     count++;
                 }
                 else
                 {
                     if(count >= 5)
                     {
-                        en = w;
+                        // en = w;
                         obtained = true;
                     }
                     count = 0;
@@ -346,13 +347,14 @@ public:
                 {
                     if(count == 0)
                         st = w;
+                    en = w;
                     count++;
                 }
                 else
                 {
                     if(count >= 5)
                     {
-                        en = w;
+                        // en = w;
                         obtained = true;
                     }
                     count = 0;
@@ -616,13 +618,13 @@ int main(){
     game->execute_move("S 2 8 M 2 7");
     game->execute_move("S 4 0 M 4 1");
     game->execute_move("S 2 10 M 1 5");
-    game->print_board();
+    // game->print_board();
     game->execute_move("S 3 0 M 3 1");
-    game->print_board();
+    // game->print_board();
     vector<pair<int, int>> changed = game->execute_move("S 1 5 M 3 6");
-    for(auto w: changed)
-        cout << "(" << w.first << "," << w.second << ")" << endl;
-    game->execute_move("S 1 5 M 3 6");
+    // for(auto w: changed)
+    //     cout << "(" << w.first << "," << w.second << ")" << endl;
+    // game->execute_move("S 1 5 M 3 6");
     vector<pair<pair<int,int>,pair<int,int>>> consecutive = game->check5(changed,4);
     for(auto w:consecutive)
             cout << "(" << w.first.first << "," << w.first.second << ") -> " << "(" << w.second.first << "," << w.second.second << ")" << endl;
