@@ -315,13 +315,14 @@ public:
                 {
                     if(count == 0)
                         st = w;
+                    en = w;
                     count++;
                 }
                 else
                 {
                     if(count >= 5)
                     {
-                        en = w;
+                        // en = w;
                         obtained = true;
                     }
                     count = 0;
@@ -346,13 +347,14 @@ public:
                 {
                     if(count == 0)
                         st = w;
+                    en = w;
                     count++;
                 }
                 else
                 {
                     if(count >= 5)
                     {
-                        en = w;
+                        // en = w;
                         obtained = true;
                     }
                     count = 0;
