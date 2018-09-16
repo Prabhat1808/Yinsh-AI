@@ -95,6 +95,283 @@ public:
         }
         return copied;
     }
-    
+
+    vector<pair<int, int>> possible_paths(int i, int j)
+    {
+        Node_game* curr = board.at(i).at(j);
+        vector<pair<int, int>> possible;
+        vector<pair<int,int>> axis_map = util->board.at(i).at(j)->axis_mapping;
+
+
+        //Diagonal1
+        int cons = 0;
+        for(int itr = axis_map.at(0).second - 1;itr >= 0 ; itr--)
+        {
+            pair<int,int> element = util->elems_on_diagonal1.at(axis_map.at(0).first).at(itr);
+            int data = board.at(element.first).at(element.second)->data;
+            if(data == 1 || data == 2)
+                break;
+            if(data == 3 || data == 4)
+            {
+                cons++;
+                continue;
+            }
+            if(data == 0)
+            {
+                if(cons > 0)
+                {
+                    possible.push_back(element);
+                    break;
+                }
+                else
+                    possible.push_back(element);
+            }
+        }
+        //Diagonal2
+        cons = 0;
+        for(int itr = axis_map.at(1).second - 1;itr >= 0 ; itr--)
+        {
+            pair<int,int> element = util->elems_on_diagonal2.at(axis_map.at(1).first).at(itr);
+            int data = board.at(element.first).at(element.second)->data;
+            if(data == 1 || data == 2)
+                break;
+            if(data == 3 || data == 4)
+            {
+                cons++;
+                continue;
+            }
+            if(data == 0)
+            {
+                if(cons > 0)
+                {
+                    possible.push_back(element);
+                    cons = 0;
+                    break;
+                }
+                else
+                    possible.push_back(element);
+            }
+        }
+        // //Vertical
+        cons = 0;
+        for(int itr = axis_map.at(2).second - 1;itr >= 0 ; itr--)
+        {
+            pair<int,int> element = util->elems_on_vertical.at(axis_map.at(2).first).at(itr);
+            int data = board.at(element.first).at(element.second)->data;
+            if(data == 1 || data == 2)
+                break;
+            if(data == 3 || data == 4)
+            {
+                cons++;
+                continue;
+            }
+            if(data == 0)
+            {
+                if(cons > 0)
+                {
+                    possible.push_back(element);
+                    cons = 0;
+                    break;
+                }
+                else
+                    possible.push_back(element);
+            }
+        }
+
+        // //Diagonal1
+        cons = 0;
+        for(int itr = axis_map.at(0).second + 1;itr < util->elems_on_diagonal1.at(axis_map.at(0).first).size() ; itr++)
+        {
+            pair<int,int> element = util->elems_on_diagonal1.at(axis_map.at(0).first).at(itr);
+            int data = board.at(element.first).at(element.second)->data;
+            if(data == 1 || data == 2)
+                break;
+            if(data == 3 || data == 4)
+            {
+                cons++;
+                continue;
+            }
+            if(data == 0)
+            {
+                if(cons > 0)
+                {
+                    possible.push_back(element);
+                    break;
+                }
+                else
+                    possible.push_back(element);
+            }
+        }
+
+        // //Diagonal2
+        cons = 0;
+        for(int itr = axis_map.at(1).second + 1;itr < util->elems_on_diagonal2.at(axis_map.at(1).first).size() ; itr++)
+        {
+            pair<int,int> element = util->elems_on_diagonal2.at(axis_map.at(1).first).at(itr);
+            int data = board.at(element.first).at(element.second)->data;
+            if(data == 1 || data == 2)
+                break;
+            if(data == 3 || data == 4)
+            {
+                cons++;
+                continue;
+            }
+            if(data == 0)
+            {
+                if(cons > 0)
+                {
+                    possible.push_back(element);
+                    break;
+                }
+                else
+                    possible.push_back(element);
+            }
+        }
+
+        //Vertical
+        cons = 0;
+        for(int itr = axis_map.at(2).second + 1;itr < util->elems_on_vertical.at(axis_map.at(2).first).size() ; itr++)
+        {
+            pair<int,int> element = util->elems_on_vertical.at(axis_map.at(2).first).at(itr);
+            int data = board.at(element.first).at(element.second)->data;
+            if(data == 1 || data == 2)
+                break;
+            if(data == 3 || data == 4)
+            {
+                cons++;
+                continue;
+            }
+            if(data == 0)
+            {
+                if(cons > 0)
+                {
+                    possible.push_back(element);
+                    break;
+                }
+                else
+                    possible.push_back(element);
+            }
+        }
+
+        return possible;
+    }
+
+    vector<pair<pair<int,int>,pair<int,int>>> check5(vector<pair<int, int>> changed, int player_marker)
+    {
+        vector<pair<pair<int,int>,pair<int,int>>> sequences;
+        unordered_set<string> axes_checked;
+        for(auto position:changed)
+        {
+            vector<pair<int,int>> axis_map = util->board.at(position.first).at(position.second)->axis_mapping;
+            int d1ax = axis_map.at(0).first;
+            int d2ax = axis_map.at(1).first;
+            int vax = axis_map.at(2).first;
+
+            pair<int,int> st;
+            pair<int,int> en;
+            int count = 0;
+            bool obtained = false;
+            for(auto w: util->elems_on_diagonal1.at(axis_map.at(0).first))
+            {
+                if(axes_checked.count("D1"+to_string(d1ax)) != 0)
+                    break;
+
+                int data = board.at(w.first).at(w.second)->data;
+                if(data == player_marker)
+                {
+                    if(count == 0)
+                        st = w;
+                    count++;
+                }
+                else
+                {
+                    if(count >= 5)
+                    {
+                        en = w;
+                        obtained = true;
+                    }
+                    count = 0;
+                }
+                if(obtained)
+                {
+                    sequences.push_back(make_pair(st,en));
+                    obtained = false;
+                }
+            }
+            axes_checked.insert("D1"+to_string(d1ax));
+
+            count = 0;
+            obtained = false;
+            for(auto w: util->elems_on_diagonal2.at(axis_map.at(1).first))
+            {
+                if(axes_checked.count("D2"+to_string(d2ax)) != 0)
+                    break;
+
+                int data = board.at(w.first).at(w.second)->data;
+                if(data == player_marker)
+                {
+                    if(count == 0)
+                        st = w;
+                    count++;
+                }
+                else
+                {
+                    if(count >= 5)
+                    {
+                        en = w;
+                        obtained = true;
+                    }
+                    count = 0;
+                }
+                if(obtained)
+                {
+                    sequences.push_back(make_pair(st,en));
+                    obtained = false;
+                }
+            }
+            axes_checked.insert("D2"+to_string(d2ax));
+
+            count = 0;
+            obtained = false;
+            for(auto w: util->elems_on_vertical.at(axis_map.at(2).first))
+            {
+                if(axes_checked.count("V"+to_string(vax)) != 0)
+                    break;
+
+                int data = board.at(w.first).at(w.second)->data;
+                if(data == player_marker)
+                {
+                    if(count == 0)
+                        st = w;
+                    count++;
+                }
+                else
+                {
+                    if(count >= 5)
+                    {
+                        en = w;
+                        obtained = true;
+                    }
+                    count = 0;
+                }
+                if(obtained)
+                {
+                    sequences.push_back(make_pair(st,en));
+                    obtained = false;
+                }
+            }
+            axes_checked.insert("V"+to_string(vax));
+        }
+        return sequences;
+    }
+
 };
 
+int main()
+{
+    Utility* util = new Utility();
+    Game* game = new Game(0,4,util);
+    vector<pair<int, int>> po = game->possible_paths(3,4);
+    for(auto w: po)
+        cout << w.first << " , " << w.second << endl;
+}
