@@ -939,6 +939,13 @@ public:
 
 };
 
+int main(){
+    Game* game = new Game(0, 4);
+    game->place_ring(0, 0);
+    game->place_ring(4, 2);
+    game->print_board();
+}
+
 // int main(){
 //     Game game = Game(0, 4);
 // //     game.execute_move("P 0 0");
