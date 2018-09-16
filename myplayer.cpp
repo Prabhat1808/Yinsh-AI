@@ -48,6 +48,9 @@ void do_remove(pair<Game*, string> x, pair<pair<int, int>, pair<int, int> > opti
                 pair<Game*, string> out = make_pair(readytoremove, move);
                 future_possibilities.push_back(out);
             }
+            // ###############
+            delete toremove;
+            // ################
         }
     }
     else
@@ -154,6 +157,9 @@ vector<pair<pair<pair<int, Game*>, vector<pair<int, int> > >, string> > get_succ
                             auto d = make_pair(c, move);
                             successors.push_back(d);
                         }
+                        // ################
+                        delete temp;
+                        // ################
                     }
                     else {
                         int heuristic = temp->heuristic();
@@ -200,11 +206,26 @@ pair<pair<int, Game*>, string> minval(pair<pair<int, Game*>, vector<pair<int, in
         pair<pair<int, Game*>, string> child = maxval(u.first, alpha, beta, h - 1);
         beta = min(beta, child.first.first);
         if (alpha >= beta) {
+            Game* out = child.first.second->copy_board();
+            child.first.second = out;
+            // ##################
+            for(auto v : successors){
+                delete v.first.second;
+            }
+            // ##################
             return child;
         }
     }
     int l = successors.size()-1;
+    Game* out = successors.at(l).first.first.first.second->copy_board();
     pair<pair<int, Game*>, string> output = make_pair(successors.at(l).first.first, successors.at(l).second);
+    output.first.second = out;
+    // ############
+    for(auto v : successors){
+        delete v.first.second;
+    }
+    // ################
+
     return output;
 };
 
@@ -226,79 +247,202 @@ pair<pair<int, Game*>, string> maxval(pair<pair<int, Game*>, vector<pair<int, in
         pair<pair<int, Game*>, string> output = make_pair(out.first.first, out.second);
         return output;
     }
-    sort(successors.begin(), successors.end(), greater<>());
+    sort(successors.begin(), successors.end());
+    reverse(successors.begin(), successors.end());
     for (pair<pair<pair<int, Game*>, vector<pair<int, int>>>, string> u: successors) {
         pair<pair<int, Game*>, string> child = minval(u.first, alpha, beta, h - 1);
         alpha = max(alpha, child.first.first);
         if (alpha >= beta) {
+            Game* out = child.first.second->copy_board();
+            child.first.second = out;
+            // ###################
+            for(auto v : successors){
+                delete v.first.second;
+            }
+            // ###############
             return child;
         }
     }
-
-    pair<pair<int, Game*>, string> output = make_pair(successors.at(0).first.first, successors.at(0).second);
+    int l = 0;
+    // ###############
+    Game* out = successors.at(l).first.first.first.second->copy_board();
+    pair<pair<int, Game*>, string> output = make_pair(successors.at(l).first.first, successors.at(l).second);
+    output.first.second = out;
+    for(auto v : successors){
+        delete v.first.second;
+    }
+    // ############
     return output;
 };
 
-int main(int argc, char** argv)
-{
-
-    int player_id, board_size, time_limit;
-    string move;
-    string s;
-
-    getline(cin, s);
-    string buff = "";
-    vector<int> starting;
-    for(auto i:s){
-        if(i == ' '){
-            starting.push_back(stoi(buff));
-            buff = "";
-        }
-        else {
-            buff+=i;
+string random_place(Game* game){
+    while (true){
+        // cout << game->n << endl;
+        int h = rand() % game->n;
+        if(h==0) continue;
+        int p = rand() % h*6;
+        if(game->board.at(h).at(p)->data==0){
+            return "P " + to_string(h) + " " + to_string(p);
         }
     }
-    if(!buff.empty()) starting.push_back(stoi(buff));
+    return "";
+}
 
-    // cin >> player_id >> board_size >> time_limit;
+int main(int argc, char** argv){
     Utility* util = new Utility(5);
-    Game* game = new Game(0, starting.at(0)+2, util, starting.at(1));
+    Game* game = new Game(1, 4, util);
 
-
-    
-   	game->execute_move("P 0 0");
+    game->execute_move("P 3 6");
+    game->execute_move("P 2 6");
     game->execute_move("P 1 0");
-    game->execute_move("P 1 1");
-    game->execute_move("P 1 2");
-    game->execute_move("P 1 3");
-    game->execute_move("P 1 4");
-    game->execute_move("P 1 5");
+    game->execute_move("P 4 6");
+    game->execute_move("P 4 18");
+    game->execute_move("P 3 0");
+    game->execute_move("P 4 12");
     game->execute_move("P 2 0");
-    game->execute_move("P 2 1");
-    game->execute_move("P 2 2");
-    vector<pair<int, int>> changed;
-    if(player_id==2){
-        getline(cin, move);
-        // cout << "Move taken: " << move <<  endl;
-        changed = game->execute_move(move);
-    }
-    while(true){
-        pair<int, Game*> inp = make_pair(game->heuristic(), game);
-        pair<pair<int, Game*>, vector<pair<int, int>>> taken = make_pair(inp, changed);
-        pair<pair<int, Game*>, string> mymove = maxval(taken, INT_MIN, INT_MAX, 2);
-        // cerr << endl << endl;
-        cerr << mymove.second << endl;
-        game->execute_move(mymove.second);
+    game->execute_move("P 3 12");
+    game->execute_move("P 4 0");
+    game->execute_move("S 3 12 M 5 18");
+    game->execute_move("S 4 0 M 5 24");
+    game->execute_move("S 5 18 M 5 16");
+    game->execute_move("S 5 24 M 5 21");
+    game->execute_move("S 5 16 M 5 29");
+    game->execute_move("S 5 21 M 4 13");
+    game->execute_move("S 5 29 M 4 1");
+    game->execute_move("S 4 13 M 5 17");
+    game->execute_move("S 4 12 M 4 14");
+    game->execute_move("S 5 17 M 3 9");
+    game->execute_move("S 4 1 M 5 14");
+    game->execute_move("S 3 9 M 4 17");
+    game->execute_move("S 5 14 M 3 1");
+    game->execute_move("S 3 0 M 5 2");
+    game->execute_move("S 3 1 M 5 1");
+    game->execute_move("S 2 0 M 4 2");
+    game->execute_move("S 5 1 M 2 1");
+    game->execute_move("S 4 17 M 5 19");
+    game->execute_move("S 2 1 M 3 17");
+    game->execute_move("S 4 2 M 2 11");
+    game->execute_move("S 4 18 M 4 16");
+    game->execute_move("S 2 11 M 5 22");
+    game->execute_move("S 3 17 M 1 5");
+    game->execute_move("S 4 6 M 4 22");
+    game->execute_move("S 1 0 M 3 2");
+    game->execute_move("S 4 22 M 2 2");
+    game->execute_move("S 3 2 M 4 23");
+    game->execute_move("S 5 2 M 3 16");
+    game->execute_move("S 4 23 M 4 21");
+    game->execute_move("S 3 16 M 1 1");
+    game->execute_move("S 1 5 M 4 3");
+    game->execute_move("S 5 19 M 5 6");
 
-        // if(game->check_won()) break;
-        getline(cin, move);
-        // cout << "Move taken: " << move <<  endl;
-        vector<pair<int, int>> new_changes = game->execute_move(move);
-        if(game->check_won()) break;
-        changed.resize(0);
-        for(pair<int, int> u: new_changes){
-            changed.push_back(u);
-        }
-    }
+    game->execute_move("S 4 16 M 2 8");
+    game->execute_move("S 5 22 M 3 11");
+    game->execute_move("S 2 8 M 5 23");
+    // game->execute_move("S 3 11 M 2 9");
+
+    game->print_board();
+    vector<pair<int, int>> changed;
+    changed = game->execute_move("S 3 11 M 2 9");
+    game->print_board();
+    pair<int, Game*> inp = make_pair(game->heuristic(), game);
+
+    pair<pair<int, Game*>, vector<pair<int, int>>> taken = make_pair(inp, changed);
+    pair<pair<int, Game*>, string> mymove = maxval(taken, INT_MIN, INT_MAX, 3);
+    game->execute_move(mymove.second);
+    cout << mymove.second << endl;
+    game->print_board();
 
 }
+
+
+// int main(int argc, char** argv)
+// {
+
+//     // int player_id, board_size, time_limit;
+//     string move;
+//     string s;
+//     // cerr << "Staring game" << endl;
+//     getline(cin, s);
+//     // cerr << "Input Taken: " << s << endl;
+//     string buff = "";
+//     vector<int> starting;
+//     for(auto i:s){
+//         if(i == ' '){
+//             starting.push_back(stoi(buff));
+//             buff = "";
+//         }
+//         else {
+//             buff+=i;
+//         }
+//     }
+//     if(!buff.empty()) starting.push_back(stoi(buff));
+
+//     // cin >> player_id >> board_size >> time_limit;
+//     Utility* util = new Utility(5);
+//     Game* game = new Game(0, starting.at(0)+2, util, starting.at(1));
+
+//     // if(player_id==2){
+//     //     cin >> move;
+//     //     game->execute_move(move);
+
+//     // }
+
+    
+//    	// game->execute_move("P 0 0");
+//     // game->execute_move("P 1 0");
+//     // game->execute_move("P 1 1");
+//     // game->execute_move("P 1 2");
+//     // game->execute_move("P 1 3");
+//     // game->execute_move("P 1 4");
+//     // game->execute_move("P 1 5");
+//     // game->execute_move("P 2 0");
+//     // game->execute_move("P 2 1");
+//     // game->execute_move("P 2 2");
+//     vector<pair<int, int>> changed;
+//     if(starting.at(0)==2){
+//         for (int i=0; i<5; i++){
+//             getline(cin, move);
+//             // cout << "Move taken: " << move <<  endl;
+//             game->execute_move(move);
+//             string mymove = random_place(game);
+//             // cerr << mymove;
+//             cout << mymove << "\n";
+//             game->execute_move(mymove);
+//         }
+//     }
+//     else{
+//         for (int i=0; i<5; i++){
+//             string mymove = random_place(game);
+//             // cerr << mymove << endl;
+//             cout << mymove << endl;
+//             game->execute_move(mymove);
+//             getline(cin, move);
+//             changed = game->execute_move(move);
+//         }
+//     }
+    
+//     // cerr << endl;
+//     if(starting.at(0)==2){
+//         getline(cin, move);
+//         changed = game->execute_move(move);
+//     }
+//     while(true){
+//         pair<int, Game*> inp = make_pair(game->heuristic(), game);
+//         pair<pair<int, Game*>, vector<pair<int, int>>> taken = make_pair(inp, changed);
+//         pair<pair<int, Game*>, string> mymove = maxval(taken, INT_MIN, INT_MAX, 2);
+//         // cerr << endl << endl;
+//         cout << mymove.second << endl;
+//         game->execute_move(mymove.second);
+
+//         if(game->check_won()) break;
+//         getline(cin, move);
+//         // cout << "Move taken: " << move <<  endl;
+//         changed = game->execute_move(move);
+//         if(game->check_won()) break;
+//         // changed.resize(0);
+//         // for(pair<int, int> u: new_changes){
+//         //     changed.push_back(u);
+//         // }
+//     }
+
+// }

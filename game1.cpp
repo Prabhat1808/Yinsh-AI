@@ -17,6 +17,9 @@ public:
             temp.second = -1;
         }
     }
+    ~Node_game(){
+        // cout << "Deleting Node." << endl;
+    }
 };
 
 class Game{
@@ -37,6 +40,7 @@ public:
     int my_marker;
     pair<int, int> beginning;
     pair<int, int> ending;
+
     Game(int player, int my_marker,  Utility* util, int n=5, int rings=5, int max_row=5, int l=3){
         this-> n = n;
         this-> rings = rings;
@@ -60,6 +64,7 @@ public:
                 temp.push_back(nod);
                 if(i==n && j%i==0) nod->data = -1;
             }
+
             this->board.push_back(temp);
         }
         this->my_marker = my_marker;
@@ -70,6 +75,17 @@ public:
         this->beginning.first = -1;
         this->beginning.second = -1;
     }
+    ~Game(){
+        for (int i=1; i<=n; i++){
+            for(int j=0; j<i*6; j++){
+                delete board.at(i).at(j);
+            }
+            board.at(i).clear();
+        }
+        board.clear();
+        // delete board;
+    }
+
     void update_board(int hexagon, int position, int data){
         board.at(hexagon).at(position)->data = data;
     }
@@ -381,21 +397,21 @@ public:
         return sequences;
     }
 
-    void find_consecutives(vector<pair<pair<int,int>,pair<int,int>>> directions)
-    {
-        int curr3 =0, curr4 =0;
-        for(auto axis: directions)
-        {
-            for(auto w: axis)
-            {
-                int data = board.at(w.first).at(w.second)->data;
-                if(data == 3)
-                {
-                    curr3++;
-                }
-            }
-        }
-    }
+    // void find_consecutives(vector<pair<pair<int,int>,pair<int,int>>> directions)
+    // {
+    //     int curr3 =0, curr4 =0;
+    //     for(auto axis: directions)
+    //     {
+    //         for(auto w: axis)
+    //         {
+    //             int data = board.at(w.first).at(w.second)->data;
+    //             if(data == 3)
+    //             {
+    //                 curr3++;
+    //             }
+    //         }
+    //     }
+    // }
 
     bool place_ring(int hexagon, int position){
         if(board.at(hexagon).at(position)->data!=0) return false;
@@ -436,6 +452,7 @@ public:
                 changed.push_back(p);
             }
         }
+        changed.push_back(beginning);
         board.at(hexagon).at(position)->data = ring_selected;
         for(int i=0; i<ring_self.size(); i++){
             if(my_marker-3==player && beginning==ring_self.at(i)) {
@@ -604,6 +621,15 @@ public:
     }
 
 };
+
+
+int main(){
+    Utility* util = new Utility(5);
+    Game* game = new Game(0, 4, util);
+    cout << sizeof(game) << endl;
+    delete game;
+    cout << sizeof(game) << endl;
+}
 
 // int main(){
 //     Utility* util = new Utility(5);
