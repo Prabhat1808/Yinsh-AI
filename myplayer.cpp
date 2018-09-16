@@ -244,9 +244,25 @@ int main(int argc, char** argv)
 
     int player_id, board_size, time_limit;
     string move;
-    cin >> player_id >> board_size >> time_limit;
+    string s;
+
+    getline(cin, s);
+    string buff = "";
+    vector<int> starting;
+    for(auto i:s){
+        if(i == ' '){
+            starting.push_back(stoi(buff));
+            buff = "";
+        }
+        else {
+            buff+=i;
+        }
+    }
+    if(!buff.empty()) starting.push_back(stoi(buff));
+
+    // cin >> player_id >> board_size >> time_limit;
     Utility* util = new Utility(5);
-    Game* game = new Game(0, player_id+2, util, board_size);
+    Game* game = new Game(0, starting.at(0)+2, util, starting.at(1));
 
 
     
@@ -262,19 +278,21 @@ int main(int argc, char** argv)
     game->execute_move("P 2 2");
     vector<pair<int, int>> changed;
     if(player_id==2){
-        cin >> move;
+        getline(cin, move);
+        // cout << "Move taken: " << move <<  endl;
         changed = game->execute_move(move);
     }
     while(true){
         pair<int, Game*> inp = make_pair(game->heuristic(), game);
         pair<pair<int, Game*>, vector<pair<int, int>>> taken = make_pair(inp, changed);
         pair<pair<int, Game*>, string> mymove = maxval(taken, INT_MIN, INT_MAX, 2);
-        cout << endl;
-        cout << mymove.second << endl;
+        // cerr << endl << endl;
+        cerr << mymove.second << endl;
         game->execute_move(mymove.second);
 
-        if(game->check_won()) break;
-        cin >> move;
+        // if(game->check_won()) break;
+        getline(cin, move);
+        // cout << "Move taken: " << move <<  endl;
         vector<pair<int, int>> new_changes = game->execute_move(move);
         if(game->check_won()) break;
         changed.resize(0);
