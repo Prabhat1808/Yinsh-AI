@@ -63,7 +63,12 @@ public:
         update_board(elems_on_diagonal1,0);
         update_board(elems_on_diagonal2,1);
         update_board(elems_on_vertical,2);
-
+        for(int i =0;i<6;i++)
+        {
+        	Node* curr = board.at(n).at(n*i);
+        	for(int j = 0;j<3;j++)
+        		curr->axis_mapping.at(j) = make_pair(-1,-1);
+        }
 	}
 
 	void update_neighbours(Node* nod, int i, int j){
