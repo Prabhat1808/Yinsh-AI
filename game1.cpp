@@ -381,9 +381,11 @@ public:
         return sequences;
     }
 
-    void find_consecutives(vector<pair<pair<int,int>,pair<int,int>>> directions)
+    pair<vector<int>,vector<int>> find_consecutives(vector<pair<pair<int,int>,pair<int,int>>> directions)
     {
         int curr3 =0, curr4 =0;
+        int buff3 = 0, buff4 = 0;
+        vector<int> counts3(6), counts4(6);
         for(auto axis: directions)
         {
             for(auto w: axis)
@@ -391,10 +393,53 @@ public:
                 int data = board.at(w.first).at(w.second)->data;
                 if(data == 3)
                 {
+                    if(buff3 == 1)
+                        curr3++;
+                    buff3 = 2;
+                    buff4 = max(0,buff4-1);
                     curr3++;
+                    if(curr4 != 0)
+                        counts4.at(curr4 - 2) += 1;
+                    curr4 = 0; 
+                }
+                else if(data == 4)
+                {
+                    if(buff4 == 1)
+                        curr4++;
+                    buff4 = 2;
+                    buff3 = max(0,buff3-1);
+                    curr4++;
+                    if(curr3 != 0)
+                        counts3.at(curr3 - 2) += 1;
+                    curr3 = 0;
+                }
+                else
+                {
+                    buff4 = max(0,buff4-1);
+                    buff3 = max(0,buff3-1);
+                    if(curr4 != 0)
+                        counts4.at(curr4 - 2) += 1;
+                    if(curr3 != 0)
+                        counts3.at(curr3 - 2) += 1;
+                    curr3 =0;
+                    curr4 =0;
                 }
             }
+            if(buff3 == 1)
+                curr3 += 1;
+            if(buff4 == 1);
+                curr4 += 1;
+
+            if(curr3 > 1)
+                counts3.at(curr3 - 2) +=1;
+            if(curr4 > 1)
+                counts4.at(curr4 - 1) += 1;
+            buff3 = 0;
+            buff4 = 0;
+            curr3 = 0;
+            curr4 = 0;
         }
+        return make_pair(counts3,counts4);
     }
 
     bool place_ring(int hexagon, int position){
