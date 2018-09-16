@@ -96,6 +96,9 @@ public:
         return copied;
     }
 
+
+    // int removal_len(Node_game* nod, int i, int j, int x){
+
     vector<pair<int, int>> possible_paths(int i, int j)
     {
         Node_game* curr = board.at(i).at(j);
