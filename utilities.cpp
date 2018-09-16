@@ -320,16 +320,19 @@ int main()
 {
 	Utility* use = new Utility();
 //	cout << "works";
-	 cout << "(" << 0 << " , " << 0 << ") -> " << "(" <<  "(" << use->board.at(0).at(0)->axis_mapping.at(0).first << "," << use->board.at(0).at(0)->axis_mapping.at(0).second << ")" << "," << "(" << use->board.at(0).at(0)->axis_mapping.at(1).first << "," << use->board.at(0).at(0)->axis_mapping.at(1).second << ")," << "(" << use->board.at(0).at(0)->axis_mapping.at(2).first << "," << use->board.at(0).at(0)->axis_mapping.at(2).second << "))\n";
-     for(int x = 1;x<6;x++)
-     {
-         for(int y = 0; y<6*x;y++)
-         {
-             if(x==5 && y%5==0)
-                 continue;
-             vector<pair<int,int>> mappings = use->board.at(x).at(y)->axis_mapping;
-             cout << "(" << x << " , " << y << ") -> " << "(" <<  "(" << mappings.at(0).first << "," << mappings.at(0).second << ")" << "," << "(" << mappings.at(1).first << "," << mappings.at(1).second << ")," << "(" << mappings.at(2).first << "," << mappings.at(2).second << "))\n";
+	 // cout << "(" << 0 << " , " << 0 << ") -> " << "(" <<  "(" << use->board.at(0).at(0)->axis_mapping.at(0).first << "," << use->board.at(0).at(0)->axis_mapping.at(0).second << ")" << "," << "(" << use->board.at(0).at(0)->axis_mapping.at(1).first << "," << use->board.at(0).at(0)->axis_mapping.at(1).second << ")," << "(" << use->board.at(0).at(0)->axis_mapping.at(2).first << "," << use->board.at(0).at(0)->axis_mapping.at(2).second << "))\n";
+  //    for(int x = 1;x<6;x++)
+  //    {
+  //        for(int y = 0; y<6*x;y++)
+  //        {
+  //            if(x==5 && y%5==0)
+  //                continue;
+  //            vector<pair<int,int>> mappings = use->board.at(x).at(y)->axis_mapping;
+  //            cout << "(" << x << " , " << y << ") -> " << "(" <<  "(" << mappings.at(0).first << "," << mappings.at(0).second << ")" << "," << "(" << mappings.at(1).first << "," << mappings.at(1).second << ")," << "(" << mappings.at(2).first << "," << mappings.at(2).second << "))\n";
 
-         }
-     }
+  //        }
+  //    }
+	// vector<pair<int,int>> bw = use->between_points(make_pair(1,5),make_pair(5,4));
+	// for(auto w:bw)
+	// 	cout << w.first << " , "  << w.second << endl;
 }
