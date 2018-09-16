@@ -1,13 +1,60 @@
 #include <bits/stdc++.h>
-#include "game.cpp"
+#include "game1.cpp"
+// #include "utilities.cpp"
 
 using namespace std;
 
 pair<pair<int, Game*>, string> maxval( pair<pair<int, Game*>, vector<pair<int, int> > > , int , int , int );
 
-void do_remove(pair<Game*, string> x, pair<pair<int, int>, pair<int, int> > option, vector<pair<Game*, string>> &future_possibilities) {
-    int leng = x.first->removal_len(option);
-
+void do_remove(pair<Game*, string> x, pair<pair<int, int>, pair<int, int> > option, vector<pair<Game*, string>> &future_possibilities)
+ {
+    vector<pair<int, int>> indices = x.first->util->between_points(option.first, option.second);
+    int leng = 0;
+    vector<pair<pair<int, int>, pair<int, int> > > curr_options;
+    int begin;
+    for(int i=0; i<indices.size(); i++)
+    {
+        if(x.first->board.at(indices.at(i).first).at(indices.at(i).second)->data==x.first->player+3)
+        {
+            leng++;
+        }
+        else leng=0;
+        if(leng==1) begin = i;
+        if(leng==5)
+        {
+            curr_options.push_back(make_pair(indices.at(begin), indices.at(i)));
+            begin++;
+            leng--;
+        }
+    }
+    if(curr_options.size())
+    {
+        for(pair<pair<int, int>, pair<int, int>> opt: curr_options)
+        {
+            Game* toremove = x.first->copy_board();
+            toremove->remove_start(opt.first.first, opt.first.second);
+            toremove->remove_end(opt.second.first, opt.second.second);
+            vector<pair<int, int>> possible_rings;
+            if (toremove->player + 3 == toremove->my_marker) possible_rings = toremove->ring_self;
+            else possible_rings = toremove->ring_opponent;
+            for (pair<int, int> r : possible_rings)
+             {
+                if (r.first == -1 || r.second == -1) continue;
+                Game* readytoremove = toremove->copy_board();
+                readytoremove->remove_ring(r.first, r.second);
+                string move;
+                if(x.second.length()) move = x.second + " RS " + to_string(opt.first.first) + " " + to_string(opt.first.second) + " RE " + to_string(opt.second.first) + " " + to_string(opt.second.second) + " X " + to_string(r.first) + " " + to_string(r.second);
+                else move = "RS " + to_string(opt.first.first) + " " + to_string(opt.first.second) + " RE " + to_string(opt.second.first) + " " + to_string(opt.second.second) + " X " + to_string(r.first) + " " + to_string(r.second);
+                pair<Game*, string> out = make_pair(readytoremove, move);
+                future_possibilities.push_back(out);
+            }
+        }
+    }
+    else
+    {
+        future_possibilities.push_back(x);
+    }
+}
 
     // Node_game *curr = x.first->board.at(option.first.first).at(option.first.second);
     // int i = 0;
@@ -46,12 +93,12 @@ void do_remove(pair<Game*, string> x, pair<pair<int, int>, pair<int, int> > opti
     //     }
 
     // }
-    if (i == 6) {
-        future_possibilities.push_back(x);
-    }
+    // if (i == 6) {
+    //     future_possibilities.push_back(x);
+    // }
 
 
-};
+
 
 vector<pair<Game*, string>> remove_rows(vector<pair<pair<int, int>, pair<int, int> > > removal, Game* game) {
     vector<pair<Game*, string>> possibilities;
@@ -82,8 +129,8 @@ vector<pair<pair<pair<int, Game*>, vector<pair<int, int> > >, string> > get_succ
     for (pair<Game*, string> ga: newboard) {
         Game* gam = ga.first;
         vector<pair<int, int>> rings ;
-        if(gam->player==gam->my_marker-3) rings = gam->my_rings();
-        else rings = gam->opponents_rings();
+        if(gam->player==gam->my_marker-3) rings = gam->ring_self;
+        else rings = gam->ring_opponent;
         for (pair<int, int> ring: rings) {
             if (ring.first != -1 || ring.second != -1) {
                 vector<pair<int, int>> paths = gam->possible_paths(ring.first, ring.second);
@@ -198,7 +245,8 @@ int main(int argc, char** argv)
     int player_id, board_size, time_limit;
     string move;
     cin >> player_id >> board_size >> time_limit;
-    Game* game = new Game(0, player_id+2, board_size);
+    Utility* util = new Utility(5);
+    Game* game = new Game(0, player_id+2, util, board_size);
 
 
     

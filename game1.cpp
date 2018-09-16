@@ -576,58 +576,58 @@ public:
 
 };
 
-int main(){
-    Utility* util = new Utility(5);
-    Game* game = new Game(0, 4, util);
-    // game->place_ring(0, 0);
-    // game->place_ring(4, 2);
-    // vector<pair<int, int>> changed;
-    // game->select_ring(4, 2);
-    // game->move_ring(5, 6, changed);
-    // game->print_board();
-    // for(auto u: changed){
-    //     cout << u.first << " " << u.second << endl;
-    // }
-    // game->select_ring(5, 6);
-    // game->move_ring(4, 1, changed);
-    // game->print_board();
-    // for(auto u: changed){
-    //     cout << u.first << " " << u.second << endl;
-    // }
-        //TEST MOVES 1
-    game->execute_move("P 0 0");
-//     game->execute_move("P 1 0");
-    game->execute_move("P 1 1");
-    game->execute_move("P 4 0");
-    game->execute_move("P 2 2");
-    game->execute_move("P 5 1");
-    game->execute_move("P 1 4");
-    game->execute_move("P 5 29");
-    game->execute_move("P 2 8");
-    game->execute_move("P 3 0");
-    game->execute_move("P 2 10");
-    game->execute_move("S 0 0 M 1 2");
-    game->execute_move("S 1 1 M 2 3");
-    game->execute_move("S 1 2 M 2 4");
-    game->execute_move("S 2 2 M 3 4");
-    game->execute_move("S 2 4 M 3 5");
-    game->execute_move("S 1 4 M 1 3");
-    game->execute_move("S 3 5 M 4 6");
-    game->execute_move("S 2 8 M 2 7");
-    game->execute_move("S 4 0 M 4 1");
-    game->execute_move("S 2 10 M 1 5");
-    game->print_board();
-    game->execute_move("S 3 0 M 3 1");
-    game->print_board();
-    vector<pair<int, int>> changed = game->execute_move("S 1 5 M 3 6");
-    for(auto w: changed)
-        cout << "(" << w.first << "," << w.second << ")" << endl;
-    game->execute_move("S 1 5 M 3 6");
-    vector<pair<pair<int,int>,pair<int,int>>> consecutive = game->check5(changed,4);
-    for(auto w:consecutive)
-            cout << "(" << w.first.first << "," << w.first.second << ") -> " << "(" << w.second.first << "," << w.second.second << ")" << endl;
-    game->print_board();
-    // game->execute_move("S 2 9 M 5 24 RS 2 9 RE 3 2 X 4 23");
-    // game->print_board();
-    // game->print_data();
-}
+// int main(){
+//     Utility* util = new Utility(5);
+//     Game* game = new Game(0, 4, util);
+//     // game->place_ring(0, 0);
+//     // game->place_ring(4, 2);
+//     // vector<pair<int, int>> changed;
+//     // game->select_ring(4, 2);
+//     // game->move_ring(5, 6, changed);
+//     // game->print_board();
+//     // for(auto u: changed){
+//     //     cout << u.first << " " << u.second << endl;
+//     // }
+//     // game->select_ring(5, 6);
+//     // game->move_ring(4, 1, changed);
+//     // game->print_board();
+//     // for(auto u: changed){
+//     //     cout << u.first << " " << u.second << endl;
+//     // }
+//         //TEST MOVES 1
+//     game->execute_move("P 0 0");
+// //     game->execute_move("P 1 0");
+//     game->execute_move("P 1 1");
+//     game->execute_move("P 4 0");
+//     game->execute_move("P 2 2");
+//     game->execute_move("P 5 1");
+//     game->execute_move("P 1 4");
+//     game->execute_move("P 5 29");
+//     game->execute_move("P 2 8");
+//     game->execute_move("P 3 0");
+//     game->execute_move("P 2 10");
+//     game->execute_move("S 0 0 M 1 2");
+//     game->execute_move("S 1 1 M 2 3");
+//     game->execute_move("S 1 2 M 2 4");
+//     game->execute_move("S 2 2 M 3 4");
+//     game->execute_move("S 2 4 M 3 5");
+//     game->execute_move("S 1 4 M 1 3");
+//     game->execute_move("S 3 5 M 4 6");
+//     game->execute_move("S 2 8 M 2 7");
+//     game->execute_move("S 4 0 M 4 1");
+//     game->execute_move("S 2 10 M 1 5");
+//     game->print_board();
+//     game->execute_move("S 3 0 M 3 1");
+//     game->print_board();
+//     vector<pair<int, int>> changed = game->execute_move("S 1 5 M 3 6");
+//     for(auto w: changed)
+//         cout << "(" << w.first << "," << w.second << ")" << endl;
+//     // game->execute_move("S 1 5 M 3 6");
+//     vector<pair<pair<int,int>,pair<int,int>>> consecutive = game->check5(changed,4);
+//     for(auto w:consecutive)
+//         cout << "(" << w.first.first << "," << w.first.second << ") -> " << "(" << w.second.first << "," << w.second.second << ")" << endl;
+//     game->print_board();
+//     // game->execute_move("S 2 9 M 5 24 RS 2 9 RE 3 2 X 4 23");
+//     // game->print_board();
+//     // game->print_data();
+// }
