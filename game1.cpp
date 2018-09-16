@@ -95,6 +95,11 @@ public:
         }
         return copied;
     }
+
+    int removal_len(Node_game* nod, int i, int j, int x){
+        
+    }
+
     bool place_ring(int hexagon, int position){
         if(board.at(hexagon).at(position)->data!=0) return false;
         board.at(hexagon).at(position)->data = player+1;

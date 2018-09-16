@@ -6,43 +6,46 @@ using namespace std;
 pair<pair<int, Game*>, string> maxval( pair<pair<int, Game*>, vector<pair<int, int> > > , int , int , int );
 
 void do_remove(pair<Game*, string> x, pair<pair<int, int>, pair<int, int> > option, vector<pair<Game*, string>> &future_possibilities) {
-    Node *curr = x.first->board.at(option.first.first).at(option.first.second);
-    int i = 0;
-    for (i = 0; i < 6; i++) {
-        pair<int, int> p = curr->neighbours.at(i);
-        if (p.first == -1 || p.second == -1) continue;
-        int leng = x.first->removal_len(x.first->board.at(p.first).at(p.second), option.first.first, option.first.second, 2);
-        pair<int, int> ind = curr->index;
-        if (leng) {
-            for (int j = 0; j <= leng - x.first->max_row; j++) {
-                Game* toremove = x.first->copy_board();
-                toremove->board.at(ind.first).at(ind.second)->data = 0;
-                pair<int, int> ending = toremove->remove_now(toremove->board.at(p.first).at(p.second), ind.first, ind.second, 2);
-                vector<pair<int, int>> possible_rings;
-                if (toremove->player + 3 == toremove->my_marker) possible_rings = toremove->my_rings();
-                else possible_rings = toremove->opponents_rings();
-                for (pair<int, int> r : possible_rings) {
-                    if (r.first == -1 || r.second == -1) continue;
-                    Game* readytoremove = toremove->copy_board();
-                    readytoremove->remove_ring(r.first, r.second);
-                    string move;
-                    if(x.second.length()) move = x.second + " RS " + to_string(ind.first) + " " + to_string(ind.second) + " RE " + to_string(ending.first) + " " + to_string(ending.second) + " X " + to_string(r.first) + " " + to_string(r.second);
-                    else move = "RS " + to_string(ind.first) + " " + to_string(ind.second) + " RE " + to_string(ending.first) + " " + to_string(ending.second) + " X " + to_string(r.first) + " " + to_string(r.second);
-                    pair<Game*, string> out = make_pair(readytoremove, move);
-                    future_possibilities.push_back(out);
-                }
-                int next_index = -1;
-                for (int k = 0; k < 6; k++) {
-                    if (toremove->board.at(p.first).at(p.second)->neighbours.at(k) == ind) next_index = k;
-                }
-                next_index = (next_index + 3) % 6;
-                tie(ind.first, ind.second) = p;
-                tie(p.first, p.second) = toremove->board.at(p.first).at(p.second)->neighbours.at(next_index);
-            }
-            break;
-        }
+    int leng = x.first->removal_len(option);
 
-    }
+
+    // Node_game *curr = x.first->board.at(option.first.first).at(option.first.second);
+    // int i = 0;
+    // for (i = 0; i < 6; i++) {
+    //     pair<int, int> p = curr->neighbours.at(i);
+    //     if (p.first == -1 || p.second == -1) continue;
+    //     int leng = x.first->removal_len(x.first->board.at(p.first).at(p.second), option.first.first, option.first.second, 2);
+    //     pair<int, int> ind = curr->index;
+    //     if (leng) {
+    //         for (int j = 0; j <= leng - x.first->max_row; j++) {
+    //             Game* toremove = x.first->copy_board();
+    //             toremove->board.at(ind.first).at(ind.second)->data = 0;
+    //             pair<int, int> ending = toremove->remove_now(toremove->board.at(p.first).at(p.second), ind.first, ind.second, 2);
+    //             vector<pair<int, int>> possible_rings;
+    //             if (toremove->player + 3 == toremove->my_marker) possible_rings = toremove->my_rings();
+    //             else possible_rings = toremove->opponents_rings();
+    //             for (pair<int, int> r : possible_rings) {
+    //                 if (r.first == -1 || r.second == -1) continue;
+    //                 Game* readytoremove = toremove->copy_board();
+    //                 readytoremove->remove_ring(r.first, r.second);
+    //                 string move;
+    //                 if(x.second.length()) move = x.second + " RS " + to_string(ind.first) + " " + to_string(ind.second) + " RE " + to_string(ending.first) + " " + to_string(ending.second) + " X " + to_string(r.first) + " " + to_string(r.second);
+    //                 else move = "RS " + to_string(ind.first) + " " + to_string(ind.second) + " RE " + to_string(ending.first) + " " + to_string(ending.second) + " X " + to_string(r.first) + " " + to_string(r.second);
+    //                 pair<Game*, string> out = make_pair(readytoremove, move);
+    //                 future_possibilities.push_back(out);
+    //             }
+    //             int next_index = -1;
+    //             for (int k = 0; k < 6; k++) {
+    //                 if (toremove->board.at(p.first).at(p.second)->neighbours.at(k) == ind) next_index = k;
+    //             }
+    //             next_index = (next_index + 3) % 6;
+    //             tie(ind.first, ind.second) = p;
+    //             tie(p.first, p.second) = toremove->board.at(p.first).at(p.second)->neighbours.at(next_index);
+    //         }
+    //         break;
+    //     }
+
+    // }
     if (i == 6) {
         future_possibilities.push_back(x);
     }
