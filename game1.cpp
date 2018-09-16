@@ -274,6 +274,8 @@ public:
             pair<int,int> en;
             int count = 0;
             bool obtained = false;
+
+            //Diagonal1
             for(auto w: util->elems_on_diagonal1.at(axis_map.at(0).first))
             {
                 if(axes_checked.count("D1"+to_string(d1ax)) != 0)
@@ -301,10 +303,14 @@ public:
                     obtained = false;
                 }
             }
+            if(count >= 5)
+                sequences.push_back(make_pair(st,en));
             axes_checked.insert("D1"+to_string(d1ax));
+            //Diagonal1
 
             count = 0;
             obtained = false;
+            //Diagonal2
             for(auto w: util->elems_on_diagonal2.at(axis_map.at(1).first))
             {
                 if(axes_checked.count("D2"+to_string(d2ax)) != 0)
@@ -322,7 +328,6 @@ public:
                 {
                     if(count >= 5)
                     {
-                        // en = w;
                         obtained = true;
                     }
                     count = 0;
@@ -333,10 +338,14 @@ public:
                     obtained = false;
                 }
             }
+            if(count >= 5)
+                sequences.push_back(make_pair(st,en));
             axes_checked.insert("D2"+to_string(d2ax));
+            //Diagonal2
 
             count = 0;
             obtained = false;
+            //Vertical
             for(auto w: util->elems_on_vertical.at(axis_map.at(2).first))
             {
                 if(axes_checked.count("V"+to_string(vax)) != 0)
@@ -354,7 +363,6 @@ public:
                 {
                     if(count >= 5)
                     {
-                        // en = w;
                         obtained = true;
                     }
                     count = 0;
@@ -365,9 +373,28 @@ public:
                     obtained = false;
                 }
             }
+            if(count >= 5)
+                sequences.push_back(make_pair(st,en));
             axes_checked.insert("V"+to_string(vax));
+            //Vertical
         }
         return sequences;
+    }
+
+    void find_consecutives(vector<pair<pair<int,int>,pair<int,int>>> directions)
+    {
+        int curr3 =0, curr4 =0;
+        for(auto axis: directions)
+        {
+            for(auto w: axis)
+            {
+                int data = board.at(w.first).at(w.second)->data;
+                if(data == 3)
+                {
+                    curr3++;
+                }
+            }
+        }
     }
 
     bool place_ring(int hexagon, int position){
