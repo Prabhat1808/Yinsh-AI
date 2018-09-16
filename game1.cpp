@@ -282,12 +282,12 @@ public:
                     if(count == 0)
                         st = w;
                     count++;
+                    en = w;
                 }
                 else
                 {
                     if(count >= 5)
                     {
-                        en = w;
                         obtained = true;
                     }
                     count = 0;
