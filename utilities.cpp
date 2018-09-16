@@ -280,6 +280,40 @@ public:
 	        // cout << endl;
 	    }
     }
+
+    vector<pair<int,int>> between_points(pair<int,int> pt1, pair<int,int> pt2)
+    {
+    	vector<pair<int,int>> point1 = board.at(pt1.first).at(pt1.second)->axis_mapping;
+    	vector<pair<int,int>> point2 = board.at(pt2.first).at(pt2.second)->axis_mapping;
+
+    	vector<pair<int,int>> between;
+    	int direction = -1;
+    	for(int i =0;i<3;i++)
+    	{
+    		if(point1.at(i).first == point2.at(i).first)
+    		{
+    			direction = i;
+    			break;
+    		}
+    	}
+    	if (direction == -1)
+    		return between;
+
+    	int axis = point1.at(direction).first;
+    	int st = min(point1.at(direction).second , point2.at(direction).second);
+    	int en = max(point1.at(direction).second , point2.at(direction).second);
+
+    	for(int i = st; i <= en ; i++)
+    	{
+    		if(direction == 0)
+    			between.push_back(elems_on_diagonal1.at(axis).at(i));
+    		if(direction == 1)
+    			between.push_back(elems_on_diagonal2.at(axis).at(i));
+    		if(direction == 2)
+    			between.push_back(elems_on_vertical.at(axis).at(i));
+    	}
+    	return between;
+    }
 };
 
 int main()
