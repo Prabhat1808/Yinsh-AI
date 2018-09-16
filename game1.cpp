@@ -86,7 +86,7 @@ public:
             copied->ring_self.at(i).first = ring_self.at(i).first;
             copied->ring_self.at(i).second = ring_self.at(i).second;
             copied->ring_opponent.at(i).first = ring_opponent.at(i).first;
-            copied->ring_opponent.at(i).second = ring_opponent.at(i).second;      
+            copied->ring_opponent.at(i).second = ring_opponent.at(i).second;
         }
         for(int i=0; i<board.size(); i++){
             for (int j=0; j<board.at(i).size(); j++){
@@ -365,13 +365,278 @@ public:
         return sequences;
     }
 
+    bool place_ring(int hexagon, int position){
+        if(board.at(hexagon).at(position)->data!=0) return false;
+        board.at(hexagon).at(position)->data = player+1;
+        if(player==my_marker-3) {
+            ring_self.at(rings_placed / 2).first = hexagon;
+            ring_self.at(rings_placed/2).second = position;
+        }
+        else{
+            ring_opponent.at(rings_placed/2).first = hexagon;
+            ring_opponent.at(rings_placed/2).second = position;
+        }
+        rings_placed++;
+        return true;
+    }
+
+    bool select_ring(int hexagon, int position){
+        if(board.at(hexagon).at(position)->data!=player+1) return false;
+        ring_selected = board.at(hexagon).at(position)->data;
+        board.at(hexagon).at(position) -> data += 2;
+        beginning.first = hexagon;
+        beginning.second = position;
+        return true;
+    }
+
+    bool move_ring(int hexagon, int position, vector<pair<int, int>> &changed){
+        ending.first = hexagon;
+        ending.second = position;
+        vector<pair<int, int>> pointstochange = util->between_points(beginning, ending);
+        for (int i=1 ;i<pointstochange.size()-1; i++){
+            pair<int,int> p = pointstochange.at(i);
+            if(board.at(p.first).at(p.second)->data==3){
+                board.at(p.first).at(p.second)->data = 4;
+                changed.push_back(p);
+            }
+            else if(board.at(p.first).at(p.second)->data == 4){
+                board.at(p.first).at(p.second)->data = 3;
+                changed.push_back(p);
+            }
+        }
+        board.at(hexagon).at(position)->data = ring_selected;
+        for(int i=0; i<ring_self.size(); i++){
+            if(my_marker-3==player && beginning==ring_self.at(i)) {
+                ring_self.at(i).first = ending.first;
+                ring_self.at(i).second = ending.second;
+                break;
+            }
+            else if(my_marker-3!=player && beginning==ring_opponent.at(i)){
+                ring_opponent.at(i).first = ending.first;
+                ring_opponent.at(i).second = ending.second;
+                break;
+            }
+        }
+        return true;
+    }
+
+    bool remove_start(int hexagon, int position){
+        if(board.at(hexagon).at(position)->data!=player+3) return false;
+        beginning.first = hexagon;
+        beginning.second = position;
+        return true;
+    }
+
+    bool remove_end(int hexagon, int position){
+        ending.first = hexagon;
+        ending.second = position;
+        vector<pair<int, int>> pointstochange = util->between_points(beginning, ending);
+        for (pair<int, int> u: pointstochange){
+            board.at(u.first).at(u.second)->data = 0;
+        }
+        return true;
+    }
+
+    bool remove_ring(int hexagon, int position){
+        if(board.at(hexagon).at(position)->data!=player+1) return false;
+        board.at(hexagon).at(position) -> data = 0;
+        if(player==0) rings_removed0++;
+        else rings_removed1++;
+        pair<int, int> temp = make_pair(hexagon, position);
+        for(int i=0; i<ring_self.size(); i++){
+            if(my_marker-3==player && temp==ring_self.at(i)) {
+                ring_self.at(i).first = -1;
+                ring_self.at(i).second = -1;
+                break;
+            }
+            else if(my_marker-3!=player && temp==ring_opponent.at(i)){
+                ring_opponent.at(i).first = -1;
+                ring_opponent.at(i).second = -1;
+                break;
+            }
+        }
+        return true;
+    }
+
+    int execute_move1(vector<string> moves, vector<pair<int, int>> &changed){
+        // vector<string> moves = split_string(s);
+//        if(moves.size()>3) return execute_sequence(moves);
+//        else player = (player+1)%2;;
+        string mt = moves.at(0);
+        int hexagon = stoi(moves.at(1));
+        int position = stoi(moves.at(2));
+        bool success = true;
+
+        if(mt=="P") success = success && place_ring(hexagon, position);
+        else if(mt=="S") success = success && select_ring(hexagon, position);
+        else if(mt=="M") {
+            success = success && move_ring(hexagon, position, changed);
+        }
+        else if(mt=="RS"){
+            success = success && remove_start(hexagon, position);
+        }
+        else if(mt=="RE") success = success && remove_end(hexagon, position);
+        else if(mt=="X") success = success && remove_ring(hexagon, position);
+        else return 0;
+
+        bool won = check_won();
+
+        if(!success) return 0;
+        if(won) return 2;
+        return 1;
+
+    }
+
+    vector<pair<int, int>> execute_move(string s){
+        vector<string> moves;
+        string buff = "";
+        for(auto i:s){
+            if(i == ' '){
+                moves.push_back(buff);
+                buff = "";
+            }
+            else {
+                buff+=i;
+            }
+        }
+        if(!buff.empty()) moves.push_back(buff);
+        return (execute_sequence(moves));
+    }
+
+    vector<pair<int, int>> execute_sequence(vector<string> moves){
+        vector<string> temp(3);
+        vector<pair<int, int>> changed;
+        for (int i=0; i<moves.size(); i++){
+            if(i%3==2){
+                temp.at(2) = moves.at(i);
+                int move_success = execute_move1(temp, changed);
+//                if(move_success == 0) return 0;
+//                else if(move_success==2) return 2;
+            }
+            else{
+                temp.at(i%3) = moves.at(i);
+            }
+        }
+        player = (player+1)%2;
+        return changed;
+    }
+
+    bool check_won(){
+        return (rings_removed1==l || rings_removed0==l);
+    }
+
+
+
+    int get_position(int p, int h){
+//        if(p<0) p+=(6*h);
+        return board.at(h).at(p)->data;
+    }
+
+    int heuristic(){
+        int out = 0;
+        for(vector<Node_game*> u: board){
+            for(Node_game* v : u){
+                if(v->data == my_marker) out++;
+                else if(v->data == my_marker-2) out-=6;
+                else if(v->data<3 && v->data>0) out+=6;
+                else if(v->data>2) out--;
+            }
+        }
+        return out;
+    }
+
+
+    void print_board(){
+
+        cout << "   " << "     " << " " << "     " << " " << " " << endl;
+        cout << " " << "     " << " " << "     " << get_position(29,5) << "     " << get_position(1,5) << endl;
+        cout << "   " << "     " << " " << get_position(28,5) << "     " << get_position(0,4) << "     " << get_position(2,5) << endl;
+        cout << " " << "     " << get_position(27,5) << "     " << get_position(23,4) << "     " << get_position(1,4) << "     " << get_position(3,5) << endl;
+        cout << "   " << get_position(26,5) << "     " << get_position(22,4) << "     " << get_position(0,3) << "     " << get_position(2,4) << "     " << get_position(4,5) << endl;
+        cout << " " << "     " << get_position(21,4) << "     " << get_position(17,3) << "     " << get_position(1,3) << "     " << get_position(3,4) << "     " << " " << endl;
+        cout << "   " << get_position(20,4) << "     " << get_position(16,3) << "     " << get_position(0,2) << "     " << get_position(2,3) << "     " << get_position(4,4) << endl;
+        cout << get_position(24,5) << "     " << get_position(15,3) << "     " << get_position(11,2) << "     " << get_position(1,2) << "     " << get_position(3,3) << "     " << get_position(6,5) << endl;
+        cout << "   " << get_position(19,4) << "     " << get_position(10,2) << "     " << get_position(0,1) << "     " << get_position(2,2) << "     " << get_position(5,4) << endl;
+        cout << get_position(23,5) << "     " << get_position(14,3) << "     " << get_position(5,1) << "     " << get_position(1,1) << "     " << get_position(4,3) << "     " << get_position(7,5) << endl;
+        cout << "   " << get_position(18,4) << "     " << get_position(9,2) << "     " << get_position(0,0) << "     " << get_position(3,2) << "     " << get_position(6,4) << endl;
+        cout << get_position(22,5) << "     " << get_position(13,3) << "     " << get_position(4,1) << "     " << get_position(2,1) << "     " << get_position(5,3) << "     " << get_position(8,5) << endl;
+        cout << "   " << get_position(17,4) << "     " << get_position(8,2) << "     " << get_position(3,1) << "     " << get_position(4,2) << "     " << get_position(7,4) << endl;
+        cout << get_position(21,5) << "     " << get_position(12,3) << "     " << get_position(7,2) << "     " << get_position(5,2) << "     " << get_position(6,3) << "     " << get_position(9,5) << endl;
+        cout << "   " << get_position(16,4) << "     " << get_position(11,3) << "     " << get_position(6,2) << "     " << get_position(7,3) << "     " << get_position(8,4) << endl;
+        cout << " " << "     " << get_position(15,4) << "     " << get_position(10,3) << "     " << get_position(8,3) << "     " << get_position(9,4) << "     " << " " << endl;
+        cout << "   " << get_position(19,5) << "     " << get_position(14,4) << "     " << get_position(9,3) << "     " << get_position(10,4) << "     " << get_position(11,5) << endl;
+        cout << " " << "     " << get_position(18,5) << "     " << get_position(13,4) << "     " << get_position(11,4) << "     " << get_position(12,5) << endl;
+        cout << "   " << " " << "     " << get_position(17,5) << "     " << get_position(12,4) <<  "     " << get_position(13,5) <<endl;
+        cout << " " << "     " << " " << "     " << get_position(16,5) << "     " << get_position(14,5) << endl;
+        cout << "   " << "     " << " " << "     " << " " << " " << endl;
+    }
+
 };
 
-int main()
-{
-    Utility* util = new Utility();
-    Game* game = new Game(0,4,util);
-    vector<pair<int, int>> po = game->possible_paths(3,4);
-    for(auto w: po)
-        cout << w.first << " , " << w.second << endl;
+int main(){
+    Utility* util = new Utility(5);
+    Game* game = new Game(0, 4, util);
+    // game->place_ring(0, 0);
+    // game->place_ring(4, 2);
+    // vector<pair<int, int>> changed;
+    // game->select_ring(4, 2);
+    // game->move_ring(5, 6, changed);
+    // game->print_board();
+    // for(auto u: changed){
+    //     cout << u.first << " " << u.second << endl;
+    // }
+    // game->select_ring(5, 6);
+    // game->move_ring(4, 1, changed);
+    // game->print_board();
+    // for(auto u: changed){
+    //     cout << u.first << " " << u.second << endl;
+    // }
+    game->execute_move("P 0 0");
+    game->execute_move("P 1 0");
+    game->execute_move("P 1 1");
+    game->execute_move("P 1 2");
+    game->execute_move("P 1 3");
+    game->execute_move("P 1 4");
+    game->execute_move("P 1 5");
+    game->execute_move("P 2 0");
+    game->execute_move("P 2 1");
+    game->execute_move("P 2 2");
+    game->print_board();
+    game->execute_move("S 1 5 M 2 11");
+    game->print_board();
+    game->execute_move("S 1 0 M 2 9");
+    game->print_board();
+    game->execute_move("S 2 1 M 3 1");
+    game->print_board();
+    game->execute_move("S 2 0 M 3 0");
+    game->print_board();
+    game->execute_move("S 2 11 M 3 16");
+    game->print_board();
+    game->execute_move("S 2 2 M 3 17");
+    game->print_board();
+    game->execute_move("S 3 1 M 5 3");
+    game->print_board();
+    game->execute_move("S 3 0 M 3 2");
+    game->print_board();
+    game->execute_move("S 5 3 M 2 10");
+    game->print_board();
+    game->execute_move("S 3 2 M 4 23");
+    game->print_board();
+//    game->execute_move("S 3 17 M 3 4");
+//    game->execute_move("S 3 17 M 3 4");
+    game->execute_move("S 1 1 M 4 1");
+    game->print_board();
+    game->execute_move("S 4 23 M 4 0");
+    game->print_board();
+    game->execute_move("S 4 1 M 5 2");
+    game->print_board();
+
+
+    cout << "############" << endl;
+
+    game->execute_move("S 1 2 M 5 1 RS 4 1 RE 1 2 X 2 9");
+    game->print_board();
+    // game->execute_move("S 2 9 M 5 24 RS 2 9 RE 3 2 X 4 23");
+    // game->print_board();
+    // game->print_data();
 }
