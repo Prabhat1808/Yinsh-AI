@@ -90,6 +90,12 @@ public:
     Utility* get_util(){
         return util;
     }
+    int get_removed0(){
+        return rings_removed0;
+    }
+    int get_removed1(){
+        return rings_removed1;
+    }
     int get_data(int hexagon, int position){
         return board.at(hexagon).at(position).get_data();
     }
@@ -144,66 +150,6 @@ public:
 
 
     // int removal_len(Node_game* nod, int i, int j, int x){
-    pair<vector<int>,vector<int>> find_consecutives(vector<pair<pair<int,int>,pair<int,int>>> directions)
-    {
-        int curr3 =0, curr4 =0;
-        int buff3 = 0, buff4 = 0;
-        vector<int> counts3(6), counts4(6);
-        for(auto axis: directions)
-        {
-            for(auto w: axis)
-            {
-                int data = board.at(w.first).at(w.second).get_data();
-                if(data == 3)
-                {
-                    if(buff3 == 1)
-                        curr3++;
-                    buff3 = 2;
-                    buff4 = max(0,buff4-1);
-                    curr3++;
-                    if(curr4 != 0)
-                        counts4.at(curr4 - 2) += 1;
-                    curr4 = 0; 
-                }
-                else if(data == 4)
-                {
-                    if(buff4 == 1)
-                        curr4++;
-                    buff4 = 2;
-                    buff3 = max(0,buff3-1);
-                    curr4++;
-                    if(curr3 != 0)
-                        counts3.at(curr3 - 2) += 1;
-                    curr3 = 0;
-                }
-                else
-                {
-                    buff4 = max(0,buff4-1);
-                    buff3 = max(0,buff3-1);
-                    if(curr4 != 0)
-                        counts4.at(curr4 - 2) += 1;
-                    if(curr3 != 0)
-                        counts3.at(curr3 - 2) += 1;
-                    curr3 =0;
-                    curr4 =0;
-                }
-            }
-            if(buff3 == 1)
-                curr3 += 1;
-            if(buff4 == 1);
-                curr4 += 1;
-
-            if(curr3 > 1)
-                counts3.at(curr3 - 2) +=1;
-            if(curr4 > 1)
-                counts4.at(curr4 - 1) += 1;
-            buff3 = 0;
-            buff4 = 0;
-            curr3 = 0;
-            curr4 = 0;
-        }
-        return make_pair(counts3,counts4);
-    }
 
     vector<pair<int, int>> possible_paths(int i, int j)
     {
@@ -665,9 +611,11 @@ public:
 
 
 
-    int get_position(int p, int h){
+    string get_position(int p, int h){
 //        if(p<0) p+=(6*h);
-        return board.at(h).at(p).get_data();
+        int i= board.at(h).at(p).get_data();
+        if(i==0) return ".";
+        else return to_string(i);
     }
 
     int heuristic(){
@@ -675,8 +623,8 @@ public:
         for(vector<Node_game> u: board){
             for(Node_game v : u){
                 if(v.get_data() == my_marker) out++;
-                else if(v.get_data() == my_marker-2) out-=6;
-                else if(v.get_data()<3 && v.get_data()>0) out+=6;
+                else if(v.get_data() == my_marker-2) out-=18;
+                else if(v.get_data()<3 && v.get_data()>0) out+=18;
                 else if(v.get_data()>2) out--;
             }
         }
@@ -708,6 +656,7 @@ public:
         cout << " " << "     " << " " << "     " << get_position(16,5) << "     " << get_position(14,5) << endl;
         cout << "   " << "     " << " " << "     " << " " << " " << endl;
     }
+
 
 };
 
