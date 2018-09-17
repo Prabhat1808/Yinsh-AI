@@ -243,7 +243,7 @@ pair<pair<int, Game>, string> minval(pair<pair<int, Game>, vector<pair<int, int>
 };
 
 pair<pair<int, Game>, string> maxval(pair<pair<int, Game>, vector<pair<int, int> > > mygame, int alpha, int beta, int h) {
-
+    clock_t init = clock();
     vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.check5(mygame.second, mygame.first.second.player + 3);
     vector<pair<Game, string>> newboard;
     if (!before_removal.empty()) {
@@ -270,6 +270,9 @@ pair<pair<int, Game>, string> maxval(pair<pair<int, Game>, vector<pair<int, int>
     pair<pair<int, Game>, string> besti = make_pair(make_pair(INT_MIN, successors.at(0).first.first.second), "");
     for(pair<int, int> v: forcomp){
         pair<pair<pair<int, Game>, vector<pair<int, int>>>, string> u =  successors.at(v.second);
+        clock_t ending = clock();
+        if((double)(ending-init)/(CLOCKS_PER_SEC) > 5) return besti;
+
         pair<pair<int, Game>, string> child = minval(u.first, alpha, beta, h - 1);
         if(besti.first.first<=child.first.first){
             besti.first.first = child.first.first;
@@ -383,6 +386,16 @@ int main(int argc, char** argv)
        pair<int, Game> inp = make_pair(game.heuristic(), game);
        pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
        pair<pair<int, Game>, string> mymove = maxval(taken, INT_MIN, INT_MAX, 3);
+       // if(ply==4){
+       //     pair<pair<int, Game>, string> mymove1 = maxval(taken, INT_MIN, INT_MAX, 4);
+       //     if(mymove1.first.first > mymove.first.first) {
+       //          cerr << "Best Move: " << 4 << endl;
+       //          mymove = mymove1;
+       //     }
+       //     else{
+       //      cerr << "Best Move: " << 3 << endl;
+       //     }
+       //  }
        // cerr << endl << endl;
        cout << mymove.second << endl;
        game.execute_move(mymove.second);

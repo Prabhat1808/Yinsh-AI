@@ -186,9 +186,21 @@ public:
     {
         vector<pair<int,int>> rings = rings_opponent1;
         if(rings.size()==0){
+
             srand(time(NULL));
             int h = rand() % n;
-            int p = rand() % (h*6);
+            int p;
+            while(true){
+                p = rand() % (h*6);
+                if(h != 5)
+                    break;
+                else
+                {
+                    if(p % 5 != 0)
+                        break;
+                }
+            }
+
             return make_pair(h, p);
         }
         int r = 0, dirn = 0, max = 0;
@@ -978,8 +990,6 @@ public:
             out = out - (48*v.first.at(8)) + (48*v.second.at(8));
           
             out = out - (int) (4*pow(5, rings_removed0)) + (int)(4*pow(5, rings+rings_removed1));
-
-        }
 
 
         return out;
