@@ -40,6 +40,7 @@ public:
     Utility* util;
     vector<pair<int, int>> ring_self;
     vector<pair<int, int>> ring_opponent;
+    vector<pair<int, int>> rings_opponent1;
     int rings_placed;
     int rings;
     int ring_selected;
@@ -185,7 +186,10 @@ public:
     {
         vector<pair<int,int>> rings = rings_opponent1;
         if(rings.size()==0){
-            return make_pair(0, 0);
+            srand(time(NULL));
+            int h = rand() % n;
+            int p = rand() % (h*6);
+            return make_pair(h, p);
         }
         int r = 0, dirn = 0, max = 0;
         int ring = 0;
@@ -727,6 +731,7 @@ public:
         else{
             ring_opponent.at(rings_placed/2).first = hexagon;
             ring_opponent.at(rings_placed/2).second = position;
+            rings_opponent1.push_back(make_pair(hexagon, position));
         }
         rings_placed++;
         return true;
@@ -990,12 +995,7 @@ public:
         //ADD YOUR SUMMATIONS HERE
     }
 
-    int placement_heuristic()
-    {
-
-    }
-
-
+    
     void print_board(){
 
         cout << "   " << "     " << " " << "     " << " " << " " << endl;

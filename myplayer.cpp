@@ -352,6 +352,7 @@ int main(int argc, char** argv)
            game.execute_move(move);
            pair<int, int> mov = game.place_ring_heuristic();
            string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
+           cerr << "Move " << mymove << endl;
            // cerr << mymove;
            cout << mymove << "\n";
            game.execute_move(mymove);
@@ -359,8 +360,11 @@ int main(int argc, char** argv)
    }
    else{
        for (int i=0; i<5; i++){
-           string mymove = random_place(game);
+           // string mymove = random_place(game);
            // cerr << mymove << endl;
+           pair<int, int> mov = game.place_ring_heuristic();
+           string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
+
            cout << mymove << endl;
            game.execute_move(mymove);
            getline(cin, move);
