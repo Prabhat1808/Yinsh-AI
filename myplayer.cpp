@@ -43,7 +43,9 @@ void do_remove(pair<Game, string> x, pair<pair<int, int>, pair<int, int> > optio
                 Game readytoremove = toremove.copy_board();
                 readytoremove.remove_ring(r.first, r.second);
                 string move;
-                if(x.second.length()) move = x.second + " RS " + to_string(opt.first.first) + " " + to_string(opt.first.second) + " RE " + to_string(opt.second.first) + " " + to_string(opt.second.second) + " X " + to_string(r.first) + " " + to_string(r.second);
+                if(x.second.length()){
+                    move = x.second + " RS " + to_string(opt.first.first) + " " + to_string(opt.first.second) + " RE " + to_string(opt.second.first) + " " + to_string(opt.second.second) + " X " + to_string(r.first) + " " + to_string(r.second);
+                }
                 else move = "RS " + to_string(opt.first.first) + " " + to_string(opt.first.second) + " RE " + to_string(opt.second.first) + " " + to_string(opt.second.second) + " X " + to_string(r.first) + " " + to_string(r.second);
                 pair<Game, string> out = make_pair(readytoremove, move);
                 future_possibilities.push_back(out);
@@ -112,6 +114,10 @@ vector<pair<Game, string>> remove_rows(vector<pair<pair<int, int>, pair<int, int
         for (pair<pair<int, int>, pair<int, int>> option: removal) {
             vector<pair<Game, string>> future_possibilities;
             for (pair<Game, string> x: current_possibilities) {
+                if(x.first.get_removed1()>2 || x.first.get_removed0()>2){
+                    future_possibilities.push_back(x);
+                    continue;
+                }
                 do_remove(x, option, future_possibilities);
             }
             current_possibilities.clear();
@@ -131,6 +137,13 @@ vector<pair<pair<pair<int, Game>, vector<pair<int, int> > >, string> > get_succe
     vector<pair<pair<pair<int, Game>, vector<pair<int, int>>>, string>> successors;
     for (pair<Game, string> ga: newboard) {
         Game gam = ga.first;
+        if(gam.get_removed0()>2 || gam.get_removed1()>2){
+            pair<int, Game> fir = make_pair(gam.heuristic(), gam);
+            vector<pair<int, int>> chan;
+            pair<pair<int, Game>, vector<pair<int, int>>> fin = make_pair(fir, chan);
+            successors.emplace_back(fin, ga.second);
+            continue;
+        }
         vector<pair<int, int>> rings ;
         if(gam.get_player()==gam.get_marker()-3) rings = gam.self_rings();
         else rings = gam.opponent_rings();
@@ -191,6 +204,7 @@ pair<pair<int, Game>, string> minval(pair<pair<int, Game>, vector<pair<int, int>
     vector<pair<Game, string>> newboard;
     if (!before_removal.empty()) {
         newboard = remove_rows(before_removal, mygame.first.second);
+
     }
     else{
         pair<Game, string> curr_game = make_pair(mygame.first.second, "");
@@ -304,64 +318,85 @@ string random_place(Game game){
     return "";
 }
 
-//  int main(int argc, char** argv){
+// int main(int argc, char** argv){
 //      Utility* util = new Utility(5);
-//      Game game = Game(1, 3, util);
-// //     game.execute_move("")
-//      game.execute_move("P 3 6");
-//      game.execute_move("P 2 6");
-//      game.execute_move("P 1 0");
-//      game.execute_move("P 4 6");
-//      game.execute_move("P 4 18");
+//      Game game = Game(0, 4, util);
 //      game.execute_move("P 3 0");
-//      game.execute_move("P 4 12");
-//      game.execute_move("P 2 0");
-//      game.execute_move("P 3 12");
-//      game.execute_move("P 4 0");
-// //     game.execute_move("S 3 12 M 5 18");
-// //     game.execute_move("S 4 0 M 5 24");
-// //     game.execute_move("S 5 18 M 5 16");
-// //     game.execute_move("S 5 24 M 5 21");
-// //     game.execute_move("S 5 16 M 5 29");
-// //     game.execute_move("S 5 21 M 4 13");
-// //     game.execute_move("S 5 29 M 4 1");
-// //     game.execute_move("S 4 13 M 5 17");
-// //     game.execute_move("S 4 12 M 4 14");
-// //     game.execute_move("S 5 17 M 3 9");
-// //     game.execute_move("S 4 1 M 5 14");
-// //     game.execute_move("S 3 9 M 4 17");
-// //     game.execute_move("S 5 14 M 3 1");
-// //     game.execute_move("S 3 0 M 5 2");
-// //     game.execute_move("S 3 1 M 5 1");
-// //     game.execute_move("S 2 0 M 4 2");
-// //     game.execute_move("S 5 1 M 2 1");
-// //     game.execute_move("S 4 17 M 5 19");
-// //     game.execute_move("S 2 1 M 3 17");
-// //     game.execute_move("S 4 2 M 2 11");
-// //     game.execute_move("S 4 18 M 4 16");
-// //     game.execute_move("S 2 11 M 5 22");
-// //     game.execute_move("S 3 17 M 1 5");
-// //     game.execute_move("S 4 6 M 4 22");
-// //     game.execute_move("S 1 0 M 3 2");
-// //     game.execute_move("S 4 22 M 2 2");
-// //     game.execute_move("S 3 2 M 4 23");
-// //     game.execute_move("S 5 2 M 3 16");
-// //     game.execute_move("S 4 23 M 4 21");
-// //     game.execute_move("S 3 16 M 1 1");
-// //     game.execute_move("S 1 5 M 4 3");
-// //     game.execute_move("S 5 19 M 5 6");
-// //
-// //     game.execute_move("S 4 16 M 2 8");
-// //     game.execute_move("S 5 22 M 3 11");
-// //     game.print_board();
-// //     game.execute_move("S 2 8 M 5 23");
-// //     game.print_board();
-// //     // game->execute_move("S 3 11 M 2 9");
+//     game.execute_move("P 4 0");
+//     game.execute_move("P 0 0");
+//     game.execute_move("P 1 0");
+//     game.execute_move("P 2 10");
+//     game.execute_move("P 2 0");
+//     game.execute_move("P 3 8");
+//     game.execute_move("P 3 12");
+//     game.execute_move("P 1 2");
+//     game.execute_move("P 4 6");
+//     game.execute_move("S 2 10 M 4 14");
+//     game.execute_move("S 4 6 M 5 11");
+//     game.execute_move("S 0 0 M 2 6");
+//     game.execute_move("S 5 11 M 5 14");
+//     game.execute_move("S 1 2 M 1 3");
+//     game.execute_move("S 5 14 M 4 11");
+//     game.execute_move("S 1 3 M 2 7");
+//     game.execute_move("S 4 11 M 5 16");
+//     game.execute_move("S 2 7 M 4 23");
+//     game.execute_move("S 5 16 M 1 4");
+//     game.execute_move("S 2 6 M 3 5");
+//     game.execute_move("S 1 4 M 3 10");
+//     game.execute_move("S 3 0 M 3 16");
+//     game.execute_move("S 3 10 M 4 13");
+//     game.execute_move("S 4 23 M 4 21");
+//     game.execute_move("S 4 13 M 5 17");
+//     game.execute_move("S 4 14 M 4 15");
+//     game.execute_move("S 5 17 M 3 11");
+//     game.execute_move("S 3 5 M 1 1");
+//     game.execute_move("S 3 11 M 3 9");
+//     game.execute_move("S 4 15 M 5 21");
+//     game.execute_move("S 3 9 M 4 12");
+//     game.execute_move("S 1 1 M 4 1");
+//     game.execute_move("S 4 12 M 4 10");
+//     game.execute_move("S 4 21 M 4 20");
+//     game.execute_move("S 4 10 M 5 13");
+//     game.execute_move("S 5 21 M 4 16");
+//     game.execute_move("S 5 13 M 3 7");
+//     game.execute_move("S 3 16 M 3 15");
+//     game.execute_move("S 3 7 M 4 9");
+//     game.execute_move("S 4 1 M 2 1");
+//     game.execute_move("S 4 9 M 5 12");
+//     game.execute_move("S 2 1 M 5 1");
+//     game.execute_move("S 5 12 M 3 6");
+//     game.execute_move("S 3 15 M 5 27");
+//     game.execute_move("S 3 6 M 4 8");
+//     game.execute_move("S 3 8 M 2 8");
+//     game.execute_move("S 4 8 M 4 5");
+//     game.execute_move("S 2 8 M 3 13");
+//     game.execute_move("S 4 5 M 4 7");
+//     game.execute_move("S 4 20 M 4 22");
+//     game.execute_move("S 4 7 M 5 9 RS 4 5 RE 5 11 X 5 9");
+//     game.execute_move("S 3 13 M 2 9");
+//     game.execute_move("S 3 12 M 5 18 RS 4 15 RE 5 14 X 5 18");
+//     game.execute_move("S 4 16 M 5 19");
+//     game.execute_move("S 2 0 M 3 14");
+//     game.execute_move("S 4 22 M 5 28");
+//     game.execute_move("S 3 14 M 4 15");
+//     game.execute_move("S 5 1 M 5 2");
+//     game.execute_move("S 4 15 M 5 18");
+//     game.execute_move("S 5 19 M 2 3");
+//     game.execute_move("S 5 18 M 2 5");
+//     game.execute_move("RS 2 8 RE 4 10 X 2 9 S 5 27 M 5 26");
+//     game.execute_move("S 2 5 M 5 14");
+//     game.execute_move("S 2 3 M 3 2");
+//     game.execute_move("S 5 14 M 3 8");
+//     game.execute_move("S 3 2 M 5 7");
+//     game.execute_move("S 3 8 M 4 13");
+//     vector<pair<int, int>> changed = game.execute_move("S 5 7 M 3 3");
+
+// //     vector<pair<int, int>> changed = game.execute_move("S 3 15 M 3 14");
 
 //      game.print_board();
-//      vector<pair<int, int>> changed;
+// //     vector<pair<int, int>> changed;
 // //     changed = game.execute_move("S 3 11 M 2 9");
-//      game.print_board();
+// //     game.print_board();
 //      pair<int, Game> inp = make_pair(game.heuristic(), game);
 
 //      pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
