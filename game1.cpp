@@ -148,7 +148,89 @@ public:
         return copied;
     }
 
+//#########################PLACEMENT###################################
+    pair<int,int> moves_along_axis(vector<pair<int,int>> axis, int index)
+    {
+        int fwd = 0, bcd = 0;
+        for(int i =index-1;i>=0;i--)
+        {
+            pair<int,int> ele = axis.at(i);
+            int dat = board.at(ele.first).at(ele.second).get_data();
+            if(dat == 1 || dat == 2)
+                break;
+            bcd++;
+        }
+        for(int i =index+1;i<axis.size();i++)
+        {
+            pair<int,int> ele = axis.at(i);
+            int dat = board.at(ele.first).at(ele.second).get_data();
+            if(dat == 1 || dat == 2)
+                break;
+            fwd++;
+        }
+        return make_pair(fwd,bcd); // first has forward, 2nd has backward
+    }
 
+    vector<pair<int,int>> total_moves(pair<int,int> point)
+    {
+        vector<pair<int,int>> outputs;
+        vector<pair<int,int>> axis_map = util->board.at(point.first).at(point.second)->axis_mapping;
+        outputs.push_back(moves_along_axis(util->elems_on_diagonal1.at(axis_map.at(0).first) , axis_map.at(0).second));
+        outputs.push_back(moves_along_axis(util->elems_on_diagonal2.at(axis_map.at(1).first) , axis_map.at(1).second));
+        outputs.push_back(moves_along_axis(util->elems_on_vertical.at(axis_map.at(2).first) , axis_map.at(2).second));
+        return outputs;
+    }
+
+    pair<int,int> place_ring_heuristic(vector<pair<int,int>> rings)
+    {
+        int r = 0, dirn = 0, max = 0;
+        int ring = 0;
+        int rn = 0;
+        for(auto point:rings)
+        {
+            // cout << "Checking ring : " << point.first << " , " << point.second << endl;
+            vector<pair<int,int>> ndr = total_moves(point);
+            // for(auto w: ndr)
+            // {
+            //     cout << w.first << " , " << w.second << endl;
+            // }
+            // int r = 0, dirn = 0, max = 0; // 1 means forward, -1 means backward
+            for(int i = 0;i< 3; i++)
+            {
+                pair<int,int> tmp = ndr.at(i);
+                if (tmp.first > max)
+                {
+                    // cout << "Max : -> " << max << " and Current -> " << tmp.first << endl;
+                    max = tmp.first;
+                    r = i;
+                    dirn = 1;
+                    ring = rn;
+                }
+                if(tmp.second > max)
+                {
+                    // cout << "Max : -> " << max << " and Current -> " << tmp.second << endl;
+                    max = tmp.second;
+                    r = i;
+                    dirn = -1;
+                    ring = rn;
+                }
+            }
+            rn++;
+        }
+
+        pair<int,int> point = rings.at(ring);
+        vector<pair<int,int>> axis_map = util->board.at(point.first).at(point.second)->axis_mapping;
+        pair<int,int> index;
+        if(r == 0)
+            index = util->elems_on_diagonal1.at(axis_map.at(0).first).at(axis_map.at(0).second + dirn);
+        if(r == 1)
+            index = util->elems_on_diagonal2.at(axis_map.at(1).first).at(axis_map.at(1).second + dirn);
+        if(r==2)
+            index = util->elems_on_vertical.at(axis_map.at(2).first).at(axis_map.at(2).second + dirn);
+        return index;
+    }
+
+//#########################PLACEMENT###################################
     // int removal_len(Node_game* nod, int i, int j, int x){
 
     vector<pair<int, int>> possible_paths(int i, int j)
@@ -504,6 +586,65 @@ public:
         return make_pair(counts3,counts4);
     }
 
+    pair<vector<pair<pair<int,int>,pair<int,int>>>,vector<pair<pair<int,int>,pair<int,int>>>> find_consecutive_locations(vector<vector<pair<int,int>>> directions)
+    {
+        int curr3 =0, curr4 =0;
+        vector<pair<pair<int,int>,pair<int,int>>> cons3, cons4;
+        pair<int,int> st3,en3,st4,en4;
+        int cn =0;
+        for(auto axis: directions)
+        {
+            // cout << "AXIS : " << cn++ << endl;
+            for(auto w: axis)
+            {
+                
+                 int data = board.at(w.first).at(w.second).get_data();
+                 // cout << w.first << " , " << w.second << " --> " << data << endl;
+                if(data == 3)
+                {
+                    if(curr3 == 0)
+                        st3 = w;
+                    en3 = w;
+                    curr3++;
+                    if(curr4 == 4)
+                        cons4.push_back(make_pair(st4,en4));
+                    curr4 = 0;
+                }
+                else if(data == 4)
+                {
+                    if(curr4 == 0)
+                        st4 = w;
+                    en4 = w;
+                    curr4++;
+                    if(curr3 == 4)
+                        cons3.push_back(make_pair(st3,en3));
+                    curr3 = 0;
+                }
+                else
+                {
+                    if(curr4 == 4)
+                        cons4.push_back(make_pair(st4,en4));
+                    if(curr3 == 4)
+                    {
+                        cons3.push_back(make_pair(st3,en3));
+                        // cout << "updating vector 3" << endl;
+                    }
+                    curr3 =0;
+                    curr4 =0;
+                }
+                // cout << curr3 << " and " << curr4 << endl;
+            }
+
+            if(curr4 == 4)
+                cons4.push_back(make_pair(st4,en4));
+            if(curr3 == 4)
+                cons3.push_back(make_pair(st3,en3));
+            curr3 = 0;
+            curr4 = 0;
+        }
+        return make_pair(cons3,cons4);
+    }
+
     bool danger_on_axis(vector<vector<pair<int,int>>> directions, pair<int,int> axis_locations, int opponent_marker, int my_marker)
     {
         int fwd = 0;
@@ -847,7 +988,7 @@ public:
 
     int placement_heuristic()
     {
-        
+
     }
 
 
@@ -945,5 +1086,13 @@ public:
 // }
 // int main()
 // {
-//     return 1;
+//     Utility* util = new Utility(5);
+//     Game game = Game(0, 4, util);
+//     vector<pair<int,int>> ringos;
+//     game.execute_move("P 3 9");
+//     game.execute_move("P 4 12");
+//     ringos.push_back(make_pair(3,9));
+//     ringos.push_back(make_pair(4,12));
+//     pair<int,int> ind = game.place_ring_heuristic(ringos);
+//     cout << ind.first << " , " << ind.second << endl; 
 // }
