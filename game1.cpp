@@ -504,7 +504,7 @@ public:
         return make_pair(counts3,counts4);
     }
 
-    bool danger_on_axis(vector<vector<pair<int,int>>> directions, pair<int,int> axis_locations, int opponent_marker)
+    bool danger_on_axis(vector<vector<pair<int,int>>> directions, pair<int,int> axis_locations, int opponent_marker, int my_marker)
     {
         int fwd = 0;
         int bcd = 0;
@@ -512,44 +512,64 @@ public:
         for(int i=axis_locations.second + 1;i < axis.size(); i++)
         {
             int dat = board.at(axis.at(i).first).at(axis.at(i).second).get_data();
+            cout << axis.at(i).first << " , " << axis.at(i).second << " --> " << dat << endl;
             if(dat == 0)
             {
                 fwd = -1;
                 break;
             }
+            // if(dat == 1 || dat == 2)
             if(dat == opponent_marker)
             {
                 fwd = 1;
                 break;
             }
+            if(dat = my_marker)
+                break;
         }
 
         for(int i=axis_locations.second - 1;i >= 0; i--)
         {
             int dat = board.at(axis.at(i).first).at(axis.at(i).second).get_data();
+            cout << axis.at(i).first << " , " << axis.at(i).second << " --> " << dat << endl;
             if(dat == 0)
             {
                 bcd = -1;
                 break;
             }
+            // if(dat == 1 || dat == 2)
             if(dat == opponent_marker)
             {
                 bcd = 1;
                 break;
             }
+            if(dat = my_marker)
+                break;
         }
+        cout << "FWD -> " << fwd << "\tBCD -> " << bcd << endl;
         if( (fwd == 1 && bcd == -1) || (fwd == -1 && bcd == 1) )
             return true;
         return false;
     }
 
-    bool point_in_danger(pair<int,int> point, int opponent_marker)
+    bool point_in_danger(pair<int,int> point, int opponent_marker, int my_marker)
     {
         vector<pair<int,int>> axis_map = util->board.at(point.first).at(point.second)->axis_mapping;
-        bool d1 = danger_on_axis(util->elems_on_diagonal1,axis_map.at(0),opponent_marker);
-        bool d2 = danger_on_axis(util->elems_on_diagonal2,axis_map.at(1),opponent_marker);
-        bool v = danger_on_axis(util->elems_on_vertical,axis_map.at(2),opponent_marker);
+        bool d1 = danger_on_axis(util->elems_on_diagonal1,axis_map.at(0),opponent_marker,my_marker);
+        cout << "ALONG D1 : " << d1 <<endl;
+        bool d2 = danger_on_axis(util->elems_on_diagonal2,axis_map.at(1),opponent_marker,my_marker);
+        cout << "ALONG D2 : " << d2 <<endl;
+        bool v = danger_on_axis(util->elems_on_vertical,axis_map.at(2),opponent_marker,my_marker);
+        cout << "ALONG v : " << v <<endl;
         return (d1 || d2 || v);
+    }
+
+    bool streak_breakable(vector<pair<int,int>> points, int opponent_marker, int my_marker)
+    {
+        bool breakable = false;
+        for(auto w: points)
+            breakable =  breakable || point_in_danger(w, opponent_marker, my_marker);
+        return breakable;
     }
 
     bool place_ring(int hexagon, int position){
@@ -734,6 +754,20 @@ public:
         return out;
     }
 
+    int heuristic_consecutives()
+    {
+        int out = 0;
+        pair<vector<int>,vector<int>> d1 = find_consecutives(util->elems_on_diagonal1);
+        pair<vector<int>,vector<int>> d2 = find_consecutives(util->elems_on_diagonal2);
+        pair<vector<int>,vector<int>> v = find_consecutives(util->elems_on_vertical);
+        //ADD YOUR SUMMATIONS HERE
+    }
+
+    int placement_heuristic()
+    {
+        
+    }
+
 
     void print_board(){
 
@@ -826,4 +860,8 @@ public:
 //     // game->execute_move("S 2 9 M 5 24 RS 2 9 RE 3 2 X 4 23");
 //     // game->print_board();
 //     // game->print_data();
+// }
+// int main()
+// {
+//     return 1;
 // }
