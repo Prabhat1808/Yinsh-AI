@@ -504,6 +504,65 @@ public:
         return make_pair(counts3,counts4);
     }
 
+    pair<vector<pair<pair<int,int>,pair<int,int>>>,vector<pair<pair<int,int>,pair<int,int>>>> find_consecutive_locations(vector<vector<pair<int,int>>> directions)
+    {
+        int curr3 =0, curr4 =0;
+        vector<pair<pair<int,int>,pair<int,int>>> cons3, cons4;
+        pair<int,int> st3,en3,st4,en4;
+        int cn =0;
+        for(auto axis: directions)
+        {
+            // cout << "AXIS : " << cn++ << endl;
+            for(auto w: axis)
+            {
+                
+                 int data = board.at(w.first).at(w.second).get_data();
+                 // cout << w.first << " , " << w.second << " --> " << data << endl;
+                if(data == 3)
+                {
+                    if(curr3 == 0)
+                        st3 = w;
+                    en3 = w;
+                    curr3++;
+                    if(curr4 == 4)
+                        cons4.push_back(make_pair(st4,en4));
+                    curr4 = 0;
+                }
+                else if(data == 4)
+                {
+                    if(curr4 == 0)
+                        st4 = w;
+                    en4 = w;
+                    curr4++;
+                    if(curr3 == 4)
+                        cons3.push_back(make_pair(st3,en3));
+                    curr3 = 0;
+                }
+                else
+                {
+                    if(curr4 == 4)
+                        cons4.push_back(make_pair(st4,en4));
+                    if(curr3 == 4)
+                    {
+                        cons3.push_back(make_pair(st3,en3));
+                        // cout << "updating vector 3" << endl;
+                    }
+                    curr3 =0;
+                    curr4 =0;
+                }
+                // cout << curr3 << " and " << curr4 << endl;
+            }
+
+            if(curr4 == 4)
+                cons4.push_back(make_pair(st4,en4));
+            if(curr3 == 4)
+                cons3.push_back(make_pair(st3,en3));
+            curr3 = 0;
+            curr4 = 0;
+        }
+        return make_pair(cons3,cons4);
+    }
+
     bool danger_on_axis(vector<vector<pair<int,int>>> directions, pair<int,int> axis_locations, int opponent_marker, int my_marker)
     {
         int fwd = 0;
@@ -765,7 +824,7 @@ public:
 
     int placement_heuristic()
     {
-        
+
     }
 
 
