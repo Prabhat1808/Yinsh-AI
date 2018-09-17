@@ -350,7 +350,8 @@ int main(int argc, char** argv)
            getline(cin, move);
            // cout << "Move taken: " << move <<  endl;
            game.execute_move(move);
-           string mymove = random_place(game);
+           pair<int, int> mov = game.place_ring_heuristic();
+           string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
            // cerr << mymove;
            cout << mymove << "\n";
            game.execute_move(mymove);

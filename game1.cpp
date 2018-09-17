@@ -181,8 +181,12 @@ public:
         return outputs;
     }
 
-    pair<int,int> place_ring_heuristic(vector<pair<int,int>> rings)
+    pair<int,int> place_ring_heuristic()
     {
+        vector<pair<int,int>> rings = rings_opponent1;
+        if(rings.size()==0){
+            return make_pair(0, 0);
+        }
         int r = 0, dirn = 0, max = 0;
         int ring = 0;
         int rn = 0;
