@@ -433,21 +433,124 @@ public:
         return sequences;
     }
 
-    // void find_consecutives(vector<pair<pair<int,int>,pair<int,int>>> directions)
-    // {
-    //     int curr3 =0, curr4 =0;
-    //     for(auto axis: directions)
-    //     {
-    //         for(auto w: axis)
-    //         {
-    //             int data = board.at(w.first).at(w.second)->data;
-    //             if(data == 3)
-    //             {
-    //                 curr3++;
-    //             }
-    //         }
-    //     }
-    // }
+    pair<vector<int>,vector<int>> find_consecutives(vector<vector<pair<int,int>>> directions)
+    {
+        int curr3 =0, curr4 =0;
+//        int buff3 = 0, buff4 = 0;
+//        int prev3 = 0, prev4 = 0;
+        vector<int> counts3(6), counts4(6);
+        int cn =0;
+        for(auto axis: directions)
+        {
+//            cout << "Entering AXIS : " << cn++ << endl;
+            for(auto w: axis)
+            {
+                int data = board.at(w.first).at(w.second).get_data();
+                if(data == 3)
+                {
+//                    if(buff3 == 1)
+//                        curr3++;
+//                    buff3 = 2;
+//                    buff4 = max(0,buff4-1);
+                    curr3++;
+                    if(curr4 > 1)
+                        counts4.at(curr4 - 2) += 1;
+                    curr4 = 0;
+                }
+                else if(data == 4)
+                {
+//                    if(buff4 == 1)
+//                        curr4++;
+//                    buff4 = 2;
+//                    buff3 = max(0,buff3-1);
+                    curr4++;
+                    if(curr3 > 1)
+                        counts3.at(curr3 - 2) += 1;
+                    curr3 = 0;
+                }
+                else
+                {
+//                    buff4 = max(0,buff4-1);
+//                    buff3 = max(0,buff3-1);
+                    if(curr4 > 1)
+                        counts4.at(curr4 - 2) += 1;
+                    if(curr3 > 1)
+                        counts3.at(curr3 - 2) += 1;
+                    curr3 =0;
+                    curr4 =0;
+                }
+            }
+//            if(buff3 == 1)
+//                curr3 += 1;
+//            if(buff4 == 1);
+//            curr4 += 1;
+
+            if(curr3 > 1)
+                counts3.at(curr3 - 2) +=1;
+            if(curr4 > 1)
+                counts4.at(curr4 - 2) += 1;
+//            buff3 = 0;
+//            buff4 = 0;
+            curr3 = 0;
+            curr4 = 0;
+//             cout << "AXIS " << cn++ << "\n";
+//             for(int i =0;i<6;i++)
+//            {
+//                 cout << i << " --> " << "( marker 3: " << counts3.at(i) << ") and marker 4: " << counts4.at(i) << ")\n";
+//                 counts3.at(i) = 0;
+//                 counts4.at(i) = 0;
+//            }
+        }
+        return make_pair(counts3,counts4);
+    }
+
+    bool danger_on_axis(vector<vector<pair<int,int>>> directions, pair<int,int> axis_locations, int opponent_marker)
+    {
+        int fwd = 0;
+        int bcd = 0;
+        vector<pair<int,int>> axis = directions.at(axis_locations.first);
+        for(int i=axis_locations.second + 1;i < axis.size(); i++)
+        {
+            int dat = board.at(axis.at(i).first).at(axis.at(i).second).get_data();
+            if(dat == 0)
+            {
+                fwd = -1;
+                break;
+            }
+            if(dat == opponent_marker)
+            {
+                fwd = 1;
+                break;
+            }
+        }
+
+        for(int i=axis_locations.second - 1;i >= 0; i--)
+        {
+            int dat = board.at(axis.at(i).first).at(axis.at(i).second).get_data();
+            if(dat == 0)
+            {
+                bcd = -1;
+                break;
+            }
+            if(dat == opponent_marker)
+            {
+                bcd = 1;
+                break;
+            }
+        }
+        if( (fwd == 1 && bcd == -1) || (fwd == -1 && bcd == 1) )
+            return true;
+        return false;
+    }
+
+    bool point_in_danger(pair<int,int> point, int opponent_marker)
+    {
+        vector<pair<int,int>> axis_map = util->board.at(point.first).at(point.second)->axis_mapping;
+        bool d1 = danger_on_axis(util->elems_on_diagonal1,axis_map.at(0),opponent_marker);
+        bool d2 = danger_on_axis(util->elems_on_diagonal2,axis_map.at(1),opponent_marker);
+        bool v = danger_on_axis(util->elems_on_vertical,axis_map.at(2),opponent_marker);
+        return (d1 || d2 || v);
+    }
 
     bool place_ring(int hexagon, int position){
         if(board.at(hexagon).at(position).get_data()!=0) return false;
