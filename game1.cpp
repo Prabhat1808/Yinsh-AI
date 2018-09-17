@@ -438,7 +438,7 @@ public:
         int curr3 =0, curr4 =0;
 //        int buff3 = 0, buff4 = 0;
 //        int prev3 = 0, prev4 = 0;
-        vector<int> counts3(6), counts4(6);
+        vector<int> counts3(9), counts4(9);
         int cn =0;
         for(auto axis: directions)
         {
@@ -741,16 +741,97 @@ public:
         else return to_string(i);
     }
 
+    // int heuristic(){
+    //     int out = 0;
+    //     for(vector<Node_game> u: board){
+    //         for(Node_game v : u){
+    //             if(v.get_data() == my_marker) out++;
+    //             else if(v.get_data() == my_marker-2) out-=18;
+    //             else if(v.get_data()<3 && v.get_data()>0) out+=18;
+    //             else if(v.get_data()>2) out--;
+    //         }
+    //     }
+    //     return out;
+    // }
+
     int heuristic(){
         int out = 0;
-        for(vector<Node_game> u: board){
-            for(Node_game v : u){
-                if(v.get_data() == my_marker) out++;
-                else if(v.get_data() == my_marker-2) out-=18;
-                else if(v.get_data()<3 && v.get_data()>0) out+=18;
-                else if(v.get_data()>2) out--;
-            }
+        pair<vector<int>,vector<int>> d1 = find_consecutives(util->elems_on_diagonal1);
+        pair<vector<int>,vector<int>> d2 = find_consecutives(util->elems_on_diagonal2);
+        pair<vector<int>,vector<int>> v = find_consecutives(util->elems_on_vertical);
+        if(my_marker==3){
+            // cerr << d1.first.size();
+            out = out + (2*d1.first.at(0)) - (2*d1.second.at(0));
+            out = out + (4*d1.first.at(1)) - (4*d1.second.at(1));
+            out = out + (8*d1.first.at(2)) - (8*d1.second.at(2));
+            out = out + (16*d1.first.at(3)) - (16*d1.second.at(3));
+            out = out + (18*d1.first.at(4)) - (18*d1.second.at(4));
+            out = out + (20*d1.first.at(5)) - (20*d1.second.at(5));
+            out = out + (24*d1.first.at(6)) - (24*d1.second.at(6));
+            out = out + (32*d1.first.at(7)) - (32*d1.second.at(7));
+            out = out + (48*d1.first.at(8)) - (48*d1.second.at(8));
+
+            out = out + (2*d2.first.at(0)) - (2*d2.second.at(0));
+            out = out + (4*d2.first.at(1)) - (4*d2.second.at(1));
+            out = out + (8*d2.first.at(2)) - (8*d2.second.at(2));
+            out = out + (16*d2.first.at(3)) - (16*d2.second.at(3));
+            out = out + (18*d2.first.at(4)) - (18*d2.second.at(4));
+            out = out + (20*d2.first.at(5)) - (20*d2.second.at(5));
+            out = out + (24*d2.first.at(6)) - (24*d2.second.at(6));
+            out = out + (32*d2.first.at(7)) - (32*d2.second.at(7));
+            out = out + (48*d2.first.at(8)) - (48*d2.second.at(8));
+
+            out = out + (2*v.first.at(0)) - (2*v.second.at(0));
+            out = out + (4*v.first.at(1)) - (4*v.second.at(1));
+            out = out + (8*v.first.at(2)) - (8*v.second.at(2));
+            out = out + (16*v.first.at(3)) - (16*v.second.at(3));
+            out = out + (18*v.first.at(4)) - (18*v.second.at(4));
+            out = out + (20*v.first.at(5)) - (20*v.second.at(5));
+            out = out + (24*v.first.at(6)) - (24*v.second.at(6));
+            out = out + (32*v.first.at(7)) - (32*v.second.at(7));
+            out = out + (48*v.first.at(8)) - (48*v.second.at(8));
+
+            out = out + (int) (4*pow(5, rings_removed0)) - (int)(4*pow(5, rings+rings_removed1));
+
+
         }
+        if(my_marker==4){
+            // cerr << d1.first.size();
+            out = out - (2*d1.first.at(0)) + (2*d1.second.at(0));
+            out = out - (4*d1.first.at(1)) + (4*d1.second.at(1));
+            out = out - (8*d1.first.at(2)) + (8*d1.second.at(2));
+            out = out - (16*d1.first.at(3)) + (16*d1.second.at(3));
+             out = out - (18*d1.first.at(4)) + (18*d1.second.at(4));
+            out = out - (20*d1.first.at(5)) + (20*d1.second.at(5));
+            out = out - (24*d1.first.at(6)) + (24*d1.second.at(6));
+            out = out - (32*d1.first.at(7)) + (32*d1.second.at(7));
+            out = out - (48*d1.first.at(8)) + (48*d1.second.at(8));
+
+            out = out - (2*d2.first.at(0)) + (2*d2.second.at(0));
+            out = out - (4*d2.first.at(1)) + (4*d2.second.at(1));
+            out = out - (8*d2.first.at(2)) + (8*d2.second.at(2));
+            out = out - (16*d2.first.at(3)) + (16*d2.second.at(3));
+             out = out - (18*d2.first.at(4)) + (18*d2.second.at(4));
+            out = out - (20*d2.first.at(5)) + (20*d2.second.at(5));
+            out = out - (24*d2.first.at(6)) + (24*d2.second.at(6));
+            out = out - (32*d2.first.at(7)) + (32*d2.second.at(7));
+            out = out - (48*d2.first.at(8)) + (48*d2.second.at(8));
+
+            out = out - (2*v.first.at(0)) + (2*v.second.at(0));
+            out = out - (4*v.first.at(1)) + (4*v.second.at(1));
+            out = out - (8*v.first.at(2)) + (8*v.second.at(2));
+            out = out - (16*v.first.at(3)) + (16*v.second.at(3));
+            out = out - (18*v.first.at(4)) + (18*v.second.at(4));
+            out = out - (20*v.first.at(5)) + (20*v.second.at(5));
+            out = out - (24*v.first.at(6)) + (24*v.second.at(6));
+            out = out - (32*v.first.at(7)) + (32*v.second.at(7));
+            out = out - (48*v.first.at(8)) + (48*v.second.at(8));
+          
+            out = out - (int) (4*pow(5, rings_removed0)) + (int)(4*pow(5, rings+rings_removed1));
+
+        }
+
+
         return out;
     }
 
@@ -760,6 +841,7 @@ public:
         pair<vector<int>,vector<int>> d1 = find_consecutives(util->elems_on_diagonal1);
         pair<vector<int>,vector<int>> d2 = find_consecutives(util->elems_on_diagonal2);
         pair<vector<int>,vector<int>> v = find_consecutives(util->elems_on_vertical);
+        return out;
         //ADD YOUR SUMMATIONS HERE
     }
 

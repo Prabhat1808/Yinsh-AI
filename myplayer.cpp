@@ -224,32 +224,22 @@ pair<pair<int, Game>, string> minval(pair<pair<int, Game>, vector<pair<int, int>
         return output;
     }
     sort(forcomp.begin(), forcomp.end());
+    pair<pair<int, Game>, string> besti = make_pair(make_pair(INT_MAX, successors.at(0).first.first.second), "");
+
     for(pair<int, int> v: forcomp){
         auto u = successors.at(v.second);
         pair<pair<int, Game>, string> child = maxval(u.first, alpha, beta, h - 1);
-        beta = min(beta, child.first.first);
+        if(besti.first.first>=child.first.first){
+            besti.first.first = child.first.first;
+            besti.first.second = u.first.first.second;
+            besti.second = u.second;
+        }
+        beta = min(beta, besti.first.first);
         if (alpha >= beta) {
-//            Game out = child.first.second->copy_board();
-//            child.first.second = out;
-            // ##################
-//            for(auto v : successors){
-//                delete v.first.first.second;
-//            }
-            // ##################
-            return child;
+            break;
         }
     }
-    int l = successors.size()-1;
-//    Game out = successors.at(l).first.first.second->copy_board();
-    pair<pair<int, Game>, string> output = make_pair(successors.at(l).first.first, successors.at(l).second);
-//    output.first.second = out;
-    // ############
-//    for(auto v : successors){
-//        delete v.first.first.second;
-//    }
-    // ################
-
-    return output;
+    return besti;
 };
 
 pair<pair<int, Game>, string> maxval(pair<pair<int, Game>, vector<pair<int, int> > > mygame, int alpha, int beta, int h) {
@@ -276,38 +266,29 @@ pair<pair<int, Game>, string> maxval(pair<pair<int, Game>, vector<pair<int, int>
         return output;
     }
     sort(forcomp.begin(), forcomp.end());
-    reverse(successors.begin(), successors.end());
+    reverse(forcomp.begin(), forcomp.end());
+    pair<pair<int, Game>, string> besti = make_pair(make_pair(INT_MIN, successors.at(0).first.first.second), "");
     for(pair<int, int> v: forcomp){
         pair<pair<pair<int, Game>, vector<pair<int, int>>>, string> u =  successors.at(v.second);
         pair<pair<int, Game>, string> child = minval(u.first, alpha, beta, h - 1);
-        alpha = max(alpha, child.first.first);
+        if(besti.first.first<=child.first.first){
+            besti.first.first = child.first.first;
+            besti.first.second = u.first.first.second;
+            besti.second = u.second;
+        }
+        alpha = max(alpha, besti.first.first);
         if (alpha >= beta) {
-//            Game out = child.first.second.copy_board();
-//            child.first.second = out;
-//            // ###################
-//            for(auto v : successors){
-//                delete v.first.first.second;
-//            }
-            // ###############
-            return child;
+            break;
         }
     }
-    int l = 0;
-    // ###############
-//    Game out = successors.at(l).first.first.second->copy_board();
-    pair<pair<int, Game>, string> output = make_pair(successors.at(l).first.first, successors.at(l).second);
-//    output.first.second = out;
-//    for(auto v : successors){
-//        delete v.first.first.second;
-//    }
-    // ############
-    return output;
+    return besti;
 };
 
 string random_place(Game game){
-    srand(time(NULL));
     while (true){
         // cout << game->n << endl;
+        srand(time(NULL));
+
         int h = rand() % game.get_n();
         if(h==0) continue;
         int p = rand() % h*6;
@@ -318,100 +299,12 @@ string random_place(Game game){
     return "";
 }
 
-// int main(int argc, char** argv){
-//      Utility* util = new Utility(5);
-//      Game game = Game(0, 4, util);
-//      game.execute_move("P 3 0");
-//     game.execute_move("P 4 0");
-//     game.execute_move("P 0 0");
-//     game.execute_move("P 1 0");
-//     game.execute_move("P 2 10");
-//     game.execute_move("P 2 0");
-//     game.execute_move("P 3 8");
-//     game.execute_move("P 3 12");
-//     game.execute_move("P 1 2");
-//     game.execute_move("P 4 6");
-//     game.execute_move("S 2 10 M 4 14");
-//     game.execute_move("S 4 6 M 5 11");
-//     game.execute_move("S 0 0 M 2 6");
-//     game.execute_move("S 5 11 M 5 14");
-//     game.execute_move("S 1 2 M 1 3");
-//     game.execute_move("S 5 14 M 4 11");
-//     game.execute_move("S 1 3 M 2 7");
-//     game.execute_move("S 4 11 M 5 16");
-//     game.execute_move("S 2 7 M 4 23");
-//     game.execute_move("S 5 16 M 1 4");
-//     game.execute_move("S 2 6 M 3 5");
-//     game.execute_move("S 1 4 M 3 10");
-//     game.execute_move("S 3 0 M 3 16");
-//     game.execute_move("S 3 10 M 4 13");
-//     game.execute_move("S 4 23 M 4 21");
-//     game.execute_move("S 4 13 M 5 17");
-//     game.execute_move("S 4 14 M 4 15");
-//     game.execute_move("S 5 17 M 3 11");
-//     game.execute_move("S 3 5 M 1 1");
-//     game.execute_move("S 3 11 M 3 9");
-//     game.execute_move("S 4 15 M 5 21");
-//     game.execute_move("S 3 9 M 4 12");
-//     game.execute_move("S 1 1 M 4 1");
-//     game.execute_move("S 4 12 M 4 10");
-//     game.execute_move("S 4 21 M 4 20");
-//     game.execute_move("S 4 10 M 5 13");
-//     game.execute_move("S 5 21 M 4 16");
-//     game.execute_move("S 5 13 M 3 7");
-//     game.execute_move("S 3 16 M 3 15");
-//     game.execute_move("S 3 7 M 4 9");
-//     game.execute_move("S 4 1 M 2 1");
-//     game.execute_move("S 4 9 M 5 12");
-//     game.execute_move("S 2 1 M 5 1");
-//     game.execute_move("S 5 12 M 3 6");
-//     game.execute_move("S 3 15 M 5 27");
-//     game.execute_move("S 3 6 M 4 8");
-//     game.execute_move("S 3 8 M 2 8");
-//     game.execute_move("S 4 8 M 4 5");
-//     game.execute_move("S 2 8 M 3 13");
-//     game.execute_move("S 4 5 M 4 7");
-//     game.execute_move("S 4 20 M 4 22");
-//     game.execute_move("S 4 7 M 5 9 RS 4 5 RE 5 11 X 5 9");
-//     game.execute_move("S 3 13 M 2 9");
-//     game.execute_move("S 3 12 M 5 18 RS 4 15 RE 5 14 X 5 18");
-//     game.execute_move("S 4 16 M 5 19");
-//     game.execute_move("S 2 0 M 3 14");
-//     game.execute_move("S 4 22 M 5 28");
-//     game.execute_move("S 3 14 M 4 15");
-//     game.execute_move("S 5 1 M 5 2");
-//     game.execute_move("S 4 15 M 5 18");
-//     game.execute_move("S 5 19 M 2 3");
-//     game.execute_move("S 5 18 M 2 5");
-//     game.execute_move("RS 2 8 RE 4 10 X 2 9 S 5 27 M 5 26");
-//     game.execute_move("S 2 5 M 5 14");
-//     game.execute_move("S 2 3 M 3 2");
-//     game.execute_move("S 5 14 M 3 8");
-//     game.execute_move("S 3 2 M 5 7");
-//     game.execute_move("S 3 8 M 4 13");
-//     vector<pair<int, int>> changed = game.execute_move("S 5 7 M 3 3");
-
-// //     vector<pair<int, int>> changed = game.execute_move("S 3 15 M 3 14");
-
-//      game.print_board();
-// //     vector<pair<int, int>> changed;
-// //     changed = game.execute_move("S 3 11 M 2 9");
-// //     game.print_board();
-//      pair<int, Game> inp = make_pair(game.heuristic(), game);
-
-//      pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
-//      pair<pair<int, Game>, string> mymove = maxval(taken, INT_MIN, INT_MAX, 2);
-//      game.execute_move(mymove.second);
-//      cout << mymove.second << endl;
-//      game.print_board();
-
-//  }
-
 
 int main(int argc, char** argv)
 {
 
    // int player_id, board_size, time_limit;
+
    string move;
    string s;
    // cerr << "Staring game" << endl;
@@ -479,6 +372,8 @@ int main(int argc, char** argv)
        getline(cin, move);
        changed = game.execute_move(move);
    }
+   int ply=3;
+   int t=0;
    while(true){
        pair<int, Game> inp = make_pair(game.heuristic(), game);
        pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
@@ -486,7 +381,11 @@ int main(int argc, char** argv)
        // cerr << endl << endl;
        cout << mymove.second << endl;
        game.execute_move(mymove.second);
-
+       t++;
+       // cerr << ply << endl;
+       if(t==10) ply=4;
+        // if(t==15) ply = 5;
+        // if(t==30) ply=6;
        if(game.check_won()) break;
        getline(cin, move);
        // cout << "Move taken: " << move <<  endl;

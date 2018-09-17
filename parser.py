@@ -1,5 +1,3 @@
-s = input()
-
 
 moves = []
 l = []
