@@ -155,7 +155,8 @@ vector<pair<pair<pair<int, Game>, vector<pair<int, int> > >, string> > get_succe
                     temp.select_ring(ring.first, ring.second);
                     vector<pair<int, int>> changed;
                     temp.move_ring(path.first, path.second, changed);
-                    vector<pair<pair<int, int>, pair<int, int>>> removal = temp.check5(changed, temp.player + 3);
+                    // vector<pair<pair<int, int>, pair<int, int>>> removal = temp.check5(changed, temp.player + 3);
+                    vector<pair<pair<int, int>, pair<int, int>>> removal = temp.checkN(changed, temp.player + 3,k);
                     string curr_move = "S " + to_string(ring.first) + " " + to_string(ring.second) + " M " + to_string(path.first) + " " + to_string(path.second);
                     if (!removal.empty()) {
                         vector<pair<Game, string>> current_possibilities = remove_rows(k, removal, temp);
@@ -200,7 +201,8 @@ bool operat(pair<pair<pair<int, Game>, vector<pair<int, int> > >, string > a, pa
 pair<pair<int, Game>, string> minval(int k, pair<pair<int, Game>, vector<pair<int, int> > > mygame, int alpha, int beta, int h) {
 
 
-    vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.check5(mygame.second, mygame.first.second.get_player() + 3);
+    // vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.check5(mygame.second, mygame.first.second.get_player() + 3);
+    vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.checkN(mygame.second, mygame.first.second.get_player() + 3,k);
     vector<pair<Game, string>> newboard;
     if (!before_removal.empty()) {
         newboard = remove_rows(k, before_removal, mygame.first.second);
@@ -244,7 +246,8 @@ pair<pair<int, Game>, string> minval(int k, pair<pair<int, Game>, vector<pair<in
 
 pair<pair<int, Game>, string> maxval(int k, pair<pair<int, Game>, vector<pair<int, int> > > mygame, int alpha, int beta, int h) {
 
-    vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.check5(mygame.second, mygame.first.second.player + 3);
+    // vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.check5(mygame.second, mygame.first.second.player + 3);
+    vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.checkN(mygame.second, mygame.first.second.player + 3,k);
     vector<pair<Game, string>> newboard;
     if (!before_removal.empty()) {
         newboard = remove_rows(k, before_removal, mygame.first.second);

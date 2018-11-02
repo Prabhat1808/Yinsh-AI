@@ -536,6 +536,128 @@ public:
         return sequences;
     }
 
+    vector<pair<pair<int,int>,pair<int,int>>> checkN(vector<pair<int, int>> changed, int player_marker, int N)
+    {
+        vector<pair<pair<int,int>,pair<int,int>>> sequences;
+        unordered_set<string> axes_checked;
+        for(auto position:changed)
+        {
+            vector<pair<int,int>> axis_map = util->board.at(position.first).at(position.second)->axis_mapping;
+            int d1ax = axis_map.at(0).first;
+            int d2ax = axis_map.at(1).first;
+            int vax = axis_map.at(2).first;
+
+            pair<int,int> st;
+            pair<int,int> en;
+            int count = 0;
+            bool obtained = false;
+
+            //Diagonal1
+            for(auto w: util->elems_on_diagonal1.at(axis_map.at(0).first))
+            {
+                if(axes_checked.count("D1"+to_string(d1ax)) != 0)
+                    break;
+
+                int data = board.at(w.first).at(w.second).get_data();
+                if(data == player_marker)
+                {
+                    if(count == 0)
+                        st = w;
+                    count++;
+                    en = w;
+                }
+                else
+                {
+                    if(count >= N)
+                    {
+                        obtained = true;
+                    }
+                    count = 0;
+                }
+                if(obtained)
+                {
+                    sequences.push_back(make_pair(st,en));
+                    obtained = false;
+                }
+            }
+            if(count >= N)
+                sequences.push_back(make_pair(st,en));
+            axes_checked.insert("D1"+to_string(d1ax));
+            //Diagonal1
+
+            count = 0;
+            obtained = false;
+            //Diagonal2
+            for(auto w: util->elems_on_diagonal2.at(axis_map.at(1).first))
+            {
+                if(axes_checked.count("D2"+to_string(d2ax)) != 0)
+                    break;
+
+                int data = board.at(w.first).at(w.second).get_data();
+                if(data == player_marker)
+                {
+                    if(count == 0)
+                        st = w;
+                    en = w;
+                    count++;
+                }
+                else
+                {
+                    if(count >= N)
+                    {
+                        obtained = true;
+                    }
+                    count = 0;
+                }
+                if(obtained)
+                {
+                    sequences.push_back(make_pair(st,en));
+                    obtained = false;
+                }
+            }
+            if(count >= N)
+                sequences.push_back(make_pair(st,en));
+            axes_checked.insert("D2"+to_string(d2ax));
+            //Diagonal2
+
+            count = 0;
+            obtained = false;
+            //Vertical
+            for(auto w: util->elems_on_vertical.at(axis_map.at(2).first))
+            {
+                if(axes_checked.count("V"+to_string(vax)) != 0)
+                    break;
+
+                int data = board.at(w.first).at(w.second).get_data();
+                if(data == player_marker)
+                {
+                    if(count == 0)
+                        st = w;
+                    en = w;
+                    count++;
+                }
+                else
+                {
+                    if(count >= N)
+                    {
+                        obtained = true;
+                    }
+                    count = 0;
+                }
+                if(obtained)
+                {
+                    sequences.push_back(make_pair(st,en));
+                    obtained = false;
+                }
+            }
+            if(count >= N)
+                sequences.push_back(make_pair(st,en));
+            axes_checked.insert("V"+to_string(vax));
+            //Vertical
+        }
+        return sequences;
+    }
+
     pair<vector<int>,vector<int>> find_consecutives(vector<vector<pair<int,int>>> directions)
     {
         int curr3 =0, curr4 =0;
@@ -618,7 +740,7 @@ public:
             // cout << "AXIS : " << cn++ << endl;
             for(auto w: axis)
             {
-                
+
                  int data = board.at(w.first).at(w.second).get_data();
                  // cout << w.first << " , " << w.second << " --> " << data << endl;
                 if(data == 3)
@@ -989,7 +1111,7 @@ public:
             out = out - (24*v.first.at(6)) + (24*v.second.at(6));
             out = out - (32*v.first.at(7)) + (32*v.second.at(7));
             out = out - (48*v.first.at(8)) + (48*v.second.at(8));
-          
+
             out = out - (int) (4*pow(5, rings_removed0+1)) + (int)(4*pow(6, rings_removed1+1));
 
         }
@@ -1008,7 +1130,7 @@ public:
         //ADD YOUR SUMMATIONS HERE
     }
 
-    
+
     void print_board(){
 
         cout << "   " << "     " << " " << "     " << " " << " " << endl;
@@ -1111,5 +1233,5 @@ public:
 //     ringos.push_back(make_pair(3,9));
 //     ringos.push_back(make_pair(4,12));
 //     pair<int,int> ind = game.place_ring_heuristic(ringos);
-//     cout << ind.first << " , " << ind.second << endl; 
+//     cout << ind.first << " , " << ind.second << endl;
 // }
