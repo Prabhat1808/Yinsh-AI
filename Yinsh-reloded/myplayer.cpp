@@ -4,9 +4,9 @@
 
 using namespace std;
 
-pair<pair<int, Game>, string> maxval( pair<pair<int, Game>, vector<pair<int, int> > > , int , int , int );
+pair<pair<int, Game>, string> maxval( int, pair<pair<int, Game>, vector<pair<int, int> > > , int , int , int );
 
-void do_remove(pair<Game, string> x, pair<pair<int, int>, pair<int, int> > option, vector<pair<Game, string>> &future_possibilities)
+void do_remove(int k, pair<Game, string> x, pair<pair<int, int>, pair<int, int> > option, vector<pair<Game, string>> &future_possibilities)
 {
     vector<pair<int, int>> indices = x.first.get_util()->between_points(option.first, option.second);
     int leng = 0;
@@ -20,7 +20,7 @@ void do_remove(pair<Game, string> x, pair<pair<int, int>, pair<int, int> > optio
         }
         else leng=0;
         if(leng==1) begin = i;
-        if(leng==5)
+        if(leng==k)
         {
             curr_options.emplace_back(indices.at(begin), indices.at(i));
             begin++;
@@ -105,7 +105,7 @@ void do_remove(pair<Game, string> x, pair<pair<int, int>, pair<int, int> > optio
 
 
 
-vector<pair<Game, string>> remove_rows(vector<pair<pair<int, int>, pair<int, int> > > removal, Game game) {
+vector<pair<Game, string>> remove_rows(int k, vector<pair<pair<int, int>, pair<int, int> > > removal, Game game) {
     vector<pair<Game, string>> possibilities;
     do {
         vector<pair<Game, string>> current_possibilities;
@@ -118,7 +118,7 @@ vector<pair<Game, string>> remove_rows(vector<pair<pair<int, int>, pair<int, int
                     future_possibilities.push_back(x);
                     continue;
                 }
-                do_remove(x, option, future_possibilities);
+                do_remove(k, x, option, future_possibilities);
             }
             current_possibilities.clear();
             for (pair<Game, string> x:future_possibilities) {
@@ -133,7 +133,7 @@ vector<pair<Game, string>> remove_rows(vector<pair<pair<int, int>, pair<int, int
     return possibilities;
 };
 
-vector<pair<pair<pair<int, Game>, vector<pair<int, int> > >, string> > get_successors(vector<pair<Game, string>> newboard) {
+vector<pair<pair<pair<int, Game>, vector<pair<int, int> > >, string> > get_successors(int k, vector<pair<Game, string>> newboard) {
     vector<pair<pair<pair<int, Game>, vector<pair<int, int>>>, string>> successors;
     for (pair<Game, string> ga: newboard) {
         Game gam = ga.first;
@@ -158,7 +158,7 @@ vector<pair<pair<pair<int, Game>, vector<pair<int, int> > >, string> > get_succe
                     vector<pair<pair<int, int>, pair<int, int>>> removal = temp.check5(changed, temp.player + 3);
                     string curr_move = "S " + to_string(ring.first) + " " + to_string(ring.second) + " M " + to_string(path.first) + " " + to_string(path.second);
                     if (!removal.empty()) {
-                        vector<pair<Game, string>> current_possibilities = remove_rows(removal, temp);
+                        vector<pair<Game, string>> current_possibilities = remove_rows(k, removal, temp);
                         for (pair<Game, string> g: current_possibilities) {
                             g.first.player = (g.first.player + 1) % 2;
                             int heur = g.first.heuristic();
@@ -197,13 +197,13 @@ bool operat(pair<pair<pair<int, Game>, vector<pair<int, int> > >, string > a, pa
     return a.first.first.first >= b.first.first.first;
 }
 
-pair<pair<int, Game>, string> minval(pair<pair<int, Game>, vector<pair<int, int> > > mygame, int alpha, int beta, int h) {
+pair<pair<int, Game>, string> minval(int k, pair<pair<int, Game>, vector<pair<int, int> > > mygame, int alpha, int beta, int h) {
 
 
     vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.check5(mygame.second, mygame.first.second.get_player() + 3);
     vector<pair<Game, string>> newboard;
     if (!before_removal.empty()) {
-        newboard = remove_rows(before_removal, mygame.first.second);
+        newboard = remove_rows(k, before_removal, mygame.first.second);
 
     }
     else{
@@ -211,7 +211,7 @@ pair<pair<int, Game>, string> minval(pair<pair<int, Game>, vector<pair<int, int>
         newboard.push_back(curr_game);
     }
 
-    vector<pair<pair<pair<int, Game>, vector<pair<int, int> > >, string > > successors = get_successors(newboard);
+    vector<pair<pair<pair<int, Game>, vector<pair<int, int> > >, string > > successors = get_successors(k, newboard);
     vector<pair<int, int>> forcomp;
     for(int i=0; i<successors.size(); i++){
         pair<int, int> topush = make_pair(successors.at(i).first.first.first, i);
@@ -228,7 +228,7 @@ pair<pair<int, Game>, string> minval(pair<pair<int, Game>, vector<pair<int, int>
 
     for(pair<int, int> v: forcomp){
         auto u = successors.at(v.second);
-        pair<pair<int, Game>, string> child = maxval(u.first, alpha, beta, h - 1);
+        pair<pair<int, Game>, string> child = maxval(k, u.first, alpha, beta, h - 1);
         if(besti.first.first>=child.first.first){
             besti.first.first = child.first.first;
             besti.first.second = u.first.first.second;
@@ -242,18 +242,18 @@ pair<pair<int, Game>, string> minval(pair<pair<int, Game>, vector<pair<int, int>
     return besti;
 };
 
-pair<pair<int, Game>, string> maxval(pair<pair<int, Game>, vector<pair<int, int> > > mygame, int alpha, int beta, int h) {
-    clock_t init = clock();
+pair<pair<int, Game>, string> maxval(int k, pair<pair<int, Game>, vector<pair<int, int> > > mygame, int alpha, int beta, int h) {
+
     vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.check5(mygame.second, mygame.first.second.player + 3);
     vector<pair<Game, string>> newboard;
     if (!before_removal.empty()) {
-        newboard = remove_rows(before_removal, mygame.first.second);
+        newboard = remove_rows(k, before_removal, mygame.first.second);
     }
     else {
         pair<Game, string> curr_game = make_pair(mygame.first.second, "");
         newboard.push_back(curr_game);
     }
-    vector<pair<pair<pair<int, Game>, vector<pair<int, int>>>, string>> successors = get_successors(newboard);
+    vector<pair<pair<pair<int, Game>, vector<pair<int, int>>>, string>> successors = get_successors(k, newboard);
     vector<pair<int, int>> forcomp;
     for(int i=0; i<successors.size(); i++){
         pair<int, int> topush = make_pair(successors.at(i).first.first.first, i);
@@ -270,10 +270,7 @@ pair<pair<int, Game>, string> maxval(pair<pair<int, Game>, vector<pair<int, int>
     pair<pair<int, Game>, string> besti = make_pair(make_pair(INT_MIN, successors.at(0).first.first.second), "");
     for(pair<int, int> v: forcomp){
         pair<pair<pair<int, Game>, vector<pair<int, int>>>, string> u =  successors.at(v.second);
-        clock_t ending = clock();
-        if((double)(ending-init)/(CLOCKS_PER_SEC) > 5) return besti;
-
-        pair<pair<int, Game>, string> child = minval(u.first, alpha, beta, h - 1);
+        pair<pair<int, Game>, string> child = minval(k, u.first, alpha, beta, h - 1);
         if(besti.first.first<=child.first.first){
             besti.first.first = child.first.first;
             besti.first.second = u.first.first.second;
@@ -385,17 +382,7 @@ int main(int argc, char** argv)
    while(true){
        pair<int, Game> inp = make_pair(game.heuristic(), game);
        pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
-       pair<pair<int, Game>, string> mymove = maxval(taken, INT_MIN, INT_MAX, 1);
-       // if(ply==4){
-       //     pair<pair<int, Game>, string> mymove1 = maxval(taken, INT_MIN, INT_MAX, 4);
-       //     if(mymove1.first.first > mymove.first.first) {
-       //          cerr << "Best Move: " << 4 << endl;
-       //          mymove = mymove1;
-       //     }
-       //     else{
-       //      cerr << "Best Move: " << 3 << endl;
-       //     }
-       //  }
+       pair<pair<int, Game>, string> mymove = maxval(5, taken, INT_MIN, INT_MAX, 3);
        // cerr << endl << endl;
        cout << mymove.second << endl;
        game.execute_move(mymove.second);
