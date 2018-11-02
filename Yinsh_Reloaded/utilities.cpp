@@ -180,45 +180,45 @@ public:
 	{
 	    //Diagonal 1
 //	    cout << "Entered";
-	    diagonal1.push_back(make_pair(make_pair(5,1),make_pair(5,2)));
-	    diagonal1.push_back(make_pair(make_pair(5,29),make_pair(4,0)));
-	    for(int i=28;i>20;i--)
+	    diagonal1.push_back(make_pair(make_pair(n,1),make_pair(n,2)));
+	    diagonal1.push_back(make_pair(make_pair(n,6*n-1),make_pair(n-1,0)));
+	    for(int i=6*n-2;i>4*n;i--)
 	    {
-	        if(i%5 == 0)
+	        if(i%n == 0)
 	        {
-	            diagonal1.push_back(make_pair(make_pair(4,i-5),make_pair(3,i-10)));
+	            diagonal1.push_back(make_pair(make_pair(n-1,i-5),make_pair(n-2,i-10)));
 	            continue;
 	        }
-	        diagonal1.push_back(make_pair(make_pair(5,i),make_pair(4,i-5)));
+	        diagonal1.push_back(make_pair(make_pair(n,i),make_pair(n-1,i-5)));
 	    }
-	    diagonal1.push_back(make_pair(make_pair(5,19),make_pair(5,18)));
+	    diagonal1.push_back(make_pair(make_pair(n,4*n-1),make_pair(n,4*n-2)));
 	    //Diagonal 1
 
 	    //Diagonal 2
-	    diagonal2.push_back(make_pair(make_pair(5,29),make_pair(5,28)));
-	    for(int i=1;i<10;i++)
+	    diagonal2.push_back(make_pair(make_pair(n,6*n-1),make_pair(n,6*n-2)));
+	    for(int i=1;i<2*n;i++)
 	    {
-	        if(i%5==0)
+	        if(i%n==0)
 	        {
-	            diagonal2.push_back(make_pair(make_pair(4,i-1),make_pair(3,i-2)));
+	            diagonal2.push_back(make_pair(make_pair(n-1,i-1),make_pair(n-2,i-2)));
 	            continue;
 	        }
-	        diagonal2.push_back(make_pair(make_pair(5,i),make_pair(4,i-1)));
+	        diagonal2.push_back(make_pair(make_pair(n,i),make_pair(n-1,i-1)));
 	    }
-	    diagonal2.push_back(make_pair(make_pair(5,11),make_pair(5,12)));
+	    diagonal2.push_back(make_pair(make_pair(n,2*n+1),make_pair(n,2*n+2)));
 	    //Diagonal 2
 
 	    //Vertical
-	    vertical.push_back(make_pair(make_pair(5,24),make_pair(5,23)));
-	    for(int i = 26;i<30;i++)
-	        vertical.push_back(make_pair(make_pair(5,i),make_pair(4,i-6)));
+	    vertical.push_back(make_pair(make_pair(n,5*n-1),make_pair(n,5*n-2)));
+	    for(int i = 5*n+1;i<6*n;i++)
+	        vertical.push_back(make_pair(make_pair(n,i),make_pair(n-1,i-6)));
 
-	    vertical.push_back(make_pair(make_pair(4,0),make_pair(3,0)));
+	    vertical.push_back(make_pair(make_pair(n-1,0),make_pair(n-2,0)));
 
-	    for(int i=1;i<5;i++)
-	        vertical.push_back(make_pair(make_pair(5,i),make_pair(4,i)));
+	    for(int i=1;i<n;i++)
+	        vertical.push_back(make_pair(make_pair(n,i),make_pair(n-1,i)));
 
-	    vertical.push_back(make_pair(make_pair(5,6),make_pair(5,7)));
+	    vertical.push_back(make_pair(make_pair(n,n+1),make_pair(n,n+2)));
 	    //Vertical
 //	    cout << "Exited";
 	}
