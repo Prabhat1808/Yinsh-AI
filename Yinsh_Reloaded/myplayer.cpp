@@ -156,7 +156,7 @@ vector<pair<pair<pair<int, Game>, vector<pair<int, int> > >, string> > get_succe
                     vector<pair<int, int>> changed;
                     temp.move_ring(path.first, path.second, changed);
                     // vector<pair<pair<int, int>, pair<int, int>>> removal = temp.check5(changed, temp.player + 3);
-                    vector<pair<pair<int, int>, pair<int, int>>> removal = temp.checkN(changed, temp.player + 3,k);
+                    vector<pair<pair<int, int>, pair<int, int>>> removal = temp.checkN(changed, temp.player + 3, k);
                     string curr_move = "S " + to_string(ring.first) + " " + to_string(ring.second) + " M " + to_string(path.first) + " " + to_string(path.second);
                     if (!removal.empty()) {
                         vector<pair<Game, string>> current_possibilities = remove_rows(k, removal, temp);
@@ -327,9 +327,9 @@ int main(int argc, char** argv)
    if(!buff.empty()) starting.push_back(stoi(buff));
 
    // cin >> player_id >> board_size >> time_limit;
-   Utility* util = new Utility(5);
-   Game game = Game(0, starting.at(0)+2, util, starting.at(1));
-
+   Utility* util = new Utility(starting.at(1));
+   Game game = Game(0, starting.at(0)+2, util, starting.at(1), starting.at(1), starting.at(2));
+   cerr << "k: " << starting.at(3) << endl;
    // if(player_id==2){
    //     cin >> move;
    //     game->execute_move(move);
@@ -347,9 +347,10 @@ int main(int argc, char** argv)
    // game->execute_move("P 2 0");
    // game->execute_move("P 2 1");
    // game->execute_move("P 2 2");
+   int n = starting.at(1);
    vector<pair<int, int>> changed;
    if(starting.at(0)==2){
-       for (int i=0; i<5; i++){
+       for (int i=0; i<n; i++){
            getline(cin, move);
            // cout << "Move taken: " << move <<  endl;
            game.execute_move(move);
@@ -362,7 +363,7 @@ int main(int argc, char** argv)
        }
    }
    else{
-       for (int i=0; i<5; i++){
+       for (int i=0; i<n; i++){
            // string mymove = random_place(game);
            // cerr << mymove << endl;
            pair<int, int> mov = game.place_ring_heuristic();
@@ -385,7 +386,7 @@ int main(int argc, char** argv)
    while(true){
        pair<int, Game> inp = make_pair(game.heuristic(), game);
        pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
-       pair<pair<int, Game>, string> mymove = maxval(5, taken, INT_MIN, INT_MAX, 3);
+       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, 3);
        // cerr << endl << endl;
        cout << mymove.second << endl;
        game.execute_move(mymove.second);
