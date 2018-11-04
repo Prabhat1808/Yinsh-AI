@@ -57,6 +57,10 @@ public:
             this->board.push_back(temp);
         }
         update_direction_vectors(diagonal1, diagonal2, vertical);
+        // for (auto u: diagonal1){
+        //     cout << u.first.first << " " << u.first.second << "    " << u.second.first << u.second.second << endl;
+        // }
+        // cout << endl;
         elems_on_diagonal1 = elements_on_axis(diagonal1);
         elems_on_diagonal2 = elements_on_axis(diagonal2);
         elems_on_vertical = elements_on_axis(vertical);
@@ -319,6 +323,59 @@ public:
 // int main()
 // {
 // 	Utility* use = new Utility();
+//     cout << "n=5" << endl;
+//     cout << "vertical :" << endl;
+//     for (auto u: use->elems_on_vertical){
+//         for (auto v: u){
+//             cout << v.first << " " << v.second << " ";
+//         }
+//         cout << endl;
+//     }
+//     cout << endl;
+//     cout << "diagonal1 :" << endl;
+//     for (auto u: use->elems_on_diagonal1){
+//         for (auto v: u){
+//             cout << v.first << " " << v.second << " ";
+//         }
+//         cout << endl;
+//     }
+//     cout << endl;
+//     cout << "diagonal2 :" << endl;
+//     for (auto u: use->elems_on_diagonal2){
+//         for (auto v: u){
+//             cout << v.first << " " << v.second << " ";
+//         }
+//         cout << endl;
+//     }
+//     cout << endl;
+
+//     use = new Utility(6);
+//     cout << "n=6" << endl;
+//     cout << "vertical :" << endl;
+//     for (auto u: use->elems_on_vertical){
+//         for (auto v: u){
+//             cout << v.first << " " << v.second << " ";
+//         }
+//         cout << endl;
+//     }
+//     cout << endl;
+//     cout << "diagonal1 :" << endl;
+//     for (auto u: use->elems_on_diagonal1){
+//         for (auto v: u){
+//             cout << v.first << " " << v.second << " ";
+//         }
+//         cout << endl;
+//     }
+//     cout << endl;
+//     cout << "diagonal2 :" << endl;
+//     for (auto u: use->elems_on_diagonal2){
+//         for (auto v: u){
+//             cout << v.first << " " << v.second << " ";
+//         }
+//         cout << endl;
+//     }
+//     cout << endl;
+
 // //	cout << "works";
 
 // }

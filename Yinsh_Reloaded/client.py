@@ -249,7 +249,6 @@ def game_loop(args):
 			success = game.execute_move(move)                       
 			client.SendData2Process(move)
 		else:
-			# time.sleep(30)
 			sys.exit(0)     
 	
 	while(True):
@@ -277,7 +276,6 @@ def game_loop(args):
 		# 1: Normal State
 		# 2: Game Over (Someone Wins) Note) Even Drawn State Will result in Game Over
 		if success == 0:
-			# time.sleep(120)
 			message['data'] = ''
 			message['action'] = 'KILLPROC'
 			message['meta'] = 'INVALID MOVE BY PLAYER ' + player_id + \
@@ -300,9 +298,8 @@ def game_loop(args):
 				print 'Opponent\'s Score : ' + str(game.get_score(1))
 
 		client.SendData2Server(message)
-		# if message['action'] == 'FINISH' or message['action'] == 'KILLPROC':
-
-		# 	break
+		if message['action'] == 'FINISH' or message['action'] == 'KILLPROC':
+			break
 		
 		## Listen to Other Player's Move
 		move = client.RecvDataFromServer()

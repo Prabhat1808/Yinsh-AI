@@ -328,7 +328,7 @@ int main(int argc, char** argv)
 
    // cin >> player_id >> board_size >> time_limit;
    Utility* util = new Utility(starting.at(1));
-   Game game = Game(0, starting.at(0)+2, util, starting.at(1), starting.at(1), starting.at(2));
+   Game game = Game(0, starting.at(0)+2, util, starting.at(1), starting.at(1), starting.at(3));
    cerr << "k: " << starting.at(3) << endl;
    // if(player_id==2){
    //     cin >> move;
