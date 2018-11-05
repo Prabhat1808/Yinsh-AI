@@ -1078,19 +1078,24 @@ public:
         return false;
     }
 
-    pair<int,int> total_breakable_streaks()
+    pair<pair<int,int>,pair<int,int>> analyse_streaks()//combines redeemable and breakable streaks
     {
         pair<vector<pair<pair<int,int>,pair<int,int>>>,vector<pair<pair<int,int>,pair<int,int>>>> d1 = find_consecutive_locations(util->elems_on_diagonal1);
         pair<vector<pair<pair<int,int>,pair<int,int>>>,vector<pair<pair<int,int>,pair<int,int>>>> d2 = find_consecutive_locations(util->elems_on_diagonal2);
         pair<vector<pair<pair<int,int>,pair<int,int>>>,vector<pair<pair<int,int>,pair<int,int>>>> v = find_consecutive_locations(util->elems_on_vertical);
         //have to consider difference in breakability, i.e. along axis and cross axis
         int c3 = 0, c4 = 0;
+        int r3 = 0, r4 = 0;
         //first values are for point 3, i.e opponent marker = 2
         for(auto w:d1.first)
         {
             if(streak_breakable(util->between_points(w.first,w.second),2,1))
             {
                 c3++;
+            }
+            if(redeemable_streak(w.first,w.second,1))
+            {
+                r3++;
             }
         }
         for(auto w:d2.first)
@@ -1099,12 +1104,20 @@ public:
             {
                 c3++;
             }
+            if(redeemable_streak(w.first,w.second,1))
+            {
+                r3++;
+            }
         }
         for(auto w:v.first)
         {
             if(streak_breakable(util->between_points(w.first,w.second),2,1))
             {
                 c3++;
+            }
+            if(redeemable_streak(w.first,w.second,1))
+            {
+                r3++;
             }
         }
         //---------now for marker 4
@@ -1114,12 +1127,20 @@ public:
             {
                 c4++;
             }
+            if(redeemable_streak(w.first,w.second,1))
+            {
+                r4++;
+            }
         }
         for(auto w:d2.second)
         {
             if(streak_breakable(util->between_points(w.first,w.second),1,2))
             {
                 c4++;
+            }
+            if(redeemable_streak(w.first,w.second,1))
+            {
+                r4++;
             }
         }
         for(auto w:v.second)
@@ -1128,9 +1149,13 @@ public:
             {
                 c4++;
             }
+            if(redeemable_streak(w.first,w.second,1))
+            {
+                r4++;
+            }
         }
 
-        return make_pair(c3,c4);
+        return make_pair(make_pair(c3,c4),make_pair(r3,r4));
     }
 
     int heuristic(vector<float> weights){
@@ -1140,6 +1165,15 @@ public:
         pair<vector<int>,vector<int>> v = find_consecutives(util->elems_on_vertical);
         int sum3=0;
         int sum4=0;
+        pair<vector<int>,vector<int>> ring_mobilities = ring_freedom();
+        pair<pair<int,int>,pair<int,int>> streaks = analyse_streaks();
+        pair<int,int> critical = critical_points();
+
+        int c3,c4,r3,r4;
+        c3 = streaks.first.first;
+        c4 = streaks.first.second;
+        r3 = streaks.second.first;
+        r4 = streaks.second.second;
 
         for(int i =0 ; i < 9; i++)
         {
@@ -1149,12 +1183,18 @@ public:
 
         if(my_marker==3){
             out += sum3 - sum4;
+            out += 100*r3 + 50*c4 - 50*c3 - 100*r4;
+            out += 100*critical.first - 100*critical.second;
             out = out + (int) (4*pow(6, rings_removed0+1)) - (int)(4*pow(5, rings_removed1+1));
         }
         if(my_marker==4){
             out += sum4 - sum3;
+            out += 100*r4 + 50*c3 - 50*c4 - 100*r3;
+            out += -100*critical.first + 100*critical.second;
             out = out - (int) (4*pow(5, rings_removed0+1)) + (int)(4*pow(6, rings_removed1+1));
         }
+
+        out += accumulate(ring_mobilities.first.begin(),ring_mobilities.first.end(),0) - accumulate(ring_mobilities.second.begin(),ring_mobilities.second.end(),0);
         return out;
     }
 
@@ -1232,6 +1272,7 @@ public:
                     {
                         if(count_d1 + count_d2 >= max_row - 1)
                         {
+                          if(ind1 > 0)
                             tmp.push_back(axis.at(ind1-1));
                             // cout << "storing in buffer (" << axis.at(ind1-1).first << "," << axis.at(ind1-1).second << ")" << endl;
                         }
@@ -1245,6 +1286,7 @@ public:
             }
             if(count_d1 + count_d2 >= max_row - 1)
             {
+              if(ind1 > 0)
                 tmp.push_back(axis.at(ind1-1));
                 // cout << "storing in buffer (" << axis.at(ind1-1).first << "," << axis.at(ind1-1).second << ")" << endl;
             }
@@ -1292,24 +1334,24 @@ public:
 
     pair<vector<int>,vector<int>> ring_freedom() //first element of pair is my moves available. second is opponent's moves available
     {
-        vector<int> self_moves(5);
-        vector<int> opponent_moves(5);
+        vector<int> self_moves;
+        vector<int> opponent_moves;
 
         int i = 0;
         for(auto w:ring_self)
         {
             if (w.first == -1 || w.second == -1)
-                self_moves.at(i++) = -1;
+                self_moves.push_back(-5);
             else
-                self_moves.at(i++) = (possible_paths(w.first, w.second,true, true, true)).size();
+                self_moves.push_back((possible_paths(w.first, w.second,true, true, true)).size());
         }
         i = 0;
         for(auto w:ring_opponent)
         {
             if (w.first == -1 || w.second == -1)
-                opponent_moves.at(i++) = -1;
+                opponent_moves.push_back(-5);
             else
-                opponent_moves.at(i++) = (possible_paths(w.first, w.second,true, true, true)).size();
+                opponent_moves.push_back((possible_paths(w.first, w.second,true, true, true)).size());
         }
         return make_pair(self_moves,opponent_moves);
     }
@@ -1378,7 +1420,7 @@ public:
 //     // game->execute_move("S 2 9 M 5 24 RS 2 9 RE 3 2 X 4 23");
 //     // game->print_board();
 //     // game->print_data();
-// 
+//
 // int main()
 // {
 //     Utility* util = new Utility(6);
