@@ -31,6 +31,7 @@ public:
 	vector<vector<pair<int, int>>> elems_on_vertical;
 	int n;
 	vector<vector<Node*>> board;
+  pair<vector<int>,vector<int>> consecutive_weights;
 
 	Utility(int n=5){
 		vector<pair<pair<int,int>,pair<int,int>>> diagonal1;
@@ -56,11 +57,9 @@ public:
             }
             this->board.push_back(temp);
         }
+        initialize_consecutive_weights(this->consecutive_weights);
         update_direction_vectors(diagonal1, diagonal2, vertical);
-        // for (auto u: diagonal1){
-        //     cout << u.first.first << " " << u.first.second << "    " << u.second.first << u.second.second << endl;
-        // }
-        // cout << endl;
+
         elems_on_diagonal1 = elements_on_axis(diagonal1);
         elems_on_diagonal2 = elements_on_axis(diagonal2);
         elems_on_vertical = elements_on_axis(vertical);
@@ -74,6 +73,26 @@ public:
         		curr->axis_mapping.at(j) = make_pair(-1,-1);
         }
 	}
+
+  void initialize_consecutive_weights(pair<vector<int>,vector<int>> &consecutive_weights)
+  {
+      vector<int> first,second;
+      for(int i=0;i<9;i++)
+      {
+          if(i<4)
+          {
+              first.push_back((int) pow(2,i+1));
+              second.push_back((int) pow(2,i+1));
+          }
+          else
+          {
+              first.push_back((int) pow(2,i-3) + 16);
+              second.push_back((int) pow(2,i-3) + 16);
+          }
+      }
+      consecutive_weights.first = first;
+      consecutive_weights.second = second;
+  }
 
 	void update_neighbours(Node* nod, int i, int j){
         if(i==0){
@@ -322,60 +341,72 @@ public:
 
 // int main()
 // {
-// 	Utility* use = new Utility();
-//     cout << "n=5" << endl;
-//     cout << "vertical :" << endl;
-//     for (auto u: use->elems_on_vertical){
-//         for (auto v: u){
-//             cout << v.first << " " << v.second << " ";
-//         }
-//         cout << endl;
+// 	  Utility* use = new Utility();
+//     cout << "Weights 3:" << endl;
+//     for(auto w:use->consecutive_weights.first)
+//     {
+//         cout << w << "\t";
 //     }
 //     cout << endl;
-//     cout << "diagonal1 :" << endl;
-//     for (auto u: use->elems_on_diagonal1){
-//         for (auto v: u){
-//             cout << v.first << " " << v.second << " ";
-//         }
-//         cout << endl;
+//     cout << "Weights 4:" << endl;
+//     for(auto w:use->consecutive_weights.second)
+//     {
+//         cout << w << "\t";
 //     }
 //     cout << endl;
-//     cout << "diagonal2 :" << endl;
-//     for (auto u: use->elems_on_diagonal2){
-//         for (auto v: u){
-//             cout << v.first << " " << v.second << " ";
-//         }
-//         cout << endl;
-//     }
-//     cout << endl;
+    // cout << "n=5" << endl;
+    // cout << "vertical :" << endl;
+    // for (auto u: use->elems_on_vertical){
+    //     for (auto v: u){
+    //         cout << v.first << " " << v.second << " ";
+    //     }
+    //     cout << endl;
+    // }
+    // cout << endl;
+    // cout << "diagonal1 :" << endl;
+    // for (auto u: use->elems_on_diagonal1){
+    //     for (auto v: u){
+    //         cout << v.first << " " << v.second << " ";
+    //     }
+    //     cout << endl;
+    // }
+    // cout << endl;
+    // cout << "diagonal2 :" << endl;
+    // for (auto u: use->elems_on_diagonal2){
+    //     for (auto v: u){
+    //         cout << v.first << " " << v.second << " ";
+    //     }
+    //     cout << endl;
+    // }
+    // cout << endl;
+    //
+    // use = new Utility(6);
+    // cout << "n=6" << endl;
+    // cout << "vertical :" << endl;
+    // for (auto u: use->elems_on_vertical){
+    //     for (auto v: u){
+    //         cout << v.first << " " << v.second << " ";
+    //     }
+    //     cout << endl;
+    // }
+    // cout << endl;
+    // cout << "diagonal1 :" << endl;
+    // for (auto u: use->elems_on_diagonal1){
+    //     for (auto v: u){
+    //         cout << v.first << " " << v.second << " ";
+    //     }
+    //     cout << endl;
+    // }
+    // cout << endl;
+    // cout << "diagonal2 :" << endl;
+    // for (auto u: use->elems_on_diagonal2){
+    //     for (auto v: u){
+    //         cout << v.first << " " << v.second << " ";
+    //     }
+    //     cout << endl;
+    // }
+    // cout << endl;
 
-//     use = new Utility(6);
-//     cout << "n=6" << endl;
-//     cout << "vertical :" << endl;
-//     for (auto u: use->elems_on_vertical){
-//         for (auto v: u){
-//             cout << v.first << " " << v.second << " ";
-//         }
-//         cout << endl;
-//     }
-//     cout << endl;
-//     cout << "diagonal1 :" << endl;
-//     for (auto u: use->elems_on_diagonal1){
-//         for (auto v: u){
-//             cout << v.first << " " << v.second << " ";
-//         }
-//         cout << endl;
-//     }
-//     cout << endl;
-//     cout << "diagonal2 :" << endl;
-//     for (auto u: use->elems_on_diagonal2){
-//         for (auto v: u){
-//             cout << v.first << " " << v.second << " ";
-//         }
-//         cout << endl;
-//     }
-//     cout << endl;
-
-// //	cout << "works";
+//	cout << "works";
 
 // }

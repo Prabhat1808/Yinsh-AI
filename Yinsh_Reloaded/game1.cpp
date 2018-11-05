@@ -67,9 +67,10 @@ public:
                 if(i==n && j%i==0) nod.update_data(-1);
                 temp.push_back(nod);
             }
-
             this->board.push_back(temp);
         }
+
+
         this->my_marker = my_marker;
         this->rings_removed0 = 0;
         this->rings_removed1 = 0;
@@ -182,77 +183,6 @@ public:
         return outputs;
     }
 
-    pair<int,int> place_ring_heuristic()
-    {
-        vector<pair<int,int>> rings = rings_opponent1;
-        if(rings.size()==0){
-
-            // srand(time(NULL));
-            // int h = rand() % n;
-            // int p;
-            // while(true){
-            //     p = rand() % (h*6);
-            //     if(h != 5)
-            //         break;
-            //     else
-            //     {
-            //         if(p % 5 != 0)
-            //             break;
-            //     }
-            // }
-
-            // return make_pair(h, p);
-            return make_pair(0,0);
-        }
-        int r = 0, dirn = 0, max = 0;
-        int ring = 0;
-        int rn = 0;
-        for(auto point:rings)
-        {
-            // cout << "Checking ring : " << point.first << " , " << point.second << endl;
-            vector<pair<int,int>> ndr = total_moves(point);
-            // for(auto w: ndr)
-            // {
-            //     cout << w.first << " , " << w.second << endl;
-            // }
-            // int r = 0, dirn = 0, max = 0; // 1 means forward, -1 means backward
-            for(int i = 0;i< 3; i++)
-            {
-                pair<int,int> tmp = ndr.at(i);
-                if (tmp.first > max)
-                {
-                    // cout << "Max : -> " << max << " and Current -> " << tmp.first << endl;
-                    max = tmp.first;
-                    r = i;
-                    dirn = 1;
-                    ring = rn;
-                }
-                if(tmp.second > max)
-                {
-                    // cout << "Max : -> " << max << " and Current -> " << tmp.second << endl;
-                    max = tmp.second;
-                    r = i;
-                    dirn = -1;
-                    ring = rn;
-                }
-            }
-            rn++;
-        }
-
-        pair<int,int> point = rings.at(ring);
-        vector<pair<int,int>> axis_map = util->board.at(point.first).at(point.second)->axis_mapping;
-        pair<int,int> index;
-        if(r == 0)
-            index = util->elems_on_diagonal1.at(axis_map.at(0).first).at(axis_map.at(0).second + dirn);
-        if(r == 1)
-            index = util->elems_on_diagonal2.at(axis_map.at(1).first).at(axis_map.at(1).second + dirn);
-        if(r==2)
-            index = util->elems_on_vertical.at(axis_map.at(2).first).at(axis_map.at(2).second + dirn);
-        return index;
-    }
-
-//#########################PLACEMENT###################################
-    // int removal_len(Node_game* nod, int i, int j, int x){
 
     vector<pair<int, int>> possible_paths(int i, int j)
     {
@@ -658,6 +588,175 @@ public:
         return sequences;
     }
 
+
+    bool place_ring(int hexagon, int position){
+        if(board.at(hexagon).at(position).get_data()!=0) return false;
+        board.at(hexagon).at(position).update_data(player+1);
+        if(player==my_marker-3) {
+            ring_self.at(rings_placed / 2).first = hexagon;
+            ring_self.at(rings_placed/2).second = position;
+        }
+        else{
+            ring_opponent.at(rings_placed/2).first = hexagon;
+            ring_opponent.at(rings_placed/2).second = position;
+            rings_opponent1.push_back(make_pair(hexagon, position));
+        }
+        rings_placed++;
+        return true;
+    }
+
+    bool select_ring(int hexagon, int position){
+        if(board.at(hexagon).at(position).get_data()!=player+1) return false;
+        ring_selected = board.at(hexagon).at(position).get_data();
+        board.at(hexagon).at(position).update_data(board.at(hexagon).at(position).get_data()+2);
+        beginning.first = hexagon;
+        beginning.second = position;
+        return true;
+    }
+
+    bool move_ring(int hexagon, int position, vector<pair<int, int>> &changed){
+        ending.first = hexagon;
+        ending.second = position;
+        vector<pair<int, int>> pointstochange = util->between_points(beginning, ending);
+        for (int i=1 ;i<pointstochange.size()-1; i++){
+            pair<int,int> p = pointstochange.at(i);
+            if(board.at(p.first).at(p.second).get_data()==3){
+                board.at(p.first).at(p.second).update_data(4);
+                changed.push_back(p);
+            }
+            else if(board.at(p.first).at(p.second).get_data() == 4){
+                board.at(p.first).at(p.second).update_data(3);
+                changed.push_back(p);
+            }
+        }
+        changed.push_back(beginning);
+        board.at(hexagon).at(position).update_data(ring_selected);
+        for(int i=0; i<ring_self.size(); i++){
+            if(my_marker-3==player && beginning==ring_self.at(i)) {
+                ring_self.at(i).first = ending.first;
+                ring_self.at(i).second = ending.second;
+                break;
+            }
+            else if(my_marker-3!=player && beginning==ring_opponent.at(i)){
+                ring_opponent.at(i).first = ending.first;
+                ring_opponent.at(i).second = ending.second;
+                break;
+            }
+        }
+        return true;
+    }
+
+    bool remove_start(int hexagon, int position){
+        if(board.at(hexagon).at(position).get_data()!=player+3) return false;
+        beginning.first = hexagon;
+        beginning.second = position;
+        return true;
+    }
+
+    bool remove_end(int hexagon, int position){
+        ending.first = hexagon;
+        ending.second = position;
+        vector<pair<int, int>> pointstochange = util->between_points(beginning, ending);
+        for (pair<int, int> u: pointstochange){
+            board.at(u.first).at(u.second).update_data(0);
+        }
+        return true;
+    }
+
+    bool remove_ring(int hexagon, int position){
+        if(board.at(hexagon).at(position).get_data()!=player+1) return false;
+        board.at(hexagon).at(position).update_data(0);
+        if(player==0) rings_removed0++;
+        else rings_removed1++;
+        pair<int, int> temp = make_pair(hexagon, position);
+        for(int i=0; i<ring_self.size(); i++){
+            if(my_marker-3==player && temp==ring_self.at(i)) {
+                ring_self.at(i).first = -1;
+                ring_self.at(i).second = -1;
+                break;
+            }
+            else if(my_marker-3!=player && temp==ring_opponent.at(i)){
+                ring_opponent.at(i).first = -1;
+                ring_opponent.at(i).second = -1;
+                break;
+            }
+        }
+        return true;
+    }
+    int execute_move1(vector<string> moves, vector<pair<int, int>> &changed){
+        // vector<string> moves = split_string(s);
+//        if(moves.size()>3) return execute_sequence(moves);
+//        else player = (player+1)%2;;
+        string mt = moves.at(0);
+        int hexagon = stoi(moves.at(1));
+        int position = stoi(moves.at(2));
+        bool success = true;
+
+        if(mt=="P") success = success && place_ring(hexagon, position);
+        else if(mt=="S") success = success && select_ring(hexagon, position);
+        else if(mt=="M") {
+            success = success && move_ring(hexagon, position, changed);
+        }
+        else if(mt=="RS"){
+            success = success && remove_start(hexagon, position);
+        }
+        else if(mt=="RE") success = success && remove_end(hexagon, position);
+        else if(mt=="X") success = success && remove_ring(hexagon, position);
+        else return 0;
+
+        bool won = check_won();
+
+        if(!success) return 0;
+        if(won) return 2;
+        return 1;
+
+    }
+
+    vector<pair<int, int>> execute_move(string s){
+        vector<string> moves;
+        string buff = "";
+        for(auto i:s){
+            if(i == ' '){
+                moves.push_back(buff);
+                buff = "";
+            }
+            else {
+                buff+=i;
+            }
+        }
+        if(!buff.empty()) moves.push_back(buff);
+        return (execute_sequence(moves));
+    }
+
+    vector<pair<int, int>> execute_sequence(vector<string> moves){
+        vector<string> temp(3);
+        vector<pair<int, int>> changed;
+        for (int i=0; i<moves.size(); i++){
+            if(i%3==2){
+                temp.at(2) = moves.at(i);
+                int move_success = execute_move1(temp, changed);
+//                if(move_success == 0) return 0;
+//                else if(move_success==2) return 2;
+            }
+            else{
+                temp.at(i%3) = moves.at(i);
+            }
+        }
+        player = (player+1)%2;
+        return changed;
+    }
+
+    bool check_won(){
+        return (rings_removed1==l || rings_removed0==l);
+    }
+
+    string get_position(int p, int h){
+//        if(p<0) p+=(6*h);
+        int i= board.at(h).at(p).get_data();
+        if(i==0) return ".";
+        else return to_string(i);
+    }
+
     pair<vector<int>,vector<int>> find_consecutives(vector<vector<pair<int,int>>> directions)
     {
         int curr3 =0, curr4 =0;
@@ -856,280 +955,78 @@ public:
         return breakable;
     }
 
-    bool place_ring(int hexagon, int position){
-        if(board.at(hexagon).at(position).get_data()!=0) return false;
-        board.at(hexagon).at(position).update_data(player+1);
-        if(player==my_marker-3) {
-            ring_self.at(rings_placed / 2).first = hexagon;
-            ring_self.at(rings_placed/2).second = position;
+    pair<int,int> place_ring_heuristic()
+    {
+        vector<pair<int,int>> rings = rings_opponent1;
+        if(rings.size()==0){
+            return make_pair(0,0);
         }
-        else{
-            ring_opponent.at(rings_placed/2).first = hexagon;
-            ring_opponent.at(rings_placed/2).second = position;
-            rings_opponent1.push_back(make_pair(hexagon, position));
+        int r = 0, dirn = 0, max = 0;
+        int ring = 0;
+        int rn = 0;
+        for(auto point:rings)
+        {
+            vector<pair<int,int>> ndr = total_moves(point);
+            for(int i = 0;i< 3; i++)
+            {
+                pair<int,int> tmp = ndr.at(i);
+                if (tmp.first > max)
+                {
+                    // cout << "Max : -> " << max << " and Current -> " << tmp.first << endl;
+                    max = tmp.first;
+                    r = i;
+                    dirn = 1;
+                    ring = rn;
+                }
+                if(tmp.second > max)
+                {
+                    // cout << "Max : -> " << max << " and Current -> " << tmp.second << endl;
+                    max = tmp.second;
+                    r = i;
+                    dirn = -1;
+                    ring = rn;
+                }
+            }
+            rn++;
         }
-        rings_placed++;
-        return true;
+
+        pair<int,int> point = rings.at(ring);
+        vector<pair<int,int>> axis_map = util->board.at(point.first).at(point.second)->axis_mapping;
+        pair<int,int> index;
+        if(r == 0)
+            index = util->elems_on_diagonal1.at(axis_map.at(0).first).at(axis_map.at(0).second + dirn);
+        if(r == 1)
+            index = util->elems_on_diagonal2.at(axis_map.at(1).first).at(axis_map.at(1).second + dirn);
+        if(r==2)
+            index = util->elems_on_vertical.at(axis_map.at(2).first).at(axis_map.at(2).second + dirn);
+        return index;
     }
 
-    bool select_ring(int hexagon, int position){
-        if(board.at(hexagon).at(position).get_data()!=player+1) return false;
-        ring_selected = board.at(hexagon).at(position).get_data();
-        board.at(hexagon).at(position).update_data(board.at(hexagon).at(position).get_data()+2);
-        beginning.first = hexagon;
-        beginning.second = position;
-        return true;
-    }
-
-    bool move_ring(int hexagon, int position, vector<pair<int, int>> &changed){
-        ending.first = hexagon;
-        ending.second = position;
-        vector<pair<int, int>> pointstochange = util->between_points(beginning, ending);
-        for (int i=1 ;i<pointstochange.size()-1; i++){
-            pair<int,int> p = pointstochange.at(i);
-            if(board.at(p.first).at(p.second).get_data()==3){
-                board.at(p.first).at(p.second).update_data(4);
-                changed.push_back(p);
-            }
-            else if(board.at(p.first).at(p.second).get_data() == 4){
-                board.at(p.first).at(p.second).update_data(3);
-                changed.push_back(p);
-            }
-        }
-        changed.push_back(beginning);
-        board.at(hexagon).at(position).update_data(ring_selected);
-        for(int i=0; i<ring_self.size(); i++){
-            if(my_marker-3==player && beginning==ring_self.at(i)) {
-                ring_self.at(i).first = ending.first;
-                ring_self.at(i).second = ending.second;
-                break;
-            }
-            else if(my_marker-3!=player && beginning==ring_opponent.at(i)){
-                ring_opponent.at(i).first = ending.first;
-                ring_opponent.at(i).second = ending.second;
-                break;
-            }
-        }
-        return true;
-    }
-
-    bool remove_start(int hexagon, int position){
-        if(board.at(hexagon).at(position).get_data()!=player+3) return false;
-        beginning.first = hexagon;
-        beginning.second = position;
-        return true;
-    }
-
-    bool remove_end(int hexagon, int position){
-        ending.first = hexagon;
-        ending.second = position;
-        vector<pair<int, int>> pointstochange = util->between_points(beginning, ending);
-        for (pair<int, int> u: pointstochange){
-            board.at(u.first).at(u.second).update_data(0);
-        }
-        return true;
-    }
-
-    bool remove_ring(int hexagon, int position){
-        if(board.at(hexagon).at(position).get_data()!=player+1) return false;
-        board.at(hexagon).at(position).update_data(0);
-        if(player==0) rings_removed0++;
-        else rings_removed1++;
-        pair<int, int> temp = make_pair(hexagon, position);
-        for(int i=0; i<ring_self.size(); i++){
-            if(my_marker-3==player && temp==ring_self.at(i)) {
-                ring_self.at(i).first = -1;
-                ring_self.at(i).second = -1;
-                break;
-            }
-            else if(my_marker-3!=player && temp==ring_opponent.at(i)){
-                ring_opponent.at(i).first = -1;
-                ring_opponent.at(i).second = -1;
-                break;
-            }
-        }
-        return true;
-    }
-    int execute_move1(vector<string> moves, vector<pair<int, int>> &changed){
-        // vector<string> moves = split_string(s);
-//        if(moves.size()>3) return execute_sequence(moves);
-//        else player = (player+1)%2;;
-        string mt = moves.at(0);
-        int hexagon = stoi(moves.at(1));
-        int position = stoi(moves.at(2));
-        bool success = true;
-
-        if(mt=="P") success = success && place_ring(hexagon, position);
-        else if(mt=="S") success = success && select_ring(hexagon, position);
-        else if(mt=="M") {
-            success = success && move_ring(hexagon, position, changed);
-        }
-        else if(mt=="RS"){
-            success = success && remove_start(hexagon, position);
-        }
-        else if(mt=="RE") success = success && remove_end(hexagon, position);
-        else if(mt=="X") success = success && remove_ring(hexagon, position);
-        else return 0;
-
-        bool won = check_won();
-
-        if(!success) return 0;
-        if(won) return 2;
-        return 1;
-
-    }
-
-    vector<pair<int, int>> execute_move(string s){
-        vector<string> moves;
-        string buff = "";
-        for(auto i:s){
-            if(i == ' '){
-                moves.push_back(buff);
-                buff = "";
-            }
-            else {
-                buff+=i;
-            }
-        }
-        if(!buff.empty()) moves.push_back(buff);
-        return (execute_sequence(moves));
-    }
-
-    vector<pair<int, int>> execute_sequence(vector<string> moves){
-        vector<string> temp(3);
-        vector<pair<int, int>> changed;
-        for (int i=0; i<moves.size(); i++){
-            if(i%3==2){
-                temp.at(2) = moves.at(i);
-                int move_success = execute_move1(temp, changed);
-//                if(move_success == 0) return 0;
-//                else if(move_success==2) return 2;
-            }
-            else{
-                temp.at(i%3) = moves.at(i);
-            }
-        }
-        player = (player+1)%2;
-        return changed;
-    }
-
-    bool check_won(){
-        return (rings_removed1==l || rings_removed0==l);
-    }
-
-
-
-    string get_position(int p, int h){
-//        if(p<0) p+=(6*h);
-        int i= board.at(h).at(p).get_data();
-        if(i==0) return ".";
-        else return to_string(i);
-    }
-
-    // int heuristic(){
-    //     int out = 0;
-    //     for(vector<Node_game> u: board){
-    //         for(Node_game v : u){
-    //             if(v.get_data() == my_marker) out++;
-    //             else if(v.get_data() == my_marker-2) out-=18;
-    //             else if(v.get_data()<3 && v.get_data()>0) out+=18;
-    //             else if(v.get_data()>2) out--;
-    //         }
-    //     }
-    //     return out;
-    // }
 
     int heuristic(){
         int out = 0;
         pair<vector<int>,vector<int>> d1 = find_consecutives(util->elems_on_diagonal1);
         pair<vector<int>,vector<int>> d2 = find_consecutives(util->elems_on_diagonal2);
         pair<vector<int>,vector<int>> v = find_consecutives(util->elems_on_vertical);
+        int sum3=0;
+        int sum4=0;
+
+        for(int i =0 ; i < 9; i++)
+        {
+            sum3 += util->consecutive_weights.first.at(i)*(d1.first.at(i) + d2.first.at(i) + v.first.at(i));
+            sum4 += util->consecutive_weights.second.at(i)*(d1.second.at(i) + d2.second.at(i) + v.second.at(i));
+        }
+
         if(my_marker==3){
-            // cerr << d1.first.size();
-            out = out + (2*d1.first.at(0)) - (2*d1.second.at(0));
-            out = out + (4*d1.first.at(1)) - (4*d1.second.at(1));
-            out = out + (8*d1.first.at(2)) - (8*d1.second.at(2));
-            out = out + (16*d1.first.at(3)) - (16*d1.second.at(3));
-            out = out + (18*d1.first.at(4)) - (18*d1.second.at(4));
-            out = out + (20*d1.first.at(5)) - (20*d1.second.at(5));
-            out = out + (24*d1.first.at(6)) - (24*d1.second.at(6));
-            out = out + (32*d1.first.at(7)) - (32*d1.second.at(7));
-            out = out + (48*d1.first.at(8)) - (48*d1.second.at(8));
-
-            out = out + (2*d2.first.at(0)) - (2*d2.second.at(0));
-            out = out + (4*d2.first.at(1)) - (4*d2.second.at(1));
-            out = out + (8*d2.first.at(2)) - (8*d2.second.at(2));
-            out = out + (16*d2.first.at(3)) - (16*d2.second.at(3));
-            out = out + (18*d2.first.at(4)) - (18*d2.second.at(4));
-            out = out + (20*d2.first.at(5)) - (20*d2.second.at(5));
-            out = out + (24*d2.first.at(6)) - (24*d2.second.at(6));
-            out = out + (32*d2.first.at(7)) - (32*d2.second.at(7));
-            out = out + (48*d2.first.at(8)) - (48*d2.second.at(8));
-
-            out = out + (2*v.first.at(0)) - (2*v.second.at(0));
-            out = out + (4*v.first.at(1)) - (4*v.second.at(1));
-            out = out + (8*v.first.at(2)) - (8*v.second.at(2));
-            out = out + (16*v.first.at(3)) - (16*v.second.at(3));
-            out = out + (18*v.first.at(4)) - (18*v.second.at(4));
-            out = out + (20*v.first.at(5)) - (20*v.second.at(5));
-            out = out + (24*v.first.at(6)) - (24*v.second.at(6));
-            out = out + (32*v.first.at(7)) - (32*v.second.at(7));
-            out = out + (48*v.first.at(8)) - (48*v.second.at(8));
-
+            out += sum3 - sum4;
             out = out + (int) (4*pow(6, rings_removed0+1)) - (int)(4*pow(5, rings_removed1+1));
-
-
         }
         if(my_marker==4){
-            // cerr << d1.first.size();
-            out = out - (2*d1.first.at(0)) + (2*d1.second.at(0));
-            out = out - (4*d1.first.at(1)) + (4*d1.second.at(1));
-            out = out - (8*d1.first.at(2)) + (8*d1.second.at(2));
-            out = out - (16*d1.first.at(3)) + (16*d1.second.at(3));
-             out = out - (18*d1.first.at(4)) + (18*d1.second.at(4));
-            out = out - (20*d1.first.at(5)) + (20*d1.second.at(5));
-            out = out - (24*d1.first.at(6)) + (24*d1.second.at(6));
-            out = out - (32*d1.first.at(7)) + (32*d1.second.at(7));
-            out = out - (48*d1.first.at(8)) + (48*d1.second.at(8));
-
-            out = out - (2*d2.first.at(0)) + (2*d2.second.at(0));
-            out = out - (4*d2.first.at(1)) + (4*d2.second.at(1));
-            out = out - (8*d2.first.at(2)) + (8*d2.second.at(2));
-            out = out - (16*d2.first.at(3)) + (16*d2.second.at(3));
-             out = out - (18*d2.first.at(4)) + (18*d2.second.at(4));
-            out = out - (20*d2.first.at(5)) + (20*d2.second.at(5));
-            out = out - (24*d2.first.at(6)) + (24*d2.second.at(6));
-            out = out - (32*d2.first.at(7)) + (32*d2.second.at(7));
-            out = out - (48*d2.first.at(8)) + (48*d2.second.at(8));
-
-            out = out - (2*v.first.at(0)) + (2*v.second.at(0));
-            out = out - (4*v.first.at(1)) + (4*v.second.at(1));
-            out = out - (8*v.first.at(2)) + (8*v.second.at(2));
-            out = out - (16*v.first.at(3)) + (16*v.second.at(3));
-            out = out - (18*v.first.at(4)) + (18*v.second.at(4));
-            out = out - (20*v.first.at(5)) + (20*v.second.at(5));
-            out = out - (24*v.first.at(6)) + (24*v.second.at(6));
-            out = out - (32*v.first.at(7)) + (32*v.second.at(7));
-            out = out - (48*v.first.at(8)) + (48*v.second.at(8));
-
+            out += sum4 - sum3;
             out = out - (int) (4*pow(5, rings_removed0+1)) + (int)(4*pow(6, rings_removed1+1));
-
         }
-
-
         return out;
     }
-
-    int heuristic_consecutives()
-    {
-        int out = 0;
-        pair<vector<int>,vector<int>> d1 = find_consecutives(util->elems_on_diagonal1);
-        pair<vector<int>,vector<int>> d2 = find_consecutives(util->elems_on_diagonal2);
-        pair<vector<int>,vector<int>> v = find_consecutives(util->elems_on_vertical);
-        return out;
-        //ADD YOUR SUMMATIONS HERE
-    }
-
 
     void print_board(){
 
