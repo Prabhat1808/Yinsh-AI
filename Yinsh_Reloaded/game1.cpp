@@ -89,6 +89,19 @@ public:
     int get_removed1(){
         return rings_removed1;
     }
+    int self_removed(){
+      if(my_marker == 3) return rings_removed0;
+      else return rings_removed1;
+    }
+    int opp_removed(){
+      if(my_marker == 3) return rings_removed1;
+      else return rings_removed0;
+    }
+
+    vector<int> get_features(){
+      return {1,2,3,4,5};
+    }
+
     int get_data(int hexagon, int position){
         return board.at(hexagon).at(position).get_data();
     }
@@ -963,7 +976,7 @@ public:
     }
 
 
-    int heuristic(){
+    int heuristic(vector<float> weights){
         int out = 0;
         pair<vector<int>,vector<int>> d1 = find_consecutives(util->elems_on_diagonal1);
         pair<vector<int>,vector<int>> d2 = find_consecutives(util->elems_on_diagonal2);
