@@ -149,7 +149,7 @@ vector<pair<pair<pair<int, Game>, vector<pair<int, int> > >, string> > get_succe
         else rings = gam.opponent_rings();
         for (pair<int, int> ring: rings) {
             if (ring.first != -1 || ring.second != -1) {
-                vector<pair<int, int>> paths = gam.possible_paths(ring.first, ring.second);
+                vector<pair<int, int>> paths = gam.possible_paths(ring.first, ring.second, true, true, true);
                 for (pair<int, int> path: paths) {
                     Game temp = gam.copy_board();
                     temp.select_ring(ring.first, ring.second);
