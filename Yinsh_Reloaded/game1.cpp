@@ -155,161 +155,178 @@ public:
     }
 
 //#########################PLACEMENT###################################
-    vector<pair<int, int>> possible_paths(int i, int j)
+    vector<pair<int, int>> possible_paths(int i, int j,bool d1, bool d2, bool v)
     {
         Node_game curr = board.at(i).at(j);
         vector<pair<int, int>> possible;
         vector<pair<int,int>> axis_map = util->board.at(i).at(j)->axis_mapping;
-
+        int cons = 0;
 
         //Diagonal1
-        int cons = 0;
-        for(int itr = axis_map.at(0).second - 1;itr >= 0 ; itr--)
+        if(d1)
         {
-            pair<int,int> element = util->elems_on_diagonal1.at(axis_map.at(0).first).at(itr);
-            int data = board.at(element.first).at(element.second).get_data();
-            if(data == 1 || data == 2)
-                break;
-            if(data == 3 || data == 4)
-            {
-                cons++;
-                continue;
-            }
-            if(data == 0)
-            {
-                if(cons > 0)
-                {
-                    possible.push_back(element);
-                    break;
-                }
-                else
-                    possible.push_back(element);
-            }
+          for(int itr = axis_map.at(0).second - 1;itr >= 0 ; itr--)
+          {
+              pair<int,int> element = util->elems_on_diagonal1.at(axis_map.at(0).first).at(itr);
+              int data = board.at(element.first).at(element.second).get_data();
+              if(data == 1 || data == 2)
+                  break;
+              if(data == 3 || data == 4)
+              {
+                  cons++;
+                  continue;
+              }
+              if(data == 0)
+              {
+                  if(cons > 0)
+                  {
+                      possible.push_back(element);
+                      break;
+                  }
+                  else
+                      possible.push_back(element);
+              }
+          }
         }
         //Diagonal2
-        cons = 0;
-        for(int itr = axis_map.at(1).second - 1;itr >= 0 ; itr--)
+        if(d2)
         {
-            pair<int,int> element = util->elems_on_diagonal2.at(axis_map.at(1).first).at(itr);
-            int data = board.at(element.first).at(element.second).get_data();
-            if(data == 1 || data == 2)
-                break;
-            if(data == 3 || data == 4)
-            {
-                cons++;
-                continue;
-            }
-            if(data == 0)
-            {
-                if(cons > 0)
-                {
-                    possible.push_back(element);
-                    cons = 0;
-                    break;
-                }
-                else
-                    possible.push_back(element);
-            }
+          cons = 0;
+          for(int itr = axis_map.at(1).second - 1;itr >= 0 ; itr--)
+          {
+              pair<int,int> element = util->elems_on_diagonal2.at(axis_map.at(1).first).at(itr);
+              int data = board.at(element.first).at(element.second).get_data();
+              if(data == 1 || data == 2)
+                  break;
+              if(data == 3 || data == 4)
+              {
+                  cons++;
+                  continue;
+              }
+              if(data == 0)
+              {
+                  if(cons > 0)
+                  {
+                      possible.push_back(element);
+                      cons = 0;
+                      break;
+                  }
+                  else
+                      possible.push_back(element);
+              }
+          }
         }
         // //Vertical
-        cons = 0;
-        for(int itr = axis_map.at(2).second - 1;itr >= 0 ; itr--)
+        if(v)
         {
-            pair<int,int> element = util->elems_on_vertical.at(axis_map.at(2).first).at(itr);
-            int data = board.at(element.first).at(element.second).get_data();
-            if(data == 1 || data == 2)
-                break;
-            if(data == 3 || data == 4)
-            {
-                cons++;
-                continue;
-            }
-            if(data == 0)
-            {
-                if(cons > 0)
-                {
-                    possible.push_back(element);
-                    cons = 0;
-                    break;
-                }
-                else
-                    possible.push_back(element);
-            }
+          cons = 0;
+          for(int itr = axis_map.at(2).second - 1;itr >= 0 ; itr--)
+          {
+              pair<int,int> element = util->elems_on_vertical.at(axis_map.at(2).first).at(itr);
+              int data = board.at(element.first).at(element.second).get_data();
+              if(data == 1 || data == 2)
+                  break;
+              if(data == 3 || data == 4)
+              {
+                  cons++;
+                  continue;
+              }
+              if(data == 0)
+              {
+                  if(cons > 0)
+                  {
+                      possible.push_back(element);
+                      cons = 0;
+                      break;
+                  }
+                  else
+                      possible.push_back(element);
+              }
+          }
         }
 
         // //Diagonal1
-        cons = 0;
-        for(int itr = axis_map.at(0).second + 1;itr < util->elems_on_diagonal1.at(axis_map.at(0).first).size() ; itr++)
+        if(d1)
         {
-            pair<int,int> element = util->elems_on_diagonal1.at(axis_map.at(0).first).at(itr);
-            int data = board.at(element.first).at(element.second).get_data();
-            if(data == 1 || data == 2)
-                break;
-            if(data == 3 || data == 4)
-            {
-                cons++;
-                continue;
-            }
-            if(data == 0)
-            {
-                if(cons > 0)
-                {
-                    possible.push_back(element);
-                    break;
-                }
-                else
-                    possible.push_back(element);
-            }
+          cons = 0;
+          for(int itr = axis_map.at(0).second + 1;itr < util->elems_on_diagonal1.at(axis_map.at(0).first).size() ; itr++)
+          {
+              pair<int,int> element = util->elems_on_diagonal1.at(axis_map.at(0).first).at(itr);
+              int data = board.at(element.first).at(element.second).get_data();
+              if(data == 1 || data == 2)
+                  break;
+              if(data == 3 || data == 4)
+              {
+                  cons++;
+                  continue;
+              }
+              if(data == 0)
+              {
+                  if(cons > 0)
+                  {
+                      possible.push_back(element);
+                      break;
+                  }
+                  else
+                      possible.push_back(element);
+              }
+          }
         }
 
         // //Diagonal2
-        cons = 0;
-        for(int itr = axis_map.at(1).second + 1;itr < util->elems_on_diagonal2.at(axis_map.at(1).first).size() ; itr++)
+        if(d2)
         {
-            pair<int,int> element = util->elems_on_diagonal2.at(axis_map.at(1).first).at(itr);
-            int data = board.at(element.first).at(element.second).get_data();
-            if(data == 1 || data == 2)
-                break;
-            if(data == 3 || data == 4)
-            {
-                cons++;
-                continue;
-            }
-            if(data == 0)
-            {
-                if(cons > 0)
-                {
-                    possible.push_back(element);
-                    break;
-                }
-                else
-                    possible.push_back(element);
-            }
+          cons = 0;
+          for(int itr = axis_map.at(1).second + 1;itr < util->elems_on_diagonal2.at(axis_map.at(1).first).size() ; itr++)
+          {
+              pair<int,int> element = util->elems_on_diagonal2.at(axis_map.at(1).first).at(itr);
+              int data = board.at(element.first).at(element.second).get_data();
+              if(data == 1 || data == 2)
+                  break;
+              if(data == 3 || data == 4)
+              {
+                  cons++;
+                  continue;
+              }
+              if(data == 0)
+              {
+                  if(cons > 0)
+                  {
+                      possible.push_back(element);
+                      break;
+                  }
+                  else
+                      possible.push_back(element);
+              }
+          }
         }
 
         //Vertical
-        cons = 0;
-        for(int itr = axis_map.at(2).second + 1;itr < util->elems_on_vertical.at(axis_map.at(2).first).size() ; itr++)
+        if(v)
         {
-            pair<int,int> element = util->elems_on_vertical.at(axis_map.at(2).first).at(itr);
-            int data = board.at(element.first).at(element.second).get_data();
-            if(data == 1 || data == 2)
-                break;
-            if(data == 3 || data == 4)
-            {
-                cons++;
-                continue;
-            }
-            if(data == 0)
-            {
-                if(cons > 0)
-                {
-                    possible.push_back(element);
-                    break;
-                }
-                else
-                    possible.push_back(element);
-            }
+          cons = 0;
+          for(int itr = axis_map.at(2).second + 1;itr < util->elems_on_vertical.at(axis_map.at(2).first).size() ; itr++)
+          {
+              pair<int,int> element = util->elems_on_vertical.at(axis_map.at(2).first).at(itr);
+              int data = board.at(element.first).at(element.second).get_data();
+              if(data == 1 || data == 2)
+                  break;
+              if(data == 3 || data == 4)
+              {
+                  cons++;
+                  continue;
+              }
+              if(data == 0)
+              {
+                  if(cons > 0)
+                  {
+                      possible.push_back(element);
+                      break;
+                  }
+                  else
+                      possible.push_back(element);
+              }
+          }
         }
 
         return possible;
@@ -868,7 +885,7 @@ public:
         for(int i=axis_locations.second + 1;i < axis.size(); i++)
         {
             int dat = board.at(axis.at(i).first).at(axis.at(i).second).get_data();
-            cout << axis.at(i).first << " , " << axis.at(i).second << " --> " << dat << endl;
+            // cout << axis.at(i).first << " , " << axis.at(i).second << " --> " << dat << endl;
             if(dat == 0)
             {
                 fwd = -1;
@@ -887,7 +904,7 @@ public:
         for(int i=axis_locations.second - 1;i >= 0; i--)
         {
             int dat = board.at(axis.at(i).first).at(axis.at(i).second).get_data();
-            cout << axis.at(i).first << " , " << axis.at(i).second << " --> " << dat << endl;
+            // cout << axis.at(i).first << " , " << axis.at(i).second << " --> " << dat << endl;
             if(dat == 0)
             {
                 bcd = -1;
@@ -902,7 +919,7 @@ public:
             if(dat == my_marker)
                 break;
         }
-        cout << "FWD -> " << fwd << "\tBCD -> " << bcd << endl;
+        // cout << "FWD -> " << fwd << "\tBCD -> " << bcd << endl;
         if( (fwd == 1 && bcd == -1) || (fwd == -1 && bcd == 1) )
         {
             return true;
@@ -910,22 +927,26 @@ public:
         return false;
     }
 
-    bool point_in_danger(pair<int,int> point, int opponent_marker, int my_marker)
+    bool point_in_danger(pair<int,int> point, int opponent_marker, int my_marker, bool diag1, bool diag2, bool vert)
     {
         vector<pair<int,int>> axis_map = util->board.at(point.first).at(point.second)->axis_mapping;
-        bool d1 = danger_on_axis(util->elems_on_diagonal1,axis_map.at(0),opponent_marker,my_marker);
+        bool d1 = false,d2 = false, v = false;
+        if(diag1)
+          d1 = danger_on_axis(util->elems_on_diagonal1,axis_map.at(0),opponent_marker,my_marker);
         if(d1)
         {
             return true;
         }
         // cout << "ALONG D1 : " << d1 <<endl;
-        bool d2 = danger_on_axis(util->elems_on_diagonal2,axis_map.at(1),opponent_marker,my_marker);
+        if(diag2)
+          d2 = danger_on_axis(util->elems_on_diagonal2,axis_map.at(1),opponent_marker,my_marker);
         if(d2)
         {
             return true;
         }
         // cout << "ALONG D2 : " << d2 <<endl;
-        bool v = danger_on_axis(util->elems_on_vertical,axis_map.at(2),opponent_marker,my_marker);
+        if(vert)
+          v = danger_on_axis(util->elems_on_vertical,axis_map.at(2),opponent_marker,my_marker);
         // cout << "ALONG v : " << v <<endl;
         // return (d1 || d2 || v);
         return v;
@@ -936,7 +957,7 @@ public:
         bool breakable = false;
         for(auto w: points)
         {
-            breakable =  breakable || point_in_danger(w, opponent_marker, my_marker);
+            breakable =  breakable || point_in_danger(w, opponent_marker, my_marker,true,true,true);
             if(breakable)
             {
                 return breakable;
@@ -992,19 +1013,89 @@ public:
         return index;
     }
 
-    pair<int,int> total_breakable_streaks()
+    bool redeemable_streak(pair<int,int> st,pair<int,int> en, int player_marker)
+    {
+        vector<pair<int,int>> point1 = util->board.at(st.first).at(st.second)->axis_mapping;
+        vector<pair<int,int>> point2 = util->board.at(en.first).at(en.second)->axis_mapping;
+
+        int direction = -1;
+      	for(int i =0;i<3;i++)
+      	{
+      		if(point1.at(i).first == point2.at(i).first)
+      		{
+      			direction = i;
+      			break;
+      		}
+      	}
+
+        int axis = point1.at(direction).first;
+      	int low = min(point1.at(direction).second , point2.at(direction).second);
+      	int high = max(point1.at(direction).second , point2.at(direction).second);
+
+        bool d1=true,d2=true,v=true;
+
+        vector<pair<int,int>> axis_vals;
+        if(direction == 0){
+    			axis_vals = util->elems_on_diagonal1.at(axis);
+          d1=false;
+        }
+    		if(direction == 1){
+    			axis_vals = util->elems_on_diagonal2.at(axis);
+          d2=false;
+        }
+    		if(direction == 2){
+    			axis_vals = util->elems_on_vertical.at(axis);
+          v=false;
+        }
+
+        vector<pair<int,int>> checkpoints;
+        if(low == 0 && high != axis_vals.size()-1)
+            checkpoints.push_back(axis_vals.at(high+1));
+        else if(low ==0 && high == axis_vals.size()-1)
+            return false;
+        else if(low != 0 && high == axis_vals.size()-1)
+            checkpoints.push_back(axis_vals.at(low-1));
+        else
+        {
+            checkpoints.push_back(axis_vals.at(low-1));
+            checkpoints.push_back(axis_vals.at(high+1));
+        }
+
+        for(auto bp: checkpoints)
+        {
+            if(board.at(bp.first).at(bp.second).get_data() == player_marker)
+            {
+                vector<pair<int, int>> paths = possible_paths(bp.first, bp.second, d1, d2, v);
+                if(paths.size() != 0)
+                    return true;
+            }
+            if(board.at(bp.first).at(bp.second).get_data() == (player_marker%2)+3)//i.e. opponent marker
+            {
+                if(point_in_danger(bp, player_marker, player_marker%2 + 1,d1,d2,v))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    pair<pair<int,int>,pair<int,int>> analyse_streaks()//combines redeemable and breakable streaks
     {
         pair<vector<pair<pair<int,int>,pair<int,int>>>,vector<pair<pair<int,int>,pair<int,int>>>> d1 = find_consecutive_locations(util->elems_on_diagonal1);
         pair<vector<pair<pair<int,int>,pair<int,int>>>,vector<pair<pair<int,int>,pair<int,int>>>> d2 = find_consecutive_locations(util->elems_on_diagonal2);
         pair<vector<pair<pair<int,int>,pair<int,int>>>,vector<pair<pair<int,int>,pair<int,int>>>> v = find_consecutive_locations(util->elems_on_vertical);
         //have to consider difference in breakability, i.e. along axis and cross axis
         int c3 = 0, c4 = 0;
+        int r3 = 0, r4 = 0;
         //first values are for point 3, i.e opponent marker = 2
         for(auto w:d1.first)
         {
             if(streak_breakable(util->between_points(w.first,w.second),2,1))
             {
                 c3++;
+            }
+            if(redeemable_streak(w.first,w.second,1))
+            {
+                r3++;
             }
         }
         for(auto w:d2.first)
@@ -1013,12 +1104,20 @@ public:
             {
                 c3++;
             }
+            if(redeemable_streak(w.first,w.second,1))
+            {
+                r3++;
+            }
         }
         for(auto w:v.first)
         {
             if(streak_breakable(util->between_points(w.first,w.second),2,1))
             {
                 c3++;
+            }
+            if(redeemable_streak(w.first,w.second,1))
+            {
+                r3++;
             }
         }
         //---------now for marker 4
@@ -1028,12 +1127,20 @@ public:
             {
                 c4++;
             }
+            if(redeemable_streak(w.first,w.second,1))
+            {
+                r4++;
+            }
         }
         for(auto w:d2.second)
         {
             if(streak_breakable(util->between_points(w.first,w.second),1,2))
             {
                 c4++;
+            }
+            if(redeemable_streak(w.first,w.second,1))
+            {
+                r4++;
             }
         }
         for(auto w:v.second)
@@ -1042,9 +1149,13 @@ public:
             {
                 c4++;
             }
+            if(redeemable_streak(w.first,w.second,1))
+            {
+                r4++;
+            }
         }
 
-        return make_pair(c3,c4);
+        return make_pair(make_pair(c3,c4),make_pair(r3,r4));
     }
 
     int heuristic(vector<float> weights){
@@ -1054,6 +1165,15 @@ public:
         pair<vector<int>,vector<int>> v = find_consecutives(util->elems_on_vertical);
         int sum3=0;
         int sum4=0;
+        pair<vector<int>,vector<int>> ring_mobilities = ring_freedom();
+        pair<pair<int,int>,pair<int,int>> streaks = analyse_streaks();
+        pair<int,int> critical = critical_points();
+
+        int c3,c4,r3,r4;
+        c3 = streaks.first.first;
+        c4 = streaks.first.second;
+        r3 = streaks.second.first;
+        r4 = streaks.second.second;
 
         for(int i =0 ; i < 9; i++)
         {
@@ -1063,12 +1183,18 @@ public:
 
         if(my_marker==3){
             out += sum3 - sum4;
+            out += 100*r3 + 50*c4 - 50*c3 - 100*r4;
+            out += 100*critical.first - 100*critical.second;
             out = out + (int) (4*pow(6, rings_removed0+1)) - (int)(4*pow(5, rings_removed1+1));
         }
         if(my_marker==4){
             out += sum4 - sum3;
+            out += 100*r4 + 50*c3 - 50*c4 - 100*r3;
+            out += -100*critical.first + 100*critical.second;
             out = out - (int) (4*pow(5, rings_removed0+1)) + (int)(4*pow(6, rings_removed1+1));
         }
+
+        out += accumulate(ring_mobilities.first.begin(),ring_mobilities.first.end(),0) - accumulate(ring_mobilities.second.begin(),ring_mobilities.second.end(),0);
         return out;
     }
 
@@ -1097,8 +1223,9 @@ public:
         cout << "   " << "     " << " " << "     " << " " << " " << endl;
     }
 
-    void intermittent(vector<vector<pair<int,int>>> directions, int player_marker)
+    vector<pair<int,int>> intermittent_on_axis(vector<vector<pair<int,int>>> directions, int player_marker, bool d1, bool d2, bool v)
     {
+        //boolean for the direction which is given as input should be false
         int count_d1 = 0, count_d2 = 0;
         int buffer = 0;
         int ind1 = -1, ind2 = -1;
@@ -1107,6 +1234,7 @@ public:
         for(auto axis: directions)
         {
             int i = 0;
+            vector<pair<int,int>> tmp;
             for(auto point:axis)
             {
                 i++;
@@ -1144,8 +1272,9 @@ public:
                     {
                         if(count_d1 + count_d2 >= max_row - 1)
                         {
-                            buffer_points.push_back(axis.at(ind1-1));
-                            cout << "storing in buffer (" << axis.at(ind1-1).first << "," << axis.at(ind1-1).second << ")" << endl;
+                          if(ind1 > 0)
+                            tmp.push_back(axis.at(ind1-1));
+                            // cout << "storing in buffer (" << axis.at(ind1-1).first << "," << axis.at(ind1-1).second << ")" << endl;
                         }
                         buffer--;
                         ind1 = ind2;
@@ -1157,13 +1286,74 @@ public:
             }
             if(count_d1 + count_d2 >= max_row - 1)
             {
-                buffer_points.push_back(axis.at(ind1-1));
-                cout << "storing in buffer (" << axis.at(ind1-1).first << "," << axis.at(ind1-1).second << ")" << endl;
+              if(ind1 > 0)
+                tmp.push_back(axis.at(ind1-1));
+                // cout << "storing in buffer (" << axis.at(ind1-1).first << "," << axis.at(ind1-1).second << ")" << endl;
             }
+
+            for(auto bp: tmp)
+            {
+                if(board.at(bp.first).at(bp.second).get_data() == player_marker)
+                {
+                    vector<pair<int, int>> paths = possible_paths(bp.first, bp.second, d1, d2, v);
+                    if(paths.size() != 0)
+                    {
+                        buffer_points.push_back(bp);
+                    }
+                }
+                if(board.at(bp.first).at(bp.second).get_data() == (player_marker%2)+3)//i.e. opponent marker
+                {
+                    if(point_in_danger(bp, player_marker, player_marker%2 + 1,d1,d2,v))
+                    {
+                        buffer_points.push_back(bp);
+                    }
+                }
+            }
+
             count_d1 = 0, count_d2 = 0;
             buffer = 0;
             ind1 = -1, ind2 = -1;
         }
+        return buffer_points;
+    }
+
+    pair<int,int> critical_points()//1st index is for player 3. second is for player 2
+    {
+        int sum3,sum4;
+
+        sum3 += (intermittent_on_axis(util->elems_on_diagonal1,1,false,true,true)).size();
+        sum3 += (intermittent_on_axis(util->elems_on_diagonal2,1,true,false,true)).size();
+        sum3 += (intermittent_on_axis(util->elems_on_vertical,1,true,true,false)).size();
+
+        sum4 += (intermittent_on_axis(util->elems_on_diagonal1,2,false,true,true)).size();
+        sum4 += (intermittent_on_axis(util->elems_on_diagonal2,2,true,false,true)).size();
+        sum4 += (intermittent_on_axis(util->elems_on_vertical,2,true,true,false)).size();
+
+        return make_pair(sum3,sum4);
+    }
+
+    pair<vector<int>,vector<int>> ring_freedom() //first element of pair is my moves available. second is opponent's moves available
+    {
+        vector<int> self_moves;
+        vector<int> opponent_moves;
+
+        int i = 0;
+        for(auto w:ring_self)
+        {
+            if (w.first == -1 || w.second == -1)
+                self_moves.push_back(-5);
+            else
+                self_moves.push_back((possible_paths(w.first, w.second,true, true, true)).size());
+        }
+        i = 0;
+        for(auto w:ring_opponent)
+        {
+            if (w.first == -1 || w.second == -1)
+                opponent_moves.push_back(-5);
+            else
+                opponent_moves.push_back((possible_paths(w.first, w.second,true, true, true)).size());
+        }
+        return make_pair(self_moves,opponent_moves);
     }
 };
 
@@ -1230,98 +1420,102 @@ public:
 //     // game->execute_move("S 2 9 M 5 24 RS 2 9 RE 3 2 X 4 23");
 //     // game->print_board();
 //     // game->print_data();
-
-int main()
-{
-    Utility* util = new Utility(6);
-    Game game = Game(0, 3, util, 6, 6, 6);
-    vector<pair<int,int>> ringos;
-    game.board[6][29].data = 4;
-    game.board[6][28].data = 4;
-    game.board[6][27].data = 3;
-    game.board[6][26].data = 4;
-    game.board[6][25].data = 4;
-
-    game.board[6][31].data = 4;
-    game.board[5][25].data = 4;
-    game.board[5][24].data = 3;
-    game.board[5][23].data = 4;
-    game.board[5][22].data = 4;
-    game.board[5][21].data = 4;
-
-    game.board[6][32].data = 4;
-    game.board[5][26].data = 3;
-    game.board[4][20].data = 4;
-    game.board[4][19].data = 4;
-    game.board[4][18].data = 4;
-    game.board[4][17].data = 4;
-
-    game.board[6][33].data = 4;
-    game.board[5][27].data = 4;
-    game.board[4][21].data = 4;
-    game.board[3][15].data = 4;
-    game.board[3][14].data = 3;
-    game.board[3][13].data = 4;
-
-    game.board[6][34].data = 3;
-    game.board[5][28].data = 4;
-    game.board[4][22].data = 4;
-    game.board[3][16].data = 4;
-    game.board[2][10].data = 4;
-    game.board[2][9].data = 4;
-
-    game.board[6][35].data = 4;
-    game.board[5][29].data = 4;
-    game.board[4][13].data = 4;
-    game.board[3][17].data = 4;
-    game.board[2][11].data = 4;
-    game.board[1][5].data = 3;
-
-    game.board[6][1].data = 4;
-    game.board[5][1].data = 4;
-    game.board[4][1].data = 4;
-    game.board[3][1].data = 3;
-    game.board[2][1].data = 4;
-    game.board[1][1].data = 4;
-    game.board[1][2].data = 3;
-    game.board[2][5].data = 3;
-    game.board[3][8].data = 4;
-    game.board[4][11].data = 4;
-    game.board[5][13].data = 4;
-
-
-
-    //////////////////////////
-    // game.board[3][12].data = 4;
-    // game.board[4][15].data = 3;
-    // game.board[5][18].data = 3;
-    // game.board[6][21].data = 4;
-    // game.board[6][25].data = 4;
-    // game.board[6][31].data = 4;
-    // game.board[5][25].data = 4;
-    // game.board[5][24].data = 3;
-    // game.board[5][23].data = 4;
-    // game.board[5][22].data = 4;
-    // game.board[5][21].data = 4;
-    // game.board[6][32].data = 4;
-    // game.board[5][26].data = 3;
-    // game.board[4][20].data = 4;
-    // game.board[4][19].data = 4;
-    // game.board[4][18].data = 4;
-    // game.board[4][17].data = 4;
-    // game.board[6][33].data = 4;
-    // game.board[5][27].data = 4;
-    // game.board[4][21].data = 4;
-    // game.board[3][15].data = 4;
-    // game.board[3][14].data = 3;
-    // game.board[3][13].data = 4;
-
-    game.intermittent(util->elems_on_vertical,2);
-
-    // game.execute_move("P 3 9");
-    // game.execute_move("P 4 12");
-    // ringos.push_back(make_pair(3,9));
-    // ringos.push_back(make_pair(4,12));
-    // pair<int,int> ind = game.place_ring_heuristic(ringos);
-    // cout << ind.first << " , " << ind.second << endl;
-}
+//
+// int main()
+// {
+//     Utility* util = new Utility(6);
+//     Game game = Game(0, 3, util, 6, 6, 6);
+//     vector<pair<int,int>> ringos;
+//     game.board[6][29].data = 4;
+//     game.board[6][28].data = 4;
+//     game.board[6][27].data = 3;
+//     game.board[6][26].data = 2;
+//     game.board[6][25].data = 4;
+//
+//     game.board[6][31].data = 4;
+//     game.board[5][25].data = 4;
+//     game.board[5][24].data = 2;
+//     game.board[5][23].data = 4;
+//     game.board[5][22].data = 4;
+//     game.board[5][21].data = 4;
+//
+//     game.board[6][32].data = 4;
+//     game.board[5][26].data = 3;
+//     game.board[4][20].data = 4;
+//     game.board[4][19].data = 4;
+//     game.board[4][18].data = 4;
+//     game.board[4][17].data = 4;
+//
+//     game.board[6][33].data = 4;
+//     game.board[5][27].data = 4;
+//     game.board[4][21].data = 4;
+//     game.board[3][15].data = 4;
+//     game.board[3][14].data = 3;
+//     game.board[3][13].data = 4;
+//
+//     game.board[6][34].data = 4;
+//     game.board[5][28].data = 4;
+//     game.board[4][22].data = 4;
+//     game.board[3][16].data = 4;
+//     game.board[2][10].data = 0;
+//     game.board[2][9].data = 4;
+//
+//     game.board[6][35].data = 4;
+//     game.board[5][29].data = 4;
+//     game.board[4][13].data = 4;
+//     game.board[3][17].data = 4;
+//     game.board[2][11].data = 4;
+//     game.board[1][5].data = 2;
+//
+//     game.board[6][1].data = 4;
+//     game.board[5][1].data = 4;
+//     game.board[4][1].data = 4;
+//     game.board[3][1].data = 3;
+//     game.board[2][1].data = 4;
+//     game.board[1][1].data = 4;
+//     game.board[1][2].data = 3;
+//     game.board[2][5].data = 3;
+//     game.board[3][8].data = 4;
+//     game.board[4][11].data = 4;
+//     game.board[5][13].data = 4;
+//
+//     cout << game.redeemable_streak(make_pair(6,35),make_pair(2,11),2) << endl;
+//
+//     //////////////////////////
+//     // game.board[3][12].data = 4;
+//     // game.board[4][15].data = 3;
+//     // game.board[5][18].data = 3;
+//     // game.board[6][21].data = 4;
+//     // game.board[6][25].data = 4;
+//     // game.board[6][31].data = 4;
+//     // game.board[5][25].data = 4;
+//     // game.board[5][24].data = 3;
+//     // game.board[5][23].data = 4;
+//     // game.board[5][22].data = 4;
+//     // game.board[5][21].data = 4;
+//     // game.board[6][32].data = 4;
+//     // game.board[5][26].data = 3;
+//     // game.board[4][20].data = 4;
+//     // game.board[4][19].data = 4;
+//     // game.board[4][18].data = 4;
+//     // game.board[4][17].data = 4;
+//     // game.board[6][33].data = 4;
+//     // game.board[5][27].data = 4;
+//     // game.board[4][21].data = 4;
+//     // game.board[3][15].data = 4;
+//     // game.board[3][14].data = 3;
+//     // game.board[3][13].data = 4;
+//
+//     // vector<pair<int,int>> p = game.intermittent_on_axis(util->elems_on_vertical,2,true,true,false);
+//     // for(auto w: p)
+//     // {
+//     //     cout << w.first << "," << w.second << endl;
+//     // }
+//
+//     // game.execute_move("P 3 9");
+//     // game.execute_move("P 4 12");
+//     // ringos.push_back(make_pair(3,9));
+//     // ringos.push_back(make_pair(4,12));
+//     // pair<int,int> ind = game.place_ring_heuristic(ringos);
+//     // cout << ind.first << " , " << ind.second << endl;
+// }
