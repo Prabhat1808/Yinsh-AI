@@ -89,6 +89,19 @@ public:
     int get_removed1(){
         return rings_removed1;
     }
+    int self_removed(){
+      if(my_marker == 3) return rings_removed0;
+      else return rings_removed1;
+    }
+    int opp_removed(){
+      if(my_marker == 3) return rings_removed1;
+      else return rings_removed0;
+    }
+
+    vector<int> get_features(){
+      return {1,2,3,4,5};
+    }
+
     int get_data(int hexagon, int position){
         return board.at(hexagon).at(position).get_data();
     }
@@ -147,12 +160,11 @@ public:
         Node_game curr = board.at(i).at(j);
         vector<pair<int, int>> possible;
         vector<pair<int,int>> axis_map = util->board.at(i).at(j)->axis_mapping;
-
+        int cons = 0;
 
         //Diagonal1
         if(d1)
         {
-          int cons = 0;
           for(int itr = axis_map.at(0).second - 1;itr >= 0 ; itr--)
           {
               pair<int,int> element = util->elems_on_diagonal1.at(axis_map.at(0).first).at(itr);
@@ -873,7 +885,7 @@ public:
         for(int i=axis_locations.second + 1;i < axis.size(); i++)
         {
             int dat = board.at(axis.at(i).first).at(axis.at(i).second).get_data();
-            cout << axis.at(i).first << " , " << axis.at(i).second << " --> " << dat << endl;
+            // cout << axis.at(i).first << " , " << axis.at(i).second << " --> " << dat << endl;
             if(dat == 0)
             {
                 fwd = -1;
@@ -892,7 +904,7 @@ public:
         for(int i=axis_locations.second - 1;i >= 0; i--)
         {
             int dat = board.at(axis.at(i).first).at(axis.at(i).second).get_data();
-            cout << axis.at(i).first << " , " << axis.at(i).second << " --> " << dat << endl;
+            // cout << axis.at(i).first << " , " << axis.at(i).second << " --> " << dat << endl;
             if(dat == 0)
             {
                 bcd = -1;
@@ -907,7 +919,7 @@ public:
             if(dat == my_marker)
                 break;
         }
-        cout << "FWD -> " << fwd << "\tBCD -> " << bcd << endl;
+        // cout << "FWD -> " << fwd << "\tBCD -> " << bcd << endl;
         if( (fwd == 1 && bcd == -1) || (fwd == -1 && bcd == 1) )
         {
             return true;
@@ -915,22 +927,26 @@ public:
         return false;
     }
 
-    bool point_in_danger(pair<int,int> point, int opponent_marker, int my_marker)
+    bool point_in_danger(pair<int,int> point, int opponent_marker, int my_marker, bool diag1, bool diag2, bool vert)
     {
         vector<pair<int,int>> axis_map = util->board.at(point.first).at(point.second)->axis_mapping;
-        bool d1 = danger_on_axis(util->elems_on_diagonal1,axis_map.at(0),opponent_marker,my_marker);
+        bool d1 = false,d2 = false, v = false;
+        if(diag1)
+          d1 = danger_on_axis(util->elems_on_diagonal1,axis_map.at(0),opponent_marker,my_marker);
         if(d1)
         {
             return true;
         }
         // cout << "ALONG D1 : " << d1 <<endl;
-        bool d2 = danger_on_axis(util->elems_on_diagonal2,axis_map.at(1),opponent_marker,my_marker);
+        if(diag2)
+          d2 = danger_on_axis(util->elems_on_diagonal2,axis_map.at(1),opponent_marker,my_marker);
         if(d2)
         {
             return true;
         }
         // cout << "ALONG D2 : " << d2 <<endl;
-        bool v = danger_on_axis(util->elems_on_vertical,axis_map.at(2),opponent_marker,my_marker);
+        if(vert)
+          v = danger_on_axis(util->elems_on_vertical,axis_map.at(2),opponent_marker,my_marker);
         // cout << "ALONG v : " << v <<endl;
         // return (d1 || d2 || v);
         return v;
@@ -941,7 +957,7 @@ public:
         bool breakable = false;
         for(auto w: points)
         {
-            breakable =  breakable || point_in_danger(w, opponent_marker, my_marker);
+            breakable =  breakable || point_in_danger(w, opponent_marker, my_marker,true,true,true);
             if(breakable)
             {
                 return breakable;
@@ -995,6 +1011,71 @@ public:
         if(r==2)
             index = util->elems_on_vertical.at(axis_map.at(2).first).at(axis_map.at(2).second + dirn);
         return index;
+    }
+
+    bool redeemable_streak(pair<int,int> st,pair<int,int> en, int player_marker)
+    {
+        vector<pair<int,int>> point1 = util->board.at(st.first).at(st.second)->axis_mapping;
+        vector<pair<int,int>> point2 = util->board.at(en.first).at(en.second)->axis_mapping;
+
+        int direction = -1;
+      	for(int i =0;i<3;i++)
+      	{
+      		if(point1.at(i).first == point2.at(i).first)
+      		{
+      			direction = i;
+      			break;
+      		}
+      	}
+
+        int axis = point1.at(direction).first;
+      	int low = min(point1.at(direction).second , point2.at(direction).second);
+      	int high = max(point1.at(direction).second , point2.at(direction).second);
+
+        bool d1=true,d2=true,v=true;
+
+        vector<pair<int,int>> axis_vals;
+        if(direction == 0){
+    			axis_vals = util->elems_on_diagonal1.at(axis);
+          d1=false;
+        }
+    		if(direction == 1){
+    			axis_vals = util->elems_on_diagonal2.at(axis);
+          d2=false;
+        }
+    		if(direction == 2){
+    			axis_vals = util->elems_on_vertical.at(axis);
+          v=false;
+        }
+
+        vector<pair<int,int>> checkpoints;
+        if(low == 0 && high != axis_vals.size()-1)
+            checkpoints.push_back(axis_vals.at(high+1));
+        else if(low ==0 && high == axis_vals.size()-1)
+            return false;
+        else if(low != 0 && high == axis_vals.size()-1)
+            checkpoints.push_back(axis_vals.at(low-1));
+        else
+        {
+            checkpoints.push_back(axis_vals.at(low-1));
+            checkpoints.push_back(axis_vals.at(high+1));
+        }
+
+        for(auto bp: checkpoints)
+        {
+            if(board.at(bp.first).at(bp.second).get_data() == player_marker)
+            {
+                vector<pair<int, int>> paths = possible_paths(bp.first, bp.second, d1, d2, v);
+                if(paths.size() != 0)
+                    return true;
+            }
+            if(board.at(bp.first).at(bp.second).get_data() == (player_marker%2)+3)//i.e. opponent marker
+            {
+                if(point_in_danger(bp, player_marker, player_marker%2 + 1,d1,d2,v))
+                    return true;
+            }
+        }
+        return false;
     }
 
     pair<int,int> total_breakable_streaks()
@@ -1052,7 +1133,7 @@ public:
         return make_pair(c3,c4);
     }
 
-    int heuristic(){
+    int heuristic(vector<float> weights){
         int out = 0;
         pair<vector<int>,vector<int>> d1 = find_consecutives(util->elems_on_diagonal1);
         pair<vector<int>,vector<int>> d2 = find_consecutives(util->elems_on_diagonal2);
@@ -1102,7 +1183,7 @@ public:
         cout << "   " << "     " << " " << "     " << " " << " " << endl;
     }
 
-    void intermittent(vector<vector<pair<int,int>>> directions, int player_marker, bool d1, bool d2, bool v)
+    vector<pair<int,int>> intermittent_on_axis(vector<vector<pair<int,int>>> directions, int player_marker, bool d1, bool d2, bool v)
     {
         //boolean for the direction which is given as input should be false
         int count_d1 = 0, count_d2 = 0;
@@ -1152,7 +1233,7 @@ public:
                         if(count_d1 + count_d2 >= max_row - 1)
                         {
                             tmp.push_back(axis.at(ind1-1));
-                            cout << "storing in buffer (" << axis.at(ind1-1).first << "," << axis.at(ind1-1).second << ")" << endl;
+                            // cout << "storing in buffer (" << axis.at(ind1-1).first << "," << axis.at(ind1-1).second << ")" << endl;
                         }
                         buffer--;
                         ind1 = ind2;
@@ -1165,16 +1246,24 @@ public:
             if(count_d1 + count_d2 >= max_row - 1)
             {
                 tmp.push_back(axis.at(ind1-1));
-                cout << "storing in buffer (" << axis.at(ind1-1).first << "," << axis.at(ind1-1).second << ")" << endl;
+                // cout << "storing in buffer (" << axis.at(ind1-1).first << "," << axis.at(ind1-1).second << ")" << endl;
             }
 
             for(auto bp: tmp)
             {
                 if(board.at(bp.first).at(bp.second).get_data() == player_marker)
                 {
-                    if(d1)
+                    vector<pair<int, int>> paths = possible_paths(bp.first, bp.second, d1, d2, v);
+                    if(paths.size() != 0)
                     {
-
+                        buffer_points.push_back(bp);
+                    }
+                }
+                if(board.at(bp.first).at(bp.second).get_data() == (player_marker%2)+3)//i.e. opponent marker
+                {
+                    if(point_in_danger(bp, player_marker, player_marker%2 + 1,d1,d2,v))
+                    {
+                        buffer_points.push_back(bp);
                     }
                 }
             }
@@ -1183,6 +1272,22 @@ public:
             buffer = 0;
             ind1 = -1, ind2 = -1;
         }
+        return buffer_points;
+    }
+
+    pair<int,int> critical_points()//1st index is for player 3. second is for player 2
+    {
+        int sum3,sum4;
+
+        sum3 += (intermittent_on_axis(util->elems_on_diagonal1,1,false,true,true)).size();
+        sum3 += (intermittent_on_axis(util->elems_on_diagonal2,1,true,false,true)).size();
+        sum3 += (intermittent_on_axis(util->elems_on_vertical,1,true,true,false)).size();
+
+        sum4 += (intermittent_on_axis(util->elems_on_diagonal1,2,false,true,true)).size();
+        sum4 += (intermittent_on_axis(util->elems_on_diagonal2,2,true,false,true)).size();
+        sum4 += (intermittent_on_axis(util->elems_on_vertical,2,true,true,false)).size();
+
+        return make_pair(sum3,sum4);
     }
 };
 
@@ -1258,31 +1363,63 @@ int main()
     game.board[6][29].data = 4;
     game.board[6][28].data = 4;
     game.board[6][27].data = 3;
-    game.board[6][26].data = 4;
+    game.board[6][26].data = 2;
     game.board[6][25].data = 4;
+
     game.board[6][31].data = 4;
     game.board[5][25].data = 4;
-    game.board[5][24].data = 3;
+    game.board[5][24].data = 2;
     game.board[5][23].data = 4;
     game.board[5][22].data = 4;
     game.board[5][21].data = 4;
+
     game.board[6][32].data = 4;
     game.board[5][26].data = 3;
     game.board[4][20].data = 4;
     game.board[4][19].data = 4;
     game.board[4][18].data = 4;
     game.board[4][17].data = 4;
+
     game.board[6][33].data = 4;
     game.board[5][27].data = 4;
     game.board[4][21].data = 4;
     game.board[3][15].data = 4;
     game.board[3][14].data = 3;
     game.board[3][13].data = 4;
+
+    game.board[6][34].data = 4;
+    game.board[5][28].data = 4;
+    game.board[4][22].data = 4;
+    game.board[3][16].data = 4;
+    game.board[2][10].data = 0;
+    game.board[2][9].data = 4;
+
+    game.board[6][35].data = 4;
+    game.board[5][29].data = 4;
+    game.board[4][13].data = 4;
+    game.board[3][17].data = 4;
+    game.board[2][11].data = 4;
+    game.board[1][5].data = 2;
+
+    game.board[6][1].data = 4;
+    game.board[5][1].data = 4;
+    game.board[4][1].data = 4;
+    game.board[3][1].data = 3;
+    game.board[2][1].data = 4;
+    game.board[1][1].data = 4;
+    game.board[1][2].data = 3;
+    game.board[2][5].data = 3;
+    game.board[3][8].data = 4;
+    game.board[4][11].data = 4;
+    game.board[5][13].data = 4;
+
+    cout << game.redeemable_streak(make_pair(6,35),make_pair(2,11),2) << endl;
+
     //////////////////////////
-    game.board[3][12].data = 4;
-    game.board[4][15].data = 3;
-    game.board[5][18].data = 3;
-    game.board[6][21].data = 4;
+    // game.board[3][12].data = 4;
+    // game.board[4][15].data = 3;
+    // game.board[5][18].data = 3;
+    // game.board[6][21].data = 4;
     // game.board[6][25].data = 4;
     // game.board[6][31].data = 4;
     // game.board[5][25].data = 4;
@@ -1303,7 +1440,11 @@ int main()
     // game.board[3][14].data = 3;
     // game.board[3][13].data = 4;
 
-    game.intermittent(util->elems_on_vertical,2);
+    // vector<pair<int,int>> p = game.intermittent_on_axis(util->elems_on_vertical,2,true,true,false);
+    // for(auto w: p)
+    // {
+    //     cout << w.first << "," << w.second << endl;
+    // }
 
     // game.execute_move("P 3 9");
     // game.execute_move("P 4 12");

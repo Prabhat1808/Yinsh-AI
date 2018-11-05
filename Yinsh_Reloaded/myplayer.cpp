@@ -4,7 +4,7 @@
 
 using namespace std;
 
-pair<pair<int, Game>, string> maxval( int, pair<pair<int, Game>, vector<pair<int, int> > > , int , int , int );
+pair<pair<int, Game>, string> maxval( int, pair<pair<int, Game>, vector<pair<int, int> > > , int , int , int, vector<float> );
 
 void do_remove(int k, pair<Game, string> x, pair<pair<int, int>, pair<int, int> > option, vector<pair<Game, string>> &future_possibilities)
 {
@@ -133,12 +133,12 @@ vector<pair<Game, string>> remove_rows(int k, vector<pair<pair<int, int>, pair<i
     return possibilities;
 };
 
-vector<pair<pair<pair<int, Game>, vector<pair<int, int> > >, string> > get_successors(int k, vector<pair<Game, string>> newboard) {
+vector<pair<pair<pair<int, Game>, vector<pair<int, int> > >, string> > get_successors(int k, vector<pair<Game, string>> newboard, vector<float> weights) {
     vector<pair<pair<pair<int, Game>, vector<pair<int, int>>>, string>> successors;
     for (pair<Game, string> ga: newboard) {
         Game gam = ga.first;
         if(gam.get_removed0()>2 || gam.get_removed1()>2){
-            pair<int, Game> fir = make_pair(gam.heuristic(), gam);
+            pair<int, Game> fir = make_pair(gam.heuristic(weights), gam);
             vector<pair<int, int>> chan;
             pair<pair<int, Game>, vector<pair<int, int>>> fin = make_pair(fir, chan);
             successors.emplace_back(fin, ga.second);
@@ -149,7 +149,7 @@ vector<pair<pair<pair<int, Game>, vector<pair<int, int> > >, string> > get_succe
         else rings = gam.opponent_rings();
         for (pair<int, int> ring: rings) {
             if (ring.first != -1 || ring.second != -1) {
-                vector<pair<int, int>> paths = gam.possible_paths(ring.first, ring.second);
+                vector<pair<int, int>> paths = gam.possible_paths(ring.first, ring.second, true, true, true);
                 for (pair<int, int> path: paths) {
                     Game temp = gam.copy_board();
                     temp.select_ring(ring.first, ring.second);
@@ -162,7 +162,7 @@ vector<pair<pair<pair<int, Game>, vector<pair<int, int> > >, string> > get_succe
                         vector<pair<Game, string>> current_possibilities = remove_rows(k, removal, temp);
                         for (pair<Game, string> g: current_possibilities) {
                             g.first.player = (g.first.player + 1) % 2;
-                            int heur = g.first.heuristic();
+                            int heur = g.first.heuristic(weights);
                             pair<int, Game> nextstate = make_pair(heur, g.first);
                             pair<pair<int, Game>, vector<pair<int, int>>> c = make_pair(nextstate, changed);
                             string move;
@@ -176,7 +176,7 @@ vector<pair<pair<pair<int, Game>, vector<pair<int, int> > >, string> > get_succe
                         // ################
                     }
                     else {
-                        int heuristic = temp.heuristic();
+                        int heuristic = temp.heuristic(weights);
                         temp.update_player((temp.get_player() + 1) % 2);
                         pair<int, Game> curr = make_pair(heuristic, temp);
                         pair<pair<int, Game>, vector<pair<int, int>>> c = make_pair(curr, changed);
@@ -198,7 +198,7 @@ bool operat(pair<pair<pair<int, Game>, vector<pair<int, int> > >, string > a, pa
     return a.first.first.first >= b.first.first.first;
 }
 
-pair<pair<int, Game>, string> minval(int k, pair<pair<int, Game>, vector<pair<int, int> > > mygame, int alpha, int beta, int h) {
+pair<pair<int, Game>, string> minval(int k, pair<pair<int, Game>, vector<pair<int, int> > > mygame, int alpha, int beta, int h, vector<float> weights) {
 
 
     // vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.check5(mygame.second, mygame.first.second.get_player() + 3);
@@ -213,7 +213,7 @@ pair<pair<int, Game>, string> minval(int k, pair<pair<int, Game>, vector<pair<in
         newboard.push_back(curr_game);
     }
 
-    vector<pair<pair<pair<int, Game>, vector<pair<int, int> > >, string > > successors = get_successors(k, newboard);
+    vector<pair<pair<pair<int, Game>, vector<pair<int, int> > >, string > > successors = get_successors(k, newboard, weights);
     vector<pair<int, int>> forcomp;
     for(int i=0; i<successors.size(); i++){
         pair<int, int> topush = make_pair(successors.at(i).first.first.first, i);
@@ -230,7 +230,7 @@ pair<pair<int, Game>, string> minval(int k, pair<pair<int, Game>, vector<pair<in
 
     for(pair<int, int> v: forcomp){
         auto u = successors.at(v.second);
-        pair<pair<int, Game>, string> child = maxval(k, u.first, alpha, beta, h - 1);
+        pair<pair<int, Game>, string> child = maxval(k, u.first, alpha, beta, h - 1, weights);
         if(besti.first.first>=child.first.first){
             besti.first.first = child.first.first;
             besti.first.second = u.first.first.second;
@@ -244,7 +244,7 @@ pair<pair<int, Game>, string> minval(int k, pair<pair<int, Game>, vector<pair<in
     return besti;
 };
 
-pair<pair<int, Game>, string> maxval(int k, pair<pair<int, Game>, vector<pair<int, int> > > mygame, int alpha, int beta, int h) {
+pair<pair<int, Game>, string> maxval(int k, pair<pair<int, Game>, vector<pair<int, int> > > mygame, int alpha, int beta, int h, vector<float> weights) {
 
     // vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.check5(mygame.second, mygame.first.second.player + 3);
     vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.checkN(mygame.second, mygame.first.second.player + 3,k);
@@ -256,7 +256,7 @@ pair<pair<int, Game>, string> maxval(int k, pair<pair<int, Game>, vector<pair<in
         pair<Game, string> curr_game = make_pair(mygame.first.second, "");
         newboard.push_back(curr_game);
     }
-    vector<pair<pair<pair<int, Game>, vector<pair<int, int>>>, string>> successors = get_successors(k, newboard);
+    vector<pair<pair<pair<int, Game>, vector<pair<int, int>>>, string>> successors = get_successors(k, newboard, weights);
     vector<pair<int, int>> forcomp;
     for(int i=0; i<successors.size(); i++){
         pair<int, int> topush = make_pair(successors.at(i).first.first.first, i);
@@ -273,7 +273,7 @@ pair<pair<int, Game>, string> maxval(int k, pair<pair<int, Game>, vector<pair<in
     pair<pair<int, Game>, string> besti = make_pair(make_pair(INT_MIN, successors.at(0).first.first.second), "");
     for(pair<int, int> v: forcomp){
         pair<pair<pair<int, Game>, vector<pair<int, int>>>, string> u =  successors.at(v.second);
-        pair<pair<int, Game>, string> child = minval(k, u.first, alpha, beta, h - 1);
+        pair<pair<int, Game>, string> child = minval(k, u.first, alpha, beta, h - 1, weights);
         if(besti.first.first<=child.first.first){
             besti.first.first = child.first.first;
             besti.first.second = u.first.first.second;
@@ -307,6 +307,16 @@ int main(int argc, char** argv)
 {
 
    // int player_id, board_size, time_limit;
+   ifstream wfile;
+   wfile.open("weights.txt");
+   int num;
+   wfile >> num;
+   vector<float> weights;
+   float tem;
+   while(num--){
+     wfile >> tem;
+     weights.push_back(tem);
+   }
 
    string move;
    string s;
@@ -383,27 +393,56 @@ int main(int argc, char** argv)
    }
    int ply=3;
    int t=0;
+   ofstream myfile;
+   string filename = "logs"+to_string(starting.at(0))+".txt";
+   myfile.open(filename);
+
    while(true){
-       pair<int, Game> inp = make_pair(game.heuristic(), game);
+
+       int reward = 0;
+       int prev_removed = game.self_removed();
+       pair<int, Game> inp = make_pair(game.heuristic(weights), game);
        pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
-       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, 3);
+       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, 3, weights);
        // cerr << endl << endl;
        cout << mymove.second << endl;
        game.execute_move(mymove.second);
+       reward+=(game.self_removed() - prev_removed);
        t++;
        // cerr << ply << endl;
        if(t==10) ply=4;
         // if(t==15) ply = 5;
         // if(t==30) ply=6;
-       if(game.check_won()) break;
+       if(game.check_won()){
+         reward+=7;
+         vector<int> features = game.get_features();
+         for(auto u: features) {
+           myfile << u << " ";
+         }
+         myfile << reward << endl;
+         break;
+       }
        getline(cin, move);
+       // cerr<< "Checking final" << endl;
        // cout << "Move taken: " << move <<  endl;
+       prev_removed = game.opp_removed();
        changed = game.execute_move(move);
-       if(game.check_won()) break;
-       // changed.resize(0);
-       // for(pair<int, int> u: new_changes){
-       //     changed.push_back(u);
-       // }
+       reward-=(game.opp_removed() - prev_removed);
+       if(game.check_won()){
+         reward+=3;
+         vector<int> features = game.get_features();
+         for(auto u: features) {
+           myfile << u << " ";
+         }
+         myfile << reward << endl;
+         break;
+       }
+       vector<int> features = game.get_features();
+       for(auto u: features) {
+         myfile << u << " ";
+       }
+       myfile << reward << endl;
    }
+   myfile.close();
 
 }
