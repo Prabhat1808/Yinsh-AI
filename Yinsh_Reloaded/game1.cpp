@@ -1289,6 +1289,30 @@ public:
 
         return make_pair(sum3,sum4);
     }
+
+    pair<vector<int>,vector<int>> ring_freedom() //first element of pair is my moves available. second is opponent's moves available
+    {
+        vector<int> self_moves(5);
+        vector<int> opponent_moves(5);
+
+        int i = 0;
+        for(auto w:ring_self)
+        {
+            if (w.first == -1 || w.second == -1)
+                self_moves.at(i++) = -1;
+            else
+                self_moves.at(i++) = (possible_paths(w.first, w.second,true, true, true)).size();
+        }
+        i = 0;
+        for(auto w:ring_opponent)
+        {
+            if (w.first == -1 || w.second == -1)
+                opponent_moves.at(i++) = -1;
+            else
+                opponent_moves.at(i++) = (possible_paths(w.first, w.second,true, true, true)).size();
+        }
+        return make_pair(self_moves,opponent_moves);
+    }
 };
 
 
@@ -1354,102 +1378,102 @@ public:
 //     // game->execute_move("S 2 9 M 5 24 RS 2 9 RE 3 2 X 4 23");
 //     // game->print_board();
 //     // game->print_data();
-
-int main()
-{
-    Utility* util = new Utility(6);
-    Game game = Game(0, 3, util, 6, 6, 6);
-    vector<pair<int,int>> ringos;
-    game.board[6][29].data = 4;
-    game.board[6][28].data = 4;
-    game.board[6][27].data = 3;
-    game.board[6][26].data = 2;
-    game.board[6][25].data = 4;
-
-    game.board[6][31].data = 4;
-    game.board[5][25].data = 4;
-    game.board[5][24].data = 2;
-    game.board[5][23].data = 4;
-    game.board[5][22].data = 4;
-    game.board[5][21].data = 4;
-
-    game.board[6][32].data = 4;
-    game.board[5][26].data = 3;
-    game.board[4][20].data = 4;
-    game.board[4][19].data = 4;
-    game.board[4][18].data = 4;
-    game.board[4][17].data = 4;
-
-    game.board[6][33].data = 4;
-    game.board[5][27].data = 4;
-    game.board[4][21].data = 4;
-    game.board[3][15].data = 4;
-    game.board[3][14].data = 3;
-    game.board[3][13].data = 4;
-
-    game.board[6][34].data = 4;
-    game.board[5][28].data = 4;
-    game.board[4][22].data = 4;
-    game.board[3][16].data = 4;
-    game.board[2][10].data = 0;
-    game.board[2][9].data = 4;
-
-    game.board[6][35].data = 4;
-    game.board[5][29].data = 4;
-    game.board[4][13].data = 4;
-    game.board[3][17].data = 4;
-    game.board[2][11].data = 4;
-    game.board[1][5].data = 2;
-
-    game.board[6][1].data = 4;
-    game.board[5][1].data = 4;
-    game.board[4][1].data = 4;
-    game.board[3][1].data = 3;
-    game.board[2][1].data = 4;
-    game.board[1][1].data = 4;
-    game.board[1][2].data = 3;
-    game.board[2][5].data = 3;
-    game.board[3][8].data = 4;
-    game.board[4][11].data = 4;
-    game.board[5][13].data = 4;
-
-    cout << game.redeemable_streak(make_pair(6,35),make_pair(2,11),2) << endl;
-
-    //////////////////////////
-    // game.board[3][12].data = 4;
-    // game.board[4][15].data = 3;
-    // game.board[5][18].data = 3;
-    // game.board[6][21].data = 4;
-    // game.board[6][25].data = 4;
-    // game.board[6][31].data = 4;
-    // game.board[5][25].data = 4;
-    // game.board[5][24].data = 3;
-    // game.board[5][23].data = 4;
-    // game.board[5][22].data = 4;
-    // game.board[5][21].data = 4;
-    // game.board[6][32].data = 4;
-    // game.board[5][26].data = 3;
-    // game.board[4][20].data = 4;
-    // game.board[4][19].data = 4;
-    // game.board[4][18].data = 4;
-    // game.board[4][17].data = 4;
-    // game.board[6][33].data = 4;
-    // game.board[5][27].data = 4;
-    // game.board[4][21].data = 4;
-    // game.board[3][15].data = 4;
-    // game.board[3][14].data = 3;
-    // game.board[3][13].data = 4;
-
-    // vector<pair<int,int>> p = game.intermittent_on_axis(util->elems_on_vertical,2,true,true,false);
-    // for(auto w: p)
-    // {
-    //     cout << w.first << "," << w.second << endl;
-    // }
-
-    // game.execute_move("P 3 9");
-    // game.execute_move("P 4 12");
-    // ringos.push_back(make_pair(3,9));
-    // ringos.push_back(make_pair(4,12));
-    // pair<int,int> ind = game.place_ring_heuristic(ringos);
-    // cout << ind.first << " , " << ind.second << endl;
-}
+// 
+// int main()
+// {
+//     Utility* util = new Utility(6);
+//     Game game = Game(0, 3, util, 6, 6, 6);
+//     vector<pair<int,int>> ringos;
+//     game.board[6][29].data = 4;
+//     game.board[6][28].data = 4;
+//     game.board[6][27].data = 3;
+//     game.board[6][26].data = 2;
+//     game.board[6][25].data = 4;
+//
+//     game.board[6][31].data = 4;
+//     game.board[5][25].data = 4;
+//     game.board[5][24].data = 2;
+//     game.board[5][23].data = 4;
+//     game.board[5][22].data = 4;
+//     game.board[5][21].data = 4;
+//
+//     game.board[6][32].data = 4;
+//     game.board[5][26].data = 3;
+//     game.board[4][20].data = 4;
+//     game.board[4][19].data = 4;
+//     game.board[4][18].data = 4;
+//     game.board[4][17].data = 4;
+//
+//     game.board[6][33].data = 4;
+//     game.board[5][27].data = 4;
+//     game.board[4][21].data = 4;
+//     game.board[3][15].data = 4;
+//     game.board[3][14].data = 3;
+//     game.board[3][13].data = 4;
+//
+//     game.board[6][34].data = 4;
+//     game.board[5][28].data = 4;
+//     game.board[4][22].data = 4;
+//     game.board[3][16].data = 4;
+//     game.board[2][10].data = 0;
+//     game.board[2][9].data = 4;
+//
+//     game.board[6][35].data = 4;
+//     game.board[5][29].data = 4;
+//     game.board[4][13].data = 4;
+//     game.board[3][17].data = 4;
+//     game.board[2][11].data = 4;
+//     game.board[1][5].data = 2;
+//
+//     game.board[6][1].data = 4;
+//     game.board[5][1].data = 4;
+//     game.board[4][1].data = 4;
+//     game.board[3][1].data = 3;
+//     game.board[2][1].data = 4;
+//     game.board[1][1].data = 4;
+//     game.board[1][2].data = 3;
+//     game.board[2][5].data = 3;
+//     game.board[3][8].data = 4;
+//     game.board[4][11].data = 4;
+//     game.board[5][13].data = 4;
+//
+//     cout << game.redeemable_streak(make_pair(6,35),make_pair(2,11),2) << endl;
+//
+//     //////////////////////////
+//     // game.board[3][12].data = 4;
+//     // game.board[4][15].data = 3;
+//     // game.board[5][18].data = 3;
+//     // game.board[6][21].data = 4;
+//     // game.board[6][25].data = 4;
+//     // game.board[6][31].data = 4;
+//     // game.board[5][25].data = 4;
+//     // game.board[5][24].data = 3;
+//     // game.board[5][23].data = 4;
+//     // game.board[5][22].data = 4;
+//     // game.board[5][21].data = 4;
+//     // game.board[6][32].data = 4;
+//     // game.board[5][26].data = 3;
+//     // game.board[4][20].data = 4;
+//     // game.board[4][19].data = 4;
+//     // game.board[4][18].data = 4;
+//     // game.board[4][17].data = 4;
+//     // game.board[6][33].data = 4;
+//     // game.board[5][27].data = 4;
+//     // game.board[4][21].data = 4;
+//     // game.board[3][15].data = 4;
+//     // game.board[3][14].data = 3;
+//     // game.board[3][13].data = 4;
+//
+//     // vector<pair<int,int>> p = game.intermittent_on_axis(util->elems_on_vertical,2,true,true,false);
+//     // for(auto w: p)
+//     // {
+//     //     cout << w.first << "," << w.second << endl;
+//     // }
+//
+//     // game.execute_move("P 3 9");
+//     // game.execute_move("P 4 12");
+//     // ringos.push_back(make_pair(3,9));
+//     // ringos.push_back(make_pair(4,12));
+//     // pair<int,int> ind = game.place_ring_heuristic(ringos);
+//     // cout << ind.first << " , " << ind.second << endl;
+// }
