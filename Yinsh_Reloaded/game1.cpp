@@ -79,16 +79,7 @@ public:
         this->beginning.first = -1;
         this->beginning.second = -1;
     }
-//    ~Game(){
-//        for (int i=1; i<=n; i++){
-//            for(int j=0; j<i*6; j++){
-//                delete board.at(i).at(j);
-//            }
-//            board.at(i).clear();
-//        }
-//        board.clear();
-//        // delete board;
-//    }
+
     Utility* get_util(){
         return util;
     }
@@ -151,39 +142,6 @@ public:
     }
 
 //#########################PLACEMENT###################################
-    pair<int,int> moves_along_axis(vector<pair<int,int>> axis, int index)
-    {
-        int fwd = 0, bcd = 0;
-        for(int i =index-1;i>=0;i--)
-        {
-            pair<int,int> ele = axis.at(i);
-            int dat = board.at(ele.first).at(ele.second).get_data();
-            if(dat == 1 || dat == 2)
-                break;
-            bcd++;
-        }
-        for(int i =index+1;i<axis.size();i++)
-        {
-            pair<int,int> ele = axis.at(i);
-            int dat = board.at(ele.first).at(ele.second).get_data();
-            if(dat == 1 || dat == 2)
-                break;
-            fwd++;
-        }
-        return make_pair(fwd,bcd); // first has forward, 2nd has backward
-    }
-
-    vector<pair<int,int>> total_moves(pair<int,int> point)
-    {
-        vector<pair<int,int>> outputs;
-        vector<pair<int,int>> axis_map = util->board.at(point.first).at(point.second)->axis_mapping;
-        outputs.push_back(moves_along_axis(util->elems_on_diagonal1.at(axis_map.at(0).first) , axis_map.at(0).second));
-        outputs.push_back(moves_along_axis(util->elems_on_diagonal2.at(axis_map.at(1).first) , axis_map.at(1).second));
-        outputs.push_back(moves_along_axis(util->elems_on_vertical.at(axis_map.at(2).first) , axis_map.at(2).second));
-        return outputs;
-    }
-
-
     vector<pair<int, int>> possible_paths(int i, int j)
     {
         Node_game curr = board.at(i).at(j);
@@ -684,9 +642,7 @@ public:
         return true;
     }
     int execute_move1(vector<string> moves, vector<pair<int, int>> &changed){
-        // vector<string> moves = split_string(s);
-//        if(moves.size()>3) return execute_sequence(moves);
-//        else player = (player+1)%2;;
+
         string mt = moves.at(0);
         int hexagon = stoi(moves.at(1));
         int position = stoi(moves.at(2));
@@ -735,8 +691,7 @@ public:
             if(i%3==2){
                 temp.at(2) = moves.at(i);
                 int move_success = execute_move1(temp, changed);
-//                if(move_success == 0) return 0;
-//                else if(move_success==2) return 2;
+
             }
             else{
                 temp.at(i%3) = moves.at(i);
@@ -751,31 +706,56 @@ public:
     }
 
     string get_position(int p, int h){
-//        if(p<0) p+=(6*h);
         int i= board.at(h).at(p).get_data();
         if(i==0) return ".";
         else return to_string(i);
     }
 
+    pair<int,int> moves_along_axis(vector<pair<int,int>> axis, int index)
+    {
+        int fwd = 0, bcd = 0;
+        for(int i =index-1;i>=0;i--)
+        {
+            pair<int,int> ele = axis.at(i);
+            int dat = board.at(ele.first).at(ele.second).get_data();
+            if(dat == 1 || dat == 2)
+                break;
+            bcd++;
+        }
+        for(int i =index+1;i<axis.size();i++)
+        {
+            pair<int,int> ele = axis.at(i);
+            int dat = board.at(ele.first).at(ele.second).get_data();
+            if(dat == 1 || dat == 2)
+                break;
+            fwd++;
+        }
+        return make_pair(fwd,bcd); // first has forward, 2nd has backward
+    }
+
+    vector<pair<int,int>> total_moves(pair<int,int> point)
+    {
+        vector<pair<int,int>> outputs;
+        vector<pair<int,int>> axis_map = util->board.at(point.first).at(point.second)->axis_mapping;
+        outputs.push_back(moves_along_axis(util->elems_on_diagonal1.at(axis_map.at(0).first) , axis_map.at(0).second));
+        outputs.push_back(moves_along_axis(util->elems_on_diagonal2.at(axis_map.at(1).first) , axis_map.at(1).second));
+        outputs.push_back(moves_along_axis(util->elems_on_vertical.at(axis_map.at(2).first) , axis_map.at(2).second));
+        return outputs;
+    }
+
     pair<vector<int>,vector<int>> find_consecutives(vector<vector<pair<int,int>>> directions)
     {
         int curr3 =0, curr4 =0;
-//        int buff3 = 0, buff4 = 0;
-//        int prev3 = 0, prev4 = 0;
+
         vector<int> counts3(9), counts4(9);
         int cn =0;
         for(auto axis: directions)
         {
-//            cout << "Entering AXIS : " << cn++ << endl;
             for(auto w: axis)
             {
                 int data = board.at(w.first).at(w.second).get_data();
                 if(data == 3)
                 {
-//                    if(buff3 == 1)
-//                        curr3++;
-//                    buff3 = 2;
-//                    buff4 = max(0,buff4-1);
                     curr3++;
                     if(curr4 > 1)
                         counts4.at(curr4 - 2) += 1;
@@ -783,10 +763,7 @@ public:
                 }
                 else if(data == 4)
                 {
-//                    if(buff4 == 1)
-//                        curr4++;
-//                    buff4 = 2;
-//                    buff3 = max(0,buff3-1);
+
                     curr4++;
                     if(curr3 > 1)
                         counts3.at(curr3 - 2) += 1;
@@ -794,8 +771,6 @@ public:
                 }
                 else
                 {
-//                    buff4 = max(0,buff4-1);
-//                    buff3 = max(0,buff3-1);
                     if(curr4 > 1)
                         counts4.at(curr4 - 2) += 1;
                     if(curr3 > 1)
@@ -804,26 +779,15 @@ public:
                     curr4 =0;
                 }
             }
-//            if(buff3 == 1)
-//                curr3 += 1;
-//            if(buff4 == 1);
-//            curr4 += 1;
 
             if(curr3 > 1)
                 counts3.at(curr3 - 2) +=1;
             if(curr4 > 1)
                 counts4.at(curr4 - 2) += 1;
-//            buff3 = 0;
-//            buff4 = 0;
+
             curr3 = 0;
             curr4 = 0;
-//             cout << "AXIS " << cn++ << "\n";
-//             for(int i =0;i<6;i++)
-//            {
-//                 cout << i << " --> " << "( marker 3: " << counts3.at(i) << ") and marker 4: " << counts4.at(i) << ")\n";
-//                 counts3.at(i) = 0;
-//                 counts4.at(i) = 0;
-//            }
+
         }
         return make_pair(counts3,counts4);
     }
@@ -836,12 +800,10 @@ public:
         int cn =0;
         for(auto axis: directions)
         {
-            // cout << "AXIS : " << cn++ << endl;
             for(auto w: axis)
             {
 
                  int data = board.at(w.first).at(w.second).get_data();
-                 // cout << w.first << " , " << w.second << " --> " << data << endl;
                 if(data == 3)
                 {
                     if(curr3 == 0)
@@ -869,12 +831,10 @@ public:
                     if(curr3 == 4)
                     {
                         cons3.push_back(make_pair(st3,en3));
-                        // cout << "updating vector 3" << endl;
                     }
                     curr3 =0;
                     curr4 =0;
                 }
-                // cout << curr3 << " and " << curr4 << endl;
             }
 
             if(curr4 == 4)
