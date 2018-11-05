@@ -1241,29 +1241,61 @@ int main()
     game.board[6][27].data = 3;
     game.board[6][26].data = 4;
     game.board[6][25].data = 4;
+
     game.board[6][31].data = 4;
     game.board[5][25].data = 4;
     game.board[5][24].data = 3;
     game.board[5][23].data = 4;
     game.board[5][22].data = 4;
     game.board[5][21].data = 4;
+
     game.board[6][32].data = 4;
     game.board[5][26].data = 3;
     game.board[4][20].data = 4;
     game.board[4][19].data = 4;
     game.board[4][18].data = 4;
     game.board[4][17].data = 4;
+
     game.board[6][33].data = 4;
     game.board[5][27].data = 4;
     game.board[4][21].data = 4;
     game.board[3][15].data = 4;
     game.board[3][14].data = 3;
     game.board[3][13].data = 4;
+
+    game.board[6][34].data = 3;
+    game.board[5][28].data = 4;
+    game.board[4][22].data = 4;
+    game.board[3][16].data = 4;
+    game.board[2][10].data = 4;
+    game.board[2][9].data = 4;
+
+    game.board[6][35].data = 4;
+    game.board[5][29].data = 4;
+    game.board[4][13].data = 4;
+    game.board[3][17].data = 4;
+    game.board[2][11].data = 4;
+    game.board[1][5].data = 3;
+
+    game.board[6][1].data = 4;
+    game.board[5][1].data = 4;
+    game.board[4][1].data = 4;
+    game.board[3][1].data = 3;
+    game.board[2][1].data = 4;
+    game.board[1][1].data = 4;
+    game.board[1][2].data = 3;
+    game.board[2][5].data = 3;
+    game.board[3][8].data = 4;
+    game.board[4][11].data = 4;
+    game.board[5][13].data = 4;
+
+
+
     //////////////////////////
-    game.board[3][12].data = 4;
-    game.board[4][15].data = 3;
-    game.board[5][18].data = 3;
-    game.board[6][21].data = 4;
+    // game.board[3][12].data = 4;
+    // game.board[4][15].data = 3;
+    // game.board[5][18].data = 3;
+    // game.board[6][21].data = 4;
     // game.board[6][25].data = 4;
     // game.board[6][31].data = 4;
     // game.board[5][25].data = 4;
