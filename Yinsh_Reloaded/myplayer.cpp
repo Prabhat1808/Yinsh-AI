@@ -310,7 +310,8 @@ int main(int argc, char** argv)
    ifstream wfile;
    wfile.open("weights.txt");
    int num;
-   wfile >> num;
+   int abselen;
+   wfile >> abselen >> num;
    vector<float> weights;
    float tem;
    while(num--){
