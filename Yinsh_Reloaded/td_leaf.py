@@ -34,7 +34,12 @@ def td_leaf(f, r, w, lemda, alpha):
     N = len(f)
     for i in range(len(f)):
         l = len(f[i])
-        j.append(sum([w[j]*f[i][j] for j in range(l)]))
+        j.append(sum([w[notj]*f[i][notj] for notj in range(l)]))
+
+    for jval in j:
+        print (j)
+    print ("That's it folks!!")
+
     j[-1] = r
     d = [j[i+1]-j[i] for i in range(N-1)]
     w_temp = [w[x] for x in range(len(w))]
@@ -51,8 +56,13 @@ def calc_abselen(maxi, n):
 
 
 if __name__ == "__main__":
+
     for p in range(5):
+        fl1 = "archives/logs1_" + str(p) + ".txt"
+        fl2 = "archives/logs2_" + str(p) + ".txt"
         os.system("./try.sh")
+        os.system("cp logs1.txt "+fl1)
+        os.system("cp logs2.txt "+fl2)
         f1, f2, r1, r2, w = read_files();
         crit_points = []
         f = f1
@@ -61,7 +71,7 @@ if __name__ == "__main__":
             if(r[i]):
                 crit_points.append(i)
         lemda = 0.2
-        alpha = 0.2
+        alpha = 0.0001
         for i in crit_points:
             w = td_leaf(f[:i+1], r[i], w, lemda, alpha)
         abselen = calc_abselen(1, p+2)

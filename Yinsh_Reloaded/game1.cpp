@@ -1215,45 +1215,57 @@ public:
         return features;
     }
 
-    int heuristic(vector<float> weights){
-        int out = 0;
-        pair<vector<int>,vector<int>> d1 = find_consecutives(util->elems_on_diagonal1);
-        pair<vector<int>,vector<int>> d2 = find_consecutives(util->elems_on_diagonal2);
-        pair<vector<int>,vector<int>> v = find_consecutives(util->elems_on_vertical);
-        int sum3=0;
-        int sum4=0;
-        pair<vector<int>,vector<int>> ring_mobilities = ring_freedom();
-        pair<pair<int,int>,pair<int,int>> streaks = analyse_streaks();
-        pair<int,int> critical = critical_points();
-
-        int c3,c4,r3,r4;
-        c3 = streaks.first.first;
-        c4 = streaks.first.second;
-        r3 = streaks.second.first;
-        r4 = streaks.second.second;
-
-        for(int i =0 ; i < 9; i++)
-        {
-            sum3 += util->consecutive_weights.first.at(i)*(d1.first.at(i) + d2.first.at(i) + v.first.at(i));
-            sum4 += util->consecutive_weights.second.at(i)*(d1.second.at(i) + d2.second.at(i) + v.second.at(i));
-        }
-
-        if(my_marker==3){
-            out += sum3 - sum4;
-            out += 100*r3 + 50*c4 - 50*c3 - 100*r4;
-            out += 100*critical.first - 100*critical.second;
-            out = out + (int) (4*pow(6, rings_removed0+1)) - (int)(4*pow(5, rings_removed1+1));
-        }
-        if(my_marker==4){
-            out += sum4 - sum3;
-            out += 100*r4 + 50*c3 - 50*c4 - 100*r3;
-            out += -100*critical.first + 100*critical.second;
-            out = out - (int) (4*pow(5, rings_removed0+1)) + (int)(4*pow(6, rings_removed1+1));
-        }
-
-        out += accumulate(ring_mobilities.first.begin(),ring_mobilities.first.end(),0) - accumulate(ring_mobilities.second.begin(),ring_mobilities.second.end(),0);
-        return out;
+    float heuristic(vector<float> weights){
+      auto v = get_features();
+      float out = 0;
+      for (int i=0; i<v.first.size(); i++){
+        out += weights.at(i)*v.first.at(i);
+      }
+     for (int i=0; i<v.first.size(); i++){
+        out += weights.at(i+v.first.size())*v.second.at(i);
+      }
+      return out;
     }
+
+    // int heuristic(vector<float> weights){
+    //     int out = 0;
+    //     pair<vector<int>,vector<int>> d1 = find_consecutives(util->elems_on_diagonal1);
+    //     pair<vector<int>,vector<int>> d2 = find_consecutives(util->elems_on_diagonal2);
+    //     pair<vector<int>,vector<int>> v = find_consecutives(util->elems_on_vertical);
+    //     int sum3=0;
+    //     int sum4=0;
+    //     pair<vector<int>,vector<int>> ring_mobilities = ring_freedom();
+    //     pair<pair<int,int>,pair<int,int>> streaks = analyse_streaks();
+    //     pair<int,int> critical = critical_points();
+
+    //     int c3,c4,r3,r4;
+    //     c3 = streaks.first.first;
+    //     c4 = streaks.first.second;
+    //     r3 = streaks.second.first;
+    //     r4 = streaks.second.second;
+
+    //     for(int i =0 ; i < 9; i++)
+    //     {
+    //         sum3 += util->consecutive_weights.first.at(i)*(d1.first.at(i) + d2.first.at(i) + v.first.at(i));
+    //         sum4 += util->consecutive_weights.second.at(i)*(d1.second.at(i) + d2.second.at(i) + v.second.at(i));
+    //     }
+
+    //     if(my_marker==3){
+    //         out += sum3 - sum4;
+    //         out += 100*r3 + 50*c4 - 50*c3 - 100*r4;
+    //         out += 100*critical.first - 100*critical.second;
+    //         out = out + (int) (4*pow(6, rings_removed0+1)) - (int)(4*pow(5, rings_removed1+1));
+    //     }
+    //     if(my_marker==4){
+    //         out += sum4 - sum3;
+    //         out += 100*r4 + 50*c3 - 50*c4 - 100*r3;
+    //         out += -100*critical.first + 100*critical.second;
+    //         out = out - (int) (4*pow(5, rings_removed0+1)) + (int)(4*pow(6, rings_removed1+1));
+    //     }
+
+    //     out += accumulate(ring_mobilities.first.begin(),ring_mobilities.first.end(),0) - accumulate(ring_mobilities.second.begin(),ring_mobilities.second.end(),0);
+    //     return out;
+    // }
 
     void print_board(){
 
