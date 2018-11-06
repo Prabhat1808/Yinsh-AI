@@ -1,0 +1,31 @@
+***********************************
+
+-> You are player 2
+-> You are alloted a time of 150s
+
+***********************************
+
+Player 1 played : P 3 12
+Time remaining is: 150s
+You played : P 4 12
+Player 1 played : P 5 12
+Time remaining is: 150s
+You played : P 2 0
+Player 1 played : P 2 6
+Time remaining is: 150s
+You played : P 4 6
+Player 1 played : P 5 6
+Time remaining is: 150s
+You played : P 5 18
+Player 1 played : P 1 0
+Time remaining is: 150s
+You played : P 5 24
+Player 1 played : P 4 0
+Time remaining is: 150s
+You played : P 5 0
+Player 1 played : S 2 6 M 5 23
+Time remaining is: 150s
+You played : S 2 0 M 3 4
+Player 1 played : S 4 0 M 5 1
+Time remaining is: 149s
+You played : S 5 18 M 6 21

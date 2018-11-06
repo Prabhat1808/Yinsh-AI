@@ -51,7 +51,7 @@ def calc_abselen(maxi, n):
 
 
 if __name__ == "__main__":
-    for p in range(2):
+    for p in range(5):
         os.system("./try.sh")
         f1, f2, r1, r2, w = read_files();
         crit_points = []
@@ -64,7 +64,7 @@ if __name__ == "__main__":
         alpha = 0.2
         for i in crit_points:
             w = td_leaf(f[:i+1], r[i], w, lemda, alpha)
-        abselen = calc_abselen(1, p+1)
+        abselen = calc_abselen(1, p+2)
         with open("weights.txt", 'w') as f:
             f.write(str(abselen)+" ")
             f.write(str(len(w))+'\n')

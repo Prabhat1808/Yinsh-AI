@@ -1,10 +1,11 @@
 #include <bits/stdc++.h>
+#include <ctime>
 #include "game1.cpp"
 // #include "utilities.cpp"
 
 using namespace std;
 
-pair<pair<int, Game>, string> maxval( int, pair<pair<int, Game>, vector<pair<int, int> > > , int , int , int, vector<float> );
+pair<pair<int, Game>, string> maxval( int, pair<pair<int, Game>, vector<pair<int, int> > > , int , int , int, vector<float>, float);
 
 void do_remove(int k, pair<Game, string> x, pair<pair<int, int>, pair<int, int> > option, vector<pair<Game, string>> &future_possibilities)
 {
@@ -198,7 +199,7 @@ bool operat(pair<pair<pair<int, Game>, vector<pair<int, int> > >, string > a, pa
     return a.first.first.first >= b.first.first.first;
 }
 
-pair<pair<int, Game>, string> minval(int k, pair<pair<int, Game>, vector<pair<int, int> > > mygame, int alpha, int beta, int h, vector<float> weights) {
+pair<pair<int, Game>, string> minval(int k, pair<pair<int, Game>, vector<pair<int, int> > > mygame, int alpha, int beta, int h, vector<float> weights, float abselen) {
 
 
     // vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.check5(mygame.second, mygame.first.second.get_player() + 3);
@@ -230,7 +231,7 @@ pair<pair<int, Game>, string> minval(int k, pair<pair<int, Game>, vector<pair<in
 
     for(pair<int, int> v: forcomp){
         auto u = successors.at(v.second);
-        pair<pair<int, Game>, string> child = maxval(k, u.first, alpha, beta, h - 1, weights);
+        pair<pair<int, Game>, string> child = maxval(k, u.first, alpha, beta, h - 1, weights, abselen);
         if(besti.first.first>=child.first.first){
             besti.first.first = child.first.first;
             besti.first.second = u.first.first.second;
@@ -241,10 +242,22 @@ pair<pair<int, Game>, string> minval(int k, pair<pair<int, Game>, vector<pair<in
             break;
         }
     }
-    return besti;
+    int num = (int)(drand48()*100);
+    // cerr << "num: " << num << " ";
+    if((float) num / 100 > abselen) {
+      // cerr << endl;
+      return besti;
+    }
+    else {
+      num = (int)(drand48() * successors.size());
+      // cerr << num << endl;
+      auto res = successors.at(num);
+      pair<pair<int, Game>, string> out = {res.first.first, res.second};
+      return out;
+    }
 };
 
-pair<pair<int, Game>, string> maxval(int k, pair<pair<int, Game>, vector<pair<int, int> > > mygame, int alpha, int beta, int h, vector<float> weights) {
+pair<pair<int, Game>, string> maxval(int k, pair<pair<int, Game>, vector<pair<int, int> > > mygame, int alpha, int beta, int h, vector<float> weights, float abselen) {
 
     // vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.check5(mygame.second, mygame.first.second.player + 3);
     vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.checkN(mygame.second, mygame.first.second.player + 3,k);
@@ -273,7 +286,7 @@ pair<pair<int, Game>, string> maxval(int k, pair<pair<int, Game>, vector<pair<in
     pair<pair<int, Game>, string> besti = make_pair(make_pair(INT_MIN, successors.at(0).first.first.second), "");
     for(pair<int, int> v: forcomp){
         pair<pair<pair<int, Game>, vector<pair<int, int>>>, string> u =  successors.at(v.second);
-        pair<pair<int, Game>, string> child = minval(k, u.first, alpha, beta, h - 1, weights);
+        pair<pair<int, Game>, string> child = minval(k, u.first, alpha, beta, h - 1, weights, abselen);
         if(besti.first.first<=child.first.first){
             besti.first.first = child.first.first;
             besti.first.second = u.first.first.second;
@@ -284,17 +297,29 @@ pair<pair<int, Game>, string> maxval(int k, pair<pair<int, Game>, vector<pair<in
             break;
         }
     }
-    return besti;
+    int num = rand()%100;
+    if((float) num / 100 > abselen){
+      cerr << endl;
+      return besti;
+    }
+    else {
+      num = rand() % successors.size();
+      auto res = successors.at(num);
+      pair<pair<int, Game>, string> out = {res.first.first, res.second};
+      return out;
+    }
 };
 
 string random_place(Game game){
     while (true){
         // cout << game->n << endl;
-        srand(time(NULL));
-
-        int h = rand() % game.get_n();
+        // srand(time(NULL));
+        // for (int i=0; i<100; i++)
+        //   int temp = rand();
+  
+        int h = (int)(drand48() * game.get_n());
         if(h==0) continue;
-        int p = rand() % h*6;
+        int p = (int)(drand48() * h*6);
         if(game.get_data(h, p)==0){
             return "P " + to_string(h) + " " + to_string(p);
         }
@@ -307,10 +332,17 @@ int main(int argc, char** argv)
 {
 
    // int player_id, board_size, time_limit;
+  random_device rd;
+  srand(3241234213);
+  srand48(time(NULL));
+  // for (int i=0; i<100; i++)
+  //   int temp = rand();
+  
+
    ifstream wfile;
    wfile.open("weights.txt");
    int num;
-   int abselen;
+   float abselen;
    wfile >> abselen >> num;
    vector<float> weights;
    float tem;
@@ -365,8 +397,9 @@ int main(int argc, char** argv)
            getline(cin, move);
            // cout << "Move taken: " << move <<  endl;
            game.execute_move(move);
-           pair<int, int> mov = game.place_ring_heuristic();
-           string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
+           string mymove = random_place(game);
+           // pair<int, int> mov = game.place_ring_heuristic();
+           // string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
            cerr << "Move " << mymove << endl;
            // cerr << mymove;
            cout << mymove << "\n";
@@ -375,10 +408,10 @@ int main(int argc, char** argv)
    }
    else{
        for (int i=0; i<n; i++){
-           // string mymove = random_place(game);
+           string mymove = random_place(game);
            // cerr << mymove << endl;
-           pair<int, int> mov = game.place_ring_heuristic();
-           string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
+           // pair<int, int> mov = game.place_ring_heuristic();
+           // string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
 
            cout << mymove << endl;
            game.execute_move(mymove);
@@ -404,7 +437,7 @@ int main(int argc, char** argv)
        int prev_removed = game.self_removed();
        pair<int, Game> inp = make_pair(game.heuristic(weights), game);
        pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
-       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, 3, weights);
+       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, 3, weights, abselen);
        // cerr << endl << endl;
        cout << mymove.second << endl;
        game.execute_move(mymove.second);
@@ -416,10 +449,14 @@ int main(int argc, char** argv)
         // if(t==30) ply=6;
        if(game.check_won()){
          reward+=7;
-         vector<int> features = game.get_features();
-         for(auto u: features) {
+         pair<vector<int>, vector<int>> features = game.get_features();
+         for(auto u: features.first) {
            myfile << u << " ";
          }
+         for(auto u: features.second) {
+           myfile << u << " ";
+         }
+         
          myfile << reward << endl;
          break;
        }
@@ -431,17 +468,25 @@ int main(int argc, char** argv)
        reward-=(game.opp_removed() - prev_removed);
        if(game.check_won()){
          reward+=3;
-         vector<int> features = game.get_features();
-         for(auto u: features) {
+         auto features = game.get_features();
+         for(auto u: features.first) {
            myfile << u << " ";
          }
+         for(auto u: features.second) {
+           myfile << u << " ";
+         }
+         
          myfile << reward << endl;
          break;
        }
-       vector<int> features = game.get_features();
-       for(auto u: features) {
+       auto features = game.get_features();
+       for(auto u: features.first) {
          myfile << u << " ";
        }
+        for(auto u: features.second) {
+           myfile << u << " ";
+         }
+         
        myfile << reward << endl;
    }
    myfile.close();
