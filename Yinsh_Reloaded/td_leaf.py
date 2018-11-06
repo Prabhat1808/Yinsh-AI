@@ -70,5 +70,4 @@ if __name__ == "__main__":
             f.write(str(len(w))+'\n')
             for x in w:
                 f.write(str(x)+" ")
-        
     
