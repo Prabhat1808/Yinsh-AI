@@ -98,10 +98,6 @@ public:
       else return rings_removed0;
     }
 
-    vector<int> get_features(){
-      return {1,2,3,4,5};
-    }
-
     int get_data(int hexagon, int position){
         return board.at(hexagon).at(position).get_data();
     }
@@ -777,7 +773,7 @@ public:
     {
         int curr3 =0, curr4 =0;
 
-        vector<int> counts3(9), counts4(9);
+        vector<int> counts3(20), counts4(20);
         int cn =0;
         for(auto axis: directions)
         {
@@ -1158,6 +1154,64 @@ public:
         return make_pair(make_pair(c3,c4),make_pair(r3,r4));
     }
 
+    pair<vector<int>,vector<int>> get_features()
+    {
+        vector<int> feat3, feat4;
+        pair<vector<int>,vector<int>> features;
+
+        pair<vector<int>,vector<int>> d1 = find_consecutives(util->elems_on_diagonal1);
+        pair<vector<int>,vector<int>> d2 = find_consecutives(util->elems_on_diagonal2);
+        pair<vector<int>,vector<int>> v = find_consecutives(util->elems_on_vertical);
+
+        pair<pair<int,int>,pair<int,int>> streaks = analyse_streaks();
+        pair<int,int> critical = critical_points();
+        pair<vector<int>,vector<int>> ring_mobilities = ring_freedom();
+
+        for(int i =0 ; i < 9; i++)
+        {
+            feat3.push_back(d1.first.at(i));
+            feat4.push_back(d1.second.at(i));
+        }
+        for(int i =0 ; i < 9; i++)
+        {
+            feat3.push_back(d2.first.at(i));
+            feat4.push_back(d2.second.at(i));
+        }
+        for(int i =0 ; i < 9; i++)
+        {
+            feat3.push_back(v.first.at(i));
+            feat4.push_back(v.second.at(i));
+        }
+
+        feat3.push_back(streaks.first.first);
+        feat4.push_back(streaks.first.second);
+        feat3.push_back(streaks.second.first);
+        feat4.push_back(streaks.second.second);
+
+        feat3.push_back(critical.first);
+        feat4.push_back(critical.second);
+
+        if(my_marker == 3)
+        {
+            features = make_pair(feat3,feat4);
+        }
+        else
+        {
+            features = make_pair(feat4,feat3);
+        }
+
+        for(auto r:ring_mobilities.first)
+        {
+            features.first.push_back(r);
+        }
+        for(auto r:ring_mobilities.second)
+        {
+            features.second.push_back(r);
+        }
+
+        return features;
+    }
+
     int heuristic(vector<float> weights){
         int out = 0;
         pair<vector<int>,vector<int>> d1 = find_consecutives(util->elems_on_diagonal1);
@@ -1341,7 +1395,7 @@ public:
         for(auto w:ring_self)
         {
             if (w.first == -1 || w.second == -1)
-                self_moves.push_back(-5);
+                self_moves.push_back(0);
             else
                 self_moves.push_back((possible_paths(w.first, w.second,true, true, true)).size());
         }
@@ -1349,7 +1403,7 @@ public:
         for(auto w:ring_opponent)
         {
             if (w.first == -1 || w.second == -1)
-                opponent_moves.push_back(-5);
+                opponent_moves.push_back(0);
             else
                 opponent_moves.push_back((possible_paths(w.first, w.second,true, true, true)).size());
         }
@@ -1514,7 +1568,7 @@ public:
 //
 //     // game.execute_move("P 3 9");
 //     // game.execute_move("P 4 12");
-//     // ringos.push_back(make_pair(3,9));
+//     // ringos.push_back(make_pair(3,9));Please let me know of the availability of positions.Please let me know of the availability of positions.
 //     // ringos.push_back(make_pair(4,12));
 //     // pair<int,int> ind = game.place_ring_heuristic(ringos);
 //     // cout << ind.first << " , " << ind.second << endl;

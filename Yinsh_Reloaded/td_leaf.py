@@ -52,4 +52,3 @@ if __name__ == "__main__":
     f1, f2, r1, r2, w = read_files();
     crit_points = []
     cond = 0
-
