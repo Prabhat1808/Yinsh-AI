@@ -25,12 +25,23 @@ def read_files():
                 features2.append([float(x) for x in temp[:-1]])
                 reward2.append(int(temp[-1]))
 
+    if(reward1[-1]<6):
+        reward1.append(-7)
+        features1.append(features1[-1])
+    # if(reward2[-1]<6):
+    #     reward2.append(-7)
+    #     features2.append(features1[-1])
+
+
     return [features1, features2, reward1, reward2, weights]
 
 
 def td_leaf(f, r, w, lemda, alpha):
     j = []
     m = len(w)
+    print("len w:",len(w))
+    print("len f:",len(f[0]))
+    
     N = len(f)
     for i in range(len(f)):
         l = len(f[i])
@@ -57,7 +68,7 @@ def calc_abselen(maxi, n):
 
 if __name__ == "__main__":
 
-    for p in range(5):
+    for p in range(50):
         fl1 = "archives/logs1_" + str(p) + ".txt"
         fl2 = "archives/logs2_" + str(p) + ".txt"
         os.system("./try.sh")

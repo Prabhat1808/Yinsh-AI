@@ -1,2 +1,2 @@
 #!/bin/bash
-./player
+./the_old
