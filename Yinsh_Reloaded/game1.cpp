@@ -1203,14 +1203,14 @@ public:
             features = make_pair(feat4,feat3);
         }
 
-        for(auto r:ring_mobilities.first)
-        {
-            features.first.push_back(r);
-        }
-        for(auto r:ring_mobilities.second)
-        {
-            features.second.push_back(r);
-        }
+        // for(auto r:ring_mobilities.first)
+        // {
+        //     features.first.push_back(r);
+        // }
+        // for(auto r:ring_mobilities.second)
+        // {
+        //     features.second.push_back(r);
+        // }
 
         return features;
     }

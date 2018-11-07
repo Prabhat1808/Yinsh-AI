@@ -1,6 +1,7 @@
 import os
 import csv
 import numpy as np
+import sys
 
 def read_files():
     features1 = []
@@ -27,12 +28,23 @@ def read_files():
                 features2.append([float(x) for x in temp[:-1]])
                 reward2.append(int(temp[-1]))
 
+    if(reward1[-1]<6):
+        reward1.append(-7)
+        features1.append(features1[-1])
+    # if(reward2[-1]<6):
+    #     reward2.append(-7)
+    #     features2.append(features1[-1])
+
+
     return [features1, features2, reward1, reward2, weights]
 
 
 def td_leaf(f, r, w, lemda, alpha):
     j = []
     m = len(w)
+    print("len w:",len(w))
+    print("len f:",len(f[0]))
+
     N = len(f)
     for i in range(len(f)):
         l = len(f[i])
@@ -59,7 +71,9 @@ def calc_abselen(maxi, n):
 
 if __name__ == "__main__":
 
-    for p in range(2):
+    csv_file = sys.argv[1]
+
+    for p in range(5):
         fl1 = "archives/logs1_" + str(p) + ".txt"
         fl2 = "archives/logs2_" + str(p) + ".txt"
         os.system("./try.sh")
@@ -77,7 +91,7 @@ if __name__ == "__main__":
         for i in crit_points:
             w = td_leaf(f[:i+1], r[i], w, lemda, alpha)
 
-        with open('weigh_csv.csv','a') as f:
+        with open(csv_file,'a') as f:
             writer = csv.writer(f)
             writer.writerow(w)
 
