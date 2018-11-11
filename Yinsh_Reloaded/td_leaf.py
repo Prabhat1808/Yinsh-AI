@@ -1,4 +1,7 @@
 import os
+import csv
+import numpy as np
+import sys
 
 def read_files():
     features1 = []
@@ -41,7 +44,7 @@ def td_leaf(f, r, w, lemda, alpha):
     m = len(w)
     print("len w:",len(w))
     print("len f:",len(f[0]))
-    
+
     N = len(f)
     for i in range(len(f)):
         l = len(f[i])
@@ -64,7 +67,13 @@ def calc_abselen(maxi, n):
 
 if __name__ == "__main__":
 
+<<<<<<< HEAD
     for p in range(200):
+=======
+    csv_file = sys.argv[1]
+
+    for p in range(5):
+>>>>>>> 65aaa93b4d3e53a9f0f1fe1356dc6232f0837a87
         fl1 = "archives/logs1_" + str(p) + ".txt"
         fl2 = "archives/logs2_" + str(p) + ".txt"
         os.system("./try.sh")
@@ -73,7 +82,7 @@ if __name__ == "__main__":
         f1, f2, r1, r2, w = read_files();
         crit_points = []
         f = f1
-        r = r1 
+        r = r1
         for i in range(len(r)):
             if(r[i]):
                 crit_points.append(i)
@@ -81,10 +90,14 @@ if __name__ == "__main__":
         alpha = 0.0001
         for i in crit_points:
             w = td_leaf(f[:i+1], r[i], w, lemda, alpha)
+
+        with open(csv_file,'a') as f:
+            writer = csv.writer(f)
+            writer.writerow(w)
+
         abselen = calc_abselen(1, p+2)
         with open("weights.txt", 'w') as f:
             f.write(str(abselen)+" ")
             f.write(str(len(w))+'\n')
             for x in w:
                 f.write(str(x)+" ")
-    
