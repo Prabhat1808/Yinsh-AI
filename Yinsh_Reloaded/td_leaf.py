@@ -66,14 +66,9 @@ def calc_abselen(maxi, n):
 
 
 if __name__ == "__main__":
-
-<<<<<<< HEAD
-    for p in range(200):
-=======
     csv_file = sys.argv[1]
 
-    for p in range(5):
->>>>>>> 65aaa93b4d3e53a9f0f1fe1356dc6232f0837a87
+    for p in range(1000):
         fl1 = "archives/logs1_" + str(p) + ".txt"
         fl2 = "archives/logs2_" + str(p) + ".txt"
         os.system("./try.sh")
