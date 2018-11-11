@@ -110,7 +110,7 @@ public:
         else
         {
             //taking d1 of first point and d2 and v of other points
-            int d1_d2 = -1, d1_v = -1;
+            int d1_d2 = 500, d1_v = 500;
             vector<pair<int,int>> d1_p1 = elems_on_diagonal1.at(d1_1);
             vector<pair<int,int>> d2_p2 = elems_on_diagonal2.at(d2_2);
             vector<pair<int,int>> v_p2 = elems_on_vertical.at(v_2);
@@ -118,20 +118,24 @@ public:
             pair<int,int> common;
             vector<pair<int,int>> axes_com;
             common = common_on_axis(d1_p1,d2_p2);
-            axes_com = board.at(common.first).at(common.second)->axis_mapping;
+            // cout << "common point = (" << common.first << "," << common.second << ")" << endl;
+            // axes_com = board.at(common.first).at(common.second)->axis_mapping;
             if(common.first != -1 && common.second != -1)
             {
+                axes_com = board.at(common.first).at(common.second)->axis_mapping;
                 d1_d2 = abs(axes1.at(0).second - axes_com.at(0).second) + abs(axes2.at(1).second - axes_com.at(1).second);
             }
             common = common_on_axis(d1_p1,v_p2);
-            axes_com = board.at(common.first).at(common.second)->axis_mapping;
+            // cout << "common point = (" << common.first << "," << common.second << ")" << endl;
+            // axes_com = board.at(common.first).at(common.second)->axis_mapping;
             if(common.first != -1 && common.second != -1)
             {
+                axes_com = board.at(common.first).at(common.second)->axis_mapping;
                 d1_v = abs(axes1.at(0).second - axes_com.at(0).second) + abs(axes2.at(2).second - axes_com.at(2).second);
             }
 
             //taking d2 of first point and d1 and v of other points
-            int d2_d1 = -1, d2_v = -1;
+            int d2_d1 = 500, d2_v = 500;
             vector<pair<int,int>> d2_p1 = elems_on_diagonal2.at(d2_1);
             vector<pair<int,int>> d1_p2 = elems_on_diagonal1.at(d1_2);
             // vector<pair<int,int>> v_p2 = elems_on_vertical.at(v_2);
@@ -139,20 +143,24 @@ public:
             // pair<int,int> common;
             // vector<pair<int,int>> axes_com;
             common = common_on_axis(d2_p1,d1_p2);
-            axes_com = board.at(common.first).at(common.second)->axis_mapping;
+            // cout << "common point = (" << common.first << "," << common.second << ")" << endl;
+            // axes_com = board.at(common.first).at(common.second)->axis_mapping;
             if(common.first != -1 && common.second != -1)
             {
+                axes_com = board.at(common.first).at(common.second)->axis_mapping;
                 d2_d1 = abs(axes1.at(1).second - axes_com.at(1).second) + abs(axes2.at(0).second - axes_com.at(0).second);
             }
             common = common_on_axis(d2_p1,v_p2);
-            axes_com = board.at(common.first).at(common.second)->axis_mapping;
+            // cout << "common point = (" << common.first << "," << common.second << ")" << endl;
+            // axes_com = board.at(common.first).at(common.second)->axis_mapping;
             if(common.first != -1 && common.second != -1)
             {
+                axes_com = board.at(common.first).at(common.second)->axis_mapping;
                 d2_v = abs(axes1.at(1).second - axes_com.at(1).second) + abs(axes2.at(2).second - axes_com.at(2).second);
             }
 
             //taking v of first point and d2 and d1 of other points
-            int v_d1 = -1, v_d2 = -1;
+            int v_d1 = 500, v_d2 = 500;
             vector<pair<int,int>> v_p1 = elems_on_vertical.at(v_1);
             // vector<pair<int,int>> d1_p2 = elems_on_diagonal2.at(d1_2);
             // vector<pair<int,int>> d2_p2 = elems_on_vertical.at(d2_2);
@@ -160,15 +168,19 @@ public:
             // pair<int,int> common;
             // vector<pair<int,int>> axes_com;
             common = common_on_axis(v_p1,d1_p2);
-            axes_com = board.at(common.first).at(common.second)->axis_mapping;
+            // cout << "common point = (" << common.first << "," << common.second << ")" << endl;
+            // axes_com = board.at(common.first).at(common.second)->axis_mapping;
             if(common.first != -1 && common.second != -1)
             {
+                axes_com = board.at(common.first).at(common.second)->axis_mapping;
                 v_d1 = abs(axes1.at(2).second - axes_com.at(2).second) + abs(axes2.at(0).second - axes_com.at(0).second);
             }
             common = common_on_axis(v_p1,d2_p2);
-            axes_com = board.at(common.first).at(common.second)->axis_mapping;
+            // cout << "common point = (" << common.first << "," << common.second << ")" << endl;
+            // axes_com = board.at(common.first).at(common.second)->axis_mapping;
             if(common.first != -1 && common.second != -1)
             {
+                axes_com = board.at(common.first).at(common.second)->axis_mapping;
                 v_d2 = abs(axes1.at(2).second - axes_com.at(2).second) + abs(axes2.at(1).second - axes_com.at(1).second);
             }
             return min({d1_d2,d1_v,d2_d1,d2_v,v_d1,v_d2});
@@ -229,9 +241,11 @@ public:
         auto curr = distances.at(i);
         for (int j=0; j<curr.size(); j++){
             auto ins = curr.at(j);
+            if(i==n && j%n==0) continue;
             for (int k=0; k<ins.size(); k++){
                 auto inins = ins.at(k);
                 for(int l=0; l<inins.size(); l++){
+                    if(k==n && k%n==0) continue;
                     distances[i][j][k][l] = calculate_distance(make_pair(i, j), make_pair(k, l));
                 }
             }
@@ -520,33 +534,47 @@ int main()
     // }
     // cout << endl;
 
-    Utility* use = new Utility(5);
-  //   cout << "n=6" << endl;
-  //   cout << "vertical :" << endl;
-  //   for (auto u: use->elems_on_vertical){
-  //       for (auto v: u){
-  //           cout << v.first << " " << v.second << " ";
-  //       }
-  //       cout << endl;
-  //   }
-  //   cout << endl;
-  //   cout << "diagonal1 :" << endl;
-  //   for (auto u: use->elems_on_diagonal1){
-  //       for (auto v: u){
-  //           cout << v.first << " " << v.second << " ";
-  //       }
-  //       cout << endl;
-  //   }
-  //   cout << endl;
-  //   cout << "diagonal2 :" << endl;
-  //   for (auto u: use->elems_on_diagonal2){
-  //       for (auto v: u){
-  //           cout << v.first << " " << v.second << " ";
-  //       }
-  //       cout << endl;
-  //   }
-  //   cout << endl;
-  //
-	// cout << "works";
+    Utility* use = new Utility(6);
+    // cout << "n=6" << endl;
+    // cout << "vertical :" << endl;
+    // for (auto u: use->elems_on_vertical){
+    //     for (auto v: u){
+    //         cout << v.first << " " << v.second << " ";
+    //     }
+    //     cout << endl;
+    // }
+    // cout << endl;
+    // cout << "diagonal1 :" << endl;
+    // for (auto u: use->elems_on_diagonal1){
+    //     for (auto v: u){
+    //         cout << v.first << " " << v.second << " ";
+    //     }
+    //     cout << endl;
+    // }
+    // cout << endl;
+    // cout << "diagonal2 :" << endl;
+    // for (auto u: use->elems_on_diagonal2){
+    //     for (auto v: u){
+    //         cout << v.first << " " << v.second << " ";
+    //     }
+    //     cout << endl;
+    // }
+    // cout << endl;
 
+	   // cout << "works: Stuff initialized";
+     for(int i = 2; i < 7; i++)
+     {
+        for(int j = 0; j < 6*i; j++)
+        {
+            for(int k =0; k < 7; k++)
+            {
+                for(int l =0; l < k*6; l++)
+                {
+                    cout << "(" << i << "," << j << ") --> (" << k << "," << l << ") = " << use->distances.at(i).at(j).at(k).at(l) << endl;
+                    // cout << "Pair considered is = (" << i << "," << j << ") --> (" << k << "," << l << ")" << endl;
+                    // use->calculate_distance(make_pair(i,j),make_pair(k,l));
+                }
+            }
+        }
+     }
 }
