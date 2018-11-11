@@ -775,8 +775,9 @@ public:
 
         vector<int> counts3(20), counts4(20);
         int cn =0;
-        for(auto axis: directions)
+        for(int i = 1; i < directions.size() - 1; i++)
         {
+            vector<pair<int,int>> axis = directions.at(i);
             for(auto w: axis)
             {
                 int data = board.at(w.first).at(w.second).get_data();
@@ -1169,18 +1170,8 @@ public:
 
         for(int i =0 ; i < 9; i++)
         {
-            feat3.push_back(d1.first.at(i));
-            feat4.push_back(d1.second.at(i));
-        }
-        for(int i =0 ; i < 9; i++)
-        {
-            feat3.push_back(d2.first.at(i));
-            feat4.push_back(d2.second.at(i));
-        }
-        for(int i =0 ; i < 9; i++)
-        {
-            feat3.push_back(v.first.at(i));
-            feat4.push_back(v.second.at(i));
+            feat3.push_back(d1.first.at(i)+d2.first.at(i)+v.first.at(i));
+            feat4.push_back(d1.second.at(i)+d2.second.at(i)+v.second.at(i));
         }
 
         feat3.push_back(streaks.first.first);
@@ -1191,13 +1182,22 @@ public:
         feat3.push_back(critical.first);
         feat4.push_back(critical.second);
 
-      
-        feat3.push_back(rings_removed0);
-        feat4.push_back(rings_removed1);
-        
+        vector<int> binary_removal0(4);
+        vector<int> binary_removal1(4);
+        binary_removal0.at(min(rings_removed0,3)) = 1;
+        binary_removal1.at(min(rings_removed1,3)) = 1;
+        // feat3.push_back(rings_removed0);
+        // feat4.push_back(rings_removed1);
+
+        for(int i = 0; i < 4; i++)
+        {
+            feat3.push_back(binary_removal0.at(i));
+            feat4.push_back(binary_removal1.at(i));
+        }
+
         // else{
         //  feat3.push_back(rings_removed0);
-        //   feat4.push_back(rings_removed1); 
+        //   feat4.push_back(rings_removed1);
         // }
 
 
@@ -1213,21 +1213,21 @@ public:
             features = make_pair(feat4,feat3);
         }
 
-        // for(auto r:ring_mobilities.first)
-        // {
-        //     features.first.push_back(r);
-        // }
-        // for(auto r:ring_mobilities.second)
-        // {
-        //     features.second.push_back(r);
-        // }
+        for(auto r:ring_mobilities.first)
+        {
+            features.first.push_back(r);
+        }
+        for(auto r:ring_mobilities.second)
+        {
+            features.second.push_back(r);
+        }
 
         return features;
     }
 
-    float heuristic(vector<float> weights){
+    double heuristic(vector<double> weights){
       auto v = get_features();
-      float out = 0;
+      double out = 0;
       for (int i=0; i<v.first.size(); i++){
         out += weights.at(i)*v.first.at(i);
       }
@@ -1237,7 +1237,7 @@ public:
       return out;
     }
 
-    // int heuristic(vector<float> weights){
+    // int heuristic(vector<double> weights){
     //     int out = 0;
     //     pair<vector<int>,vector<int>> d1 = find_consecutives(util->elems_on_diagonal1);
     //     pair<vector<int>,vector<int>> d2 = find_consecutives(util->elems_on_diagonal2);

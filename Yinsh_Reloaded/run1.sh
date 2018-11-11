@@ -1,2 +1,2 @@
 #!/bin/bash
-./code4
+./the_old
