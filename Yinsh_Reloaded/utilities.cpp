@@ -245,7 +245,7 @@ public:
             for (int k=0; k<ins.size(); k++){
                 auto inins = ins.at(k);
                 for(int l=0; l<inins.size(); l++){
-                    if(k==n && l%n==0) continue;
+                    if(k==n && k%n==0) continue;
                     distances[i][j][k][l] = calculate_distance(make_pair(i, j), make_pair(k, l));
                 }
             }
@@ -493,88 +493,94 @@ public:
     }
 };
 
-int main()
-{
-	  // Utility* use = new Utility();
-    // cout << "Weights 3:" << endl;
-    // for(auto w:use->consecutive_weights.first)
-    // {
-    //     cout << w << "\t";
-    // }
-    // cout << endl;
-    // cout << "Weights 4:" << endl;
-    // for(auto w:use->consecutive_weights.second)
-    // {
-    //     cout << w << "\t";
-    // }
-    // cout << endl;
-    // cout << "n=5" << endl;
-    // cout << "vertical :" << endl;
-    // for (auto u: use->elems_on_vertical){
-    //     for (auto v: u){
-    //         cout << v.first << " " << v.second << " ";
-    //     }
-    //     cout << endl;
-    // }
-    // cout << endl;
-    // cout << "diagonal1 :" << endl;
-    // for (auto u: use->elems_on_diagonal1){
-    //     for (auto v: u){
-    //         cout << v.first << " " << v.second << " ";
-    //     }
-    //     cout << endl;
-    // }
-    // cout << endl;
-    // cout << "diagonal2 :" << endl;
-    // for (auto u: use->elems_on_diagonal2){
-    //     for (auto v: u){
-    //         cout << v.first << " " << v.second << " ";
-    //     }
-    //     cout << endl;
-    // }
-    // cout << endl;
-
-    Utility* use = new Utility(6);
-    // cout << "n=6" << endl;
-    // cout << "vertical :" << endl;
-    // for (auto u: use->elems_on_vertical){
-    //     for (auto v: u){
-    //         cout << v.first << " " << v.second << " ";
-    //     }
-    //     cout << endl;
-    // }
-    // cout << endl;
-    // cout << "diagonal1 :" << endl;
-    // for (auto u: use->elems_on_diagonal1){
-    //     for (auto v: u){
-    //         cout << v.first << " " << v.second << " ";
-    //     }
-    //     cout << endl;
-    // }
-    // cout << endl;
-    // cout << "diagonal2 :" << endl;
-    // for (auto u: use->elems_on_diagonal2){
-    //     for (auto v: u){
-    //         cout << v.first << " " << v.second << " ";
-    //     }
-    //     cout << endl;
-    // }
-    // cout << endl;
-
-	   // cout << "works: Stuff initialized";
-     for(int i = 2; i < 7; i++)
-     {
-        for(int j = 0; j < 6*i; j++)
-        {
-            for(int k =0; k < 7; k++)
-            {
-                for(int l =0; l < k*6; l++)
-                {
-                    cout << "(" << i << "," << j << ") --> (" << k << "," << l << ") = " << use->distances.at(i).at(j).at(k).at(l) << endl;
-                    // cout << "Pair considered is = (" << i << "," << j << ") --> (" << k << "," << l << ")" << endl;
-                    // use->calculate_distance(make_pair(i,j),make_pair(k,l));
-                }
-            }
-        }
-     }
-}
+// int main()
+// {
+// 	  // Utility* use = new Utility();
+//     // cout << "Weights 3:" << endl;
+//     // for(auto w:use->consecutive_weights.first)
+//     // {
+//     //     cout << w << "\t";
+//     // }
+//     // cout << endl;
+//     // cout << "Weights 4:" << endl;
+//     // for(auto w:use->consecutive_weights.second)
+//     // {
+//     //     cout << w << "\t";
+//     // }
+//     // cout << endl;
+//     // cout << "n=5" << endl;
+//     // cout << "vertical :" << endl;
+//     // for (auto u: use->elems_on_vertical){
+//     //     for (auto v: u){
+//     //         cout << v.first << " " << v.second << " ";
+//     //     }
+//     //     cout << endl;
+//     // }
+//     // cout << endl;
+//     // cout << "diagonal1 :" << endl;
+//     // for (auto u: use->elems_on_diagonal1){
+//     //     for (auto v: u){
+//     //         cout << v.first << " " << v.second << " ";
+//     //     }
+//     //     cout << endl;
+//     // }
+//     // cout << endl;
+//     // cout << "diagonal2 :" << endl;
+//     // for (auto u: use->elems_on_diagonal2){
+//     //     for (auto v: u){
+//     //         cout << v.first << " " << v.second << " ";
+//     //     }
+//     //     cout << endl;
+//     // }
+//     // cout << endl;
+//
+//     Utility* use = new Utility(6);
+//     // cout << "n=6" << endl;
+//     // cout << "vertical :" << endl;
+//     // for (auto u: use->elems_on_vertical){
+//     //     for (auto v: u){
+//     //         cout << v.first << " " << v.second << " ";
+//     //     }
+//     //     cout << endl;
+//     // }
+//     // cout << endl;
+//     // cout << "diagonal1 :" << endl;
+//     // for (auto u: use->elems_on_diagonal1){
+//     //     for (auto v: u){
+//     //         cout << v.first << " " << v.second << " ";
+//     //     }
+//     //     cout << endl;
+//     // }
+//     // cout << endl;
+//     // cout << "diagonal2 :" << endl;
+//     // for (auto u: use->elems_on_diagonal2){
+//     //     for (auto v: u){
+//     //         cout << v.first << " " << v.second << " ";
+//     //     }
+//     //     cout << endl;
+//     // }
+//     // cout << endl;
+//
+// 	   // cout << "works: Stuff initialized";
+//      int j;
+//      for(int i = 0; i < 7; i++)
+//      {
+//         j = 0;
+//         if(i == 0)
+//             j = -1;
+//         for(; j < 6*i; j++)
+//         {
+//             if(i == 0)
+//                 j = 0;
+//             for(int k =0; k < 7; k++)
+//             {
+//                 for(int l =0; l < k*6; l++)
+//                 {
+//                     cout << "(" << i << "," << j << ") --> (" << k << "," << l << ") = " << use->distances.at(i).at(j).at(k).at(l) << endl;
+//                     // cout << "Pair considered is = (" << i << "," << j << ") --> (" << k << "," << l << ")" << endl;
+//                     // use->calculate_distance(make_pair(i,j),make_pair(k,l));
+//                 }
+//             }
+//         }
+//      }
+// }

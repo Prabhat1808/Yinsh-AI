@@ -1231,9 +1231,32 @@ public:
         return streak_info;
     }
 
-    void density()
+    pair<int,int> density_estimate()
     {
-        
+          int estimate3 = 0, estimate4 = 0;
+          int j;
+          for(int i = 0; i < 7; i++)
+          {
+             j = 0;
+             if(i == 0)
+                 j = -1;
+             for(; j < 6*i; j++)
+             {
+                 if(i == 0)
+                     j = 0;
+                 for(int k =0; k < 7; k++)
+                 {
+                     for(int l =0; l < k*6; l++)
+                     {
+                         if(board.at(i).at(j).get_data() == 3 && board.at(k).at(l).get_data() == 3)
+                              estimate3 += util->distances.at(i).at(j).at(k).at(l);
+                         if(board.at(i).at(j).get_data() == 4 && board.at(k).at(l).get_data() == 4)
+                              estimate4 += util->distances.at(i).at(j).at(k).at(l);
+                     }
+                 }
+             }
+          }
+          return make_pair(estimate3,estimate4);
     }
 
     pair<vector<int>,vector<int>> get_features()
@@ -1249,6 +1272,7 @@ public:
         pair<int,int> critical = critical_points();
         pair<vector<int>,vector<int>> ring_mobilities = ring_freedom();
         pair<vector<int>,vector<int>> spatial = spatial_distribution();
+        pair<int,int> density = density_estimate();
 
         for(int i = 0 ; i < 5; i++)
         {
@@ -1288,11 +1312,17 @@ public:
         // }
 
         // Adding spatial distribution
+        int ss3 = 0, ss4 = 0;
         for(int i = 1; i < n+1; i++)
         {
             feat3.push_back(spatial.first.at(i));
+            ss3 += spatial.first.at(i);
             feat4.push_back(spatial.second.at(i));
+            ss4 += spatial.second.at(i);
         }
+
+        feat3.push_back(round((ss3*ss3)/density.first));
+        feat4.push_back(round((ss4*ss4)/density.second));
 
         if(my_marker == 3)
         {
