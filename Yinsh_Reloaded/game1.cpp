@@ -1231,6 +1231,11 @@ public:
         return streak_info;
     }
 
+    void density()
+    {
+        
+    }
+
     pair<vector<int>,vector<int>> get_features()
     {
         vector<int> feat3, feat4;
@@ -1282,7 +1287,7 @@ public:
         //   feat4.push_back(rings_removed1);
         // }
 
-        //Adding spatial distribution
+        // Adding spatial distribution
         for(int i = 1; i < n+1; i++)
         {
             feat3.push_back(spatial.first.at(i));
