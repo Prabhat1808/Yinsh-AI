@@ -229,9 +229,11 @@ public:
         auto curr = distances.at(i);
         for (int j=0; j<curr.size(); j++){
             auto ins = curr.at(j);
+            if(i==n && j%n==0) continue;
             for (int k=0; k<ins.size(); k++){
                 auto inins = ins.at(k);
                 for(int l=0; l<inins.size(); l++){
+                    if(k==n && k%n==0) continue;
                     distances[i][j][k][l] = calculate_distance(make_pair(i, j), make_pair(k, l));
                 }
             }
