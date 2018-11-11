@@ -1191,8 +1191,15 @@ public:
         feat3.push_back(critical.first);
         feat4.push_back(critical.second);
 
+      
         feat3.push_back(rings_removed0);
         feat4.push_back(rings_removed1);
+        
+        // else{
+        //  feat3.push_back(rings_removed0);
+        //   feat4.push_back(rings_removed1); 
+        // }
+
 
 
         if(my_marker == 3)

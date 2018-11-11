@@ -348,6 +348,7 @@ int main(int argc, char** argv)
    float tem;
    while(num--){
      wfile >> tem;
+     cerr << tem <<endl;
      weights.push_back(tem);
    }
 
@@ -397,9 +398,9 @@ int main(int argc, char** argv)
            getline(cin, move);
            // cout << "Move taken: " << move <<  endl;
            game.execute_move(move);
-           string mymove = random_place(game);
-           // pair<int, int> mov = game.place_ring_heuristic();
-           // string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
+           // string mymove = random_place(game);
+           pair<int, int> mov = game.place_ring_heuristic();
+           string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
            cerr << "Move " << mymove << endl;
            // cerr << mymove;
            cout << mymove << "\n";
@@ -408,10 +409,10 @@ int main(int argc, char** argv)
    }
    else{
        for (int i=0; i<n; i++){
-           string mymove = random_place(game);
+           // string mymove = random_place(game);
            // cerr << mymove << endl;
-           // pair<int, int> mov = game.place_ring_heuristic();
-           // string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
+           pair<int, int> mov = game.place_ring_heuristic();
+           string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
 
            cout << mymove << endl;
            game.execute_move(mymove);
@@ -437,7 +438,7 @@ int main(int argc, char** argv)
        int prev_removed = game.self_removed();
        pair<float, Game> inp = make_pair(game.heuristic(weights), game);
        pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
-       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, 3, weights, abselen);
+       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, ply, weights, abselen);
        // cerr << endl << endl;
        cout << mymove.second << endl;
        game.execute_move(mymove.second);
