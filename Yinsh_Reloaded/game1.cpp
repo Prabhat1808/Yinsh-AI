@@ -1235,7 +1235,7 @@ public:
     {
           int estimate3 = 0, estimate4 = 0;
           int j;
-          for(int i = 0; i < 7; i++)
+          for(int i = 0; i < n+1; i++)
           {
              j = 0;
              if(i == 0)
@@ -1244,7 +1244,7 @@ public:
              {
                  if(i == 0)
                      j = 0;
-                 for(int k =0; k < 7; k++)
+                 for(int k =0; k < n+1; k++)
                  {
                      for(int l =0; l < k*6; l++)
                      {
@@ -1321,8 +1321,22 @@ public:
             ss4 += spatial.second.at(i);
         }
 
-        feat3.push_back(round((ss3*ss3)/density.first));
-        feat4.push_back(round((ss4*ss4)/density.second));
+        if(density.first == 0)
+        {
+            feat3.push_back(0);
+        }
+        else
+        {
+            feat3.push_back(round((ss3*ss3)/density.first));
+        }
+        if(density.second == 0)
+        {
+            feat4.push_back(0);
+        }
+        else
+        {
+            feat4.push_back(round((ss4*ss4)/density.second));
+        }
 
         if(my_marker == 3)
         {
