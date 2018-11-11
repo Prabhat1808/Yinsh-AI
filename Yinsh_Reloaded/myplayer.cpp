@@ -5,7 +5,7 @@
 
 using namespace std;
 
-pair<pair<float, Game>, string> maxval( int, pair<pair<float, Game>, vector<pair<int, int> > > , float , float , int, vector<float>, float);
+pair<pair<double, Game>, string> maxval( int, pair<pair<double, Game>, vector<pair<int, int> > > , double , double , int, vector<double>, double);
 
 void do_remove(int k, pair<Game, string> x, pair<pair<int, int>, pair<int, int> > option, vector<pair<Game, string>> &future_possibilities)
 {
@@ -134,14 +134,14 @@ vector<pair<Game, string>> remove_rows(int k, vector<pair<pair<int, int>, pair<i
     return possibilities;
 };
 
-vector<pair<pair<pair<float, Game>, vector<pair<int, int> > >, string> > get_successors(int k, vector<pair<Game, string>> newboard, vector<float> weights) {
-    vector<pair<pair<pair<float, Game>, vector<pair<int, int>>>, string>> successors;
+vector<pair<pair<pair<double, Game>, vector<pair<int, int> > >, string> > get_successors(int k, vector<pair<Game, string>> newboard, vector<double> weights) {
+    vector<pair<pair<pair<double, Game>, vector<pair<int, int>>>, string>> successors;
     for (pair<Game, string> ga: newboard) {
         Game gam = ga.first;
         if(gam.get_removed0()>2 || gam.get_removed1()>2){
-            pair<float, Game> fir = make_pair(gam.heuristic(weights), gam);
+            pair<double, Game> fir = make_pair(gam.heuristic(weights), gam);
             vector<pair<int, int>> chan;
-            pair<pair<float, Game>, vector<pair<int, int>>> fin = make_pair(fir, chan);
+            pair<pair<double, Game>, vector<pair<int, int>>> fin = make_pair(fir, chan);
             successors.emplace_back(fin, ga.second);
             continue;
         }
@@ -163,9 +163,9 @@ vector<pair<pair<pair<float, Game>, vector<pair<int, int> > >, string> > get_suc
                         vector<pair<Game, string>> current_possibilities = remove_rows(k, removal, temp);
                         for (pair<Game, string> g: current_possibilities) {
                             g.first.player = (g.first.player + 1) % 2;
-                            float heur = g.first.heuristic(weights);
-                            pair<float, Game> nextstate = make_pair(heur, g.first);
-                            pair<pair<float, Game>, vector<pair<int, int>>> c = make_pair(nextstate, changed);
+                            double heur = g.first.heuristic(weights);
+                            pair<double, Game> nextstate = make_pair(heur, g.first);
+                            pair<pair<double, Game>, vector<pair<int, int>>> c = make_pair(nextstate, changed);
                             string move;
                             if(ga.second.length()) move = ga.second+ " " + curr_move + " " + g.second;
                             else move = curr_move + " " + g.second;
@@ -177,10 +177,10 @@ vector<pair<pair<pair<float, Game>, vector<pair<int, int> > >, string> > get_suc
                         // ################
                     }
                     else {
-                        float heuristic = temp.heuristic(weights);
+                        double heuristic = temp.heuristic(weights);
                         temp.update_player((temp.get_player() + 1) % 2);
-                        pair<float, Game> curr = make_pair(heuristic, temp);
-                        pair<pair<float, Game>, vector<pair<int, int>>> c = make_pair(curr, changed);
+                        pair<double, Game> curr = make_pair(heuristic, temp);
+                        pair<pair<double, Game>, vector<pair<int, int>>> c = make_pair(curr, changed);
                         string mov;
                         if(ga.second.length()) mov = ga.second + " " + curr_move;
                         else mov = curr_move;
@@ -195,11 +195,11 @@ vector<pair<pair<pair<float, Game>, vector<pair<int, int> > >, string> > get_suc
 
     return successors;
 };
-bool operat(pair<pair<pair<float, Game>, vector<pair<int, int> > >, string > a, pair<pair<pair<int, Game>, vector<pair<int, int> > >, string > b){
+bool operat(pair<pair<pair<double, Game>, vector<pair<int, int> > >, string > a, pair<pair<pair<int, Game>, vector<pair<int, int> > >, string > b){
     return a.first.first.first >= b.first.first.first;
 }
 
-pair<pair<float, Game>, string> minval(int k, pair<pair<float, Game>, vector<pair<int, int> > > mygame, float alpha, float beta, int h, vector<float> weights, float abselen) {
+pair<pair<double, Game>, string> minval(int k, pair<pair<double, Game>, vector<pair<int, int> > > mygame, double alpha, double beta, int h, vector<double> weights, double abselen) {
 
 
     // vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.check5(mygame.second, mygame.first.second.get_player() + 3);
@@ -214,22 +214,22 @@ pair<pair<float, Game>, string> minval(int k, pair<pair<float, Game>, vector<pai
         newboard.push_back(curr_game);
     }
 
-    vector<pair<pair<pair<float, Game>, vector<pair<int, int> > >, string > > successors = get_successors(k, newboard, weights);
-    vector<pair<float, int>> forcomp;
+    vector<pair<pair<pair<double, Game>, vector<pair<int, int> > >, string > > successors = get_successors(k, newboard, weights);
+    vector<pair<double, int>> forcomp;
     for(int i=0; i<successors.size(); i++){
-        pair<float, int> topush = make_pair(successors.at(i).first.first.first, i);
+        pair<double, int> topush = make_pair(successors.at(i).first.first.first, i);
         forcomp.push_back(topush);
     }
     if(h==1) {
 
         auto out = *std::min_element(forcomp.begin(), forcomp.end());
-        pair<pair<float, Game>, string> output = make_pair(successors.at(out.second).first.first, successors.at(out.second).second);
+        pair<pair<double, Game>, string> output = make_pair(successors.at(out.second).first.first, successors.at(out.second).second);
         return output;
     }
     sort(forcomp.begin(), forcomp.end());
-    pair<pair<float, Game>, string> besti = make_pair(make_pair(INT_MAX, successors.at(0).first.first.second), "");
+    pair<pair<double, Game>, string> besti = make_pair(make_pair(INT_MAX, successors.at(0).first.first.second), "");
 
-    for(pair<float, int> v: forcomp){
+    for(pair<double, int> v: forcomp){
         auto u = successors.at(v.second);
         pair<pair<int, Game>, string> child = maxval(k, u.first, alpha, beta, h - 1, weights, abselen);
         if(besti.first.first>=child.first.first){
@@ -244,7 +244,7 @@ pair<pair<float, Game>, string> minval(int k, pair<pair<float, Game>, vector<pai
     }
     int num = (int)(drand48()*100);
     // cerr << "num: " << num << " ";
-    if((float) num / 100 > abselen) {
+    if((double) num / 100 > abselen) {
       // cerr << endl;
       return besti;
     }
@@ -252,12 +252,12 @@ pair<pair<float, Game>, string> minval(int k, pair<pair<float, Game>, vector<pai
       num = (int)(drand48() * successors.size());
       // cerr << num << endl;
       auto res = successors.at(num);
-      pair<pair<float, Game>, string> out = {res.first.first, res.second};
+      pair<pair<double, Game>, string> out = {res.first.first, res.second};
       return out;
     }
 };
 
-pair<pair<float, Game>, string> maxval(int k, pair<pair<float, Game>, vector<pair<int, int> > > mygame, float alpha, float beta, int h, vector<float> weights, float abselen) {
+pair<pair<double, Game>, string> maxval(int k, pair<pair<double, Game>, vector<pair<int, int> > > mygame, double alpha, double beta, int h, vector<double> weights, double abselen) {
 
     // vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.check5(mygame.second, mygame.first.second.player + 3);
     vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.checkN(mygame.second, mygame.first.second.player + 3,k);
@@ -269,24 +269,24 @@ pair<pair<float, Game>, string> maxval(int k, pair<pair<float, Game>, vector<pai
         pair<Game, string> curr_game = make_pair(mygame.first.second, "");
         newboard.push_back(curr_game);
     }
-    vector<pair<pair<pair<float, Game>, vector<pair<int, int>>>, string>> successors = get_successors(k, newboard, weights);
-    vector<pair<float, int>> forcomp;
+    vector<pair<pair<pair<double, Game>, vector<pair<int, int>>>, string>> successors = get_successors(k, newboard, weights);
+    vector<pair<double, int>> forcomp;
     for(int i=0; i<successors.size(); i++){
-        pair<float, int> topush = make_pair(successors.at(i).first.first.first, i);
+        pair<double, int> topush = make_pair(successors.at(i).first.first.first, i);
         forcomp.push_back(topush);
     }
     if(h==1) {
 
         auto out = *std::max_element(forcomp.begin(), forcomp.end());
-        pair<pair<float, Game>, string> output = make_pair(successors.at(out.second).first.first, successors.at(out.second).second);
+        pair<pair<double, Game>, string> output = make_pair(successors.at(out.second).first.first, successors.at(out.second).second);
         return output;
     }
     sort(forcomp.begin(), forcomp.end());
     reverse(forcomp.begin(), forcomp.end());
-    pair<pair<float, Game>, string> besti = make_pair(make_pair(INT_MIN, successors.at(0).first.first.second), "");
-    for(pair<float, int> v: forcomp){
-        pair<pair<pair<float, Game>, vector<pair<int, int>>>, string> u =  successors.at(v.second);
-        pair<pair<float, Game>, string> child = minval(k, u.first, alpha, beta, h - 1, weights, abselen);
+    pair<pair<double, Game>, string> besti = make_pair(make_pair(INT_MIN, successors.at(0).first.first.second), "");
+    for(pair<double, int> v: forcomp){
+        pair<pair<pair<double, Game>, vector<pair<int, int>>>, string> u =  successors.at(v.second);
+        pair<pair<double, Game>, string> child = minval(k, u.first, alpha, beta, h - 1, weights, abselen);
         if(besti.first.first<=child.first.first){
             besti.first.first = child.first.first;
             besti.first.second = u.first.first.second;
@@ -298,14 +298,14 @@ pair<pair<float, Game>, string> maxval(int k, pair<pair<float, Game>, vector<pai
         }
     }
     int num = rand()%100;
-    if((float) num / 100 > abselen){
+    if((double) num / 100 > abselen){
       cerr << endl;
       return besti;
     }
     else {
       num = rand() % successors.size();
       auto res = successors.at(num);
-      pair<pair<float, Game>, string> out = {res.first.first, res.second};
+      pair<pair<double, Game>, string> out = {res.first.first, res.second};
       return out;
     }
 };
@@ -316,7 +316,7 @@ string random_place(Game game){
         // srand(time(NULL));
         // for (int i=0; i<100; i++)
         //   int temp = rand();
-  
+
         int h = (int)(drand48() * game.get_n());
         if(h==0) continue;
         int p = (int)(drand48() * h*6);
@@ -337,15 +337,15 @@ int main(int argc, char** argv)
   srand48(time(NULL));
   // for (int i=0; i<100; i++)
   //   int temp = rand();
-  
+
 
    ifstream wfile;
    wfile.open("weights.txt");
    int num;
-   float abselen;
+   double abselen;
    wfile >> abselen >> num;
-   vector<float> weights;
-   float tem;
+   vector<double> weights;
+   double tem;
    while(num--){
      wfile >> tem;
      cerr << tem <<endl;
@@ -436,9 +436,9 @@ int main(int argc, char** argv)
 
        int reward = 0;
        int prev_removed = game.self_removed();
-       pair<float, Game> inp = make_pair(game.heuristic(weights), game);
+       pair<double, Game> inp = make_pair(game.heuristic(weights), game);
        pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
-       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, ply, weights, abselen);
+       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, 3, weights, abselen);
        // cerr << endl << endl;
        cout << mymove.second << endl;
        game.execute_move(mymove.second);
@@ -457,7 +457,7 @@ int main(int argc, char** argv)
          for(auto u: features.second) {
            myfile << u << " ";
          }
-         
+
          myfile << reward << endl;
          break;
        }
@@ -476,7 +476,7 @@ int main(int argc, char** argv)
          for(auto u: features.second) {
            myfile << u << " ";
          }
-         
+
          myfile << reward << endl;
          break;
        }
@@ -487,7 +487,7 @@ int main(int argc, char** argv)
         for(auto u: features.second) {
            myfile << u << " ";
          }
-         
+
        myfile << reward << endl;
    }
    myfile.close();
