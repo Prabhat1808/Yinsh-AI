@@ -244,17 +244,18 @@ pair<pair<double, Game>, string> minval(int k, pair<pair<double, Game>, vector<p
     }
     int num = (int)(drand48()*100);
     // cerr << "num: " << num << " ";
-    if((double) num / 100 > abselen) {
-      // cerr << endl;
-      return besti;
-    }
-    else {
-      num = (int)(drand48() * successors.size());
-      // cerr << num << endl;
-      auto res = successors.at(num);
-      pair<pair<double, Game>, string> out = {res.first.first, res.second};
-      return out;
-    }
+    // if((double) num / 100 > abselen) {
+    //   // cerr << endl;
+    //   return besti;
+    // }
+    // else {
+    //   num = (int)(drand48() * successors.size());
+    //   // cerr << num << endl;
+    //   auto res = successors.at(num);
+    //   pair<pair<double, Game>, string> out = {res.first.first, res.second};
+    //   return out;
+    // }
+    return besti;
 };
 
 pair<pair<double, Game>, string> maxval(int k, pair<pair<double, Game>, vector<pair<int, int> > > mygame, double alpha, double beta, int h, vector<double> weights, double abselen) {
@@ -297,17 +298,18 @@ pair<pair<double, Game>, string> maxval(int k, pair<pair<double, Game>, vector<p
             break;
         }
     }
-    int num = rand()%100;
-    if((double) num / 100 > abselen){
-      cerr << endl;
-      return besti;
-    }
-    else {
-      num = rand() % successors.size();
-      auto res = successors.at(num);
-      pair<pair<double, Game>, string> out = {res.first.first, res.second};
-      return out;
-    }
+    // int num = rand()%100;
+    // if((double) num / 100 > abselen){
+    //   cerr << endl;
+    //   return besti;
+    // }
+    // else {
+    //   num = rand() % successors.size();
+    //   auto res = successors.at(num);
+    //   pair<pair<double, Game>, string> out = {res.first.first, res.second};
+    //   return out;
+    // }
+    return besti;
 };
 
 string random_place(Game game){
