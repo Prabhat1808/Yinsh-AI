@@ -759,6 +759,28 @@ public:
         return make_pair(fwd,bcd); // first has forward, 2nd has backward
     }
 
+    pair<vector<int>,vector<int>> spatial_distribution()
+    {
+        vector<int> spat3(n+1);
+        vector<int> spat4(n+1);
+
+        for(int i = 0;i < n+1; i++)
+        {
+            for(int j = 0; j< 6*i; j++)
+            {
+                if(board.at(i).at(j).get_data() == 3)
+                {
+                    spat3.at(i) = spat3.at(i) + 1;
+                }
+                if(board.at(i).at(j).get_data() == 4)
+                {
+                    spat4.at(i) = spat4.at(i) + 1;
+                }
+            }
+        }
+        return make_pair(spat3,spat4);
+    }
+
     vector<pair<int,int>> total_moves(pair<int,int> point)
     {
         vector<pair<int,int>> outputs;
@@ -1221,6 +1243,7 @@ public:
         vector<pair<int,int>> streaks = analyse_streaks();
         pair<int,int> critical = critical_points();
         pair<vector<int>,vector<int>> ring_mobilities = ring_freedom();
+        pair<vector<int>,vector<int>> spatial = spatial_distribution();
 
         for(int i = 0 ; i < 5; i++)
         {
@@ -1258,6 +1281,13 @@ public:
         //  feat3.push_back(rings_removed0);
         //   feat4.push_back(rings_removed1);
         // }
+
+        //Adding spatial distribution
+        for(int i = 1; i < n+1; i++)
+        {
+            feat3.push_back(spatial.first.at(i));
+            feat4.push_back(spatial.second.at(i));
+        }
 
         if(my_marker == 3)
         {
