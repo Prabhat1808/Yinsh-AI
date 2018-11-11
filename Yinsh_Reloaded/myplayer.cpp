@@ -445,7 +445,7 @@ int main(int argc, char** argv)
        t++;
        // cerr << ply << endl;
        if(t==10) ply=4;
-        // if(t==15) ply = 5;
+        // if(t==20) ply = 5;
         // if(t==30) ply=6;
        if(game.check_won()){
          reward+=7;

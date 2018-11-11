@@ -32,6 +32,7 @@ public:
 	int n;
 	vector<vector<Node*>> board;
   pair<vector<int>,vector<int>> consecutive_weights;
+    vector<vector<vector<vector<int>>>> distances;
 
 	Utility(int n=5){
 		vector<pair<pair<int,int>,pair<int,int>>> diagonal1;
@@ -94,6 +95,51 @@ public:
       consecutive_weights.second = second;
   }
 
+
+  vector<vector<int>> get_empty(){
+    vector<vector<int>> out;
+    vector<int> tem;
+    out.push_back(tem);
+
+    for(int i=1; i<=n; i++){
+        vector<int> curr(i*6);
+        out.push_back(curr);
+    }
+    return out;
+
+  }
+
+  void initialize_distances(){
+
+    vector<vector<vector<int>>> tem;
+    auto s = get_empty();
+    tem.push_back(s);
+    distances.append(tem);
+
+    for(int i=1; i<=n; i++){
+        vector<vector<vector<int>>> temp;
+        for(int j=0; j<i*6; j++){
+            auto s = get_empty();
+            temp.push_back(s);
+        }
+        distances.push_back(temp);
+    }
+
+    for (int i=0; i<distances.size(); i++){
+        auto curr = distances.at(i);
+        for (int j=0; j<curr.size(); j++){
+            auto ins = curr.at(j);
+            for (int k=0; k<ins.size(); k++){
+                auto inins = ins.at(k);
+                for(int l=0; l<inins.size(); l++){
+                    distances[i][j][k][l] = calculate_distance(make_pair(i, j), make_pair(k, l));
+                }
+            }
+        }
+    }
+
+
+  }
 	void update_neighbours(Node* nod, int i, int j){
         if(i==0){
             for(int k=0; k<6; k++){
