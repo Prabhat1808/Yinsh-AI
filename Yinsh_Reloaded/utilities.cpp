@@ -32,6 +32,7 @@ public:
 	int n;
 	vector<vector<Node*>> board;
   pair<vector<int>,vector<int>> consecutive_weights;
+  vector<vector<vector<vector<int>>>> distances;
 
 	Utility(int n=5){
 		vector<pair<pair<int,int>,pair<int,int>>> diagonal1;
@@ -57,6 +58,7 @@ public:
             }
             this->board.push_back(temp);
         }
+
         initialize_consecutive_weights(this->consecutive_weights);
         update_direction_vectors(diagonal1, diagonal2, vertical);
 
@@ -72,8 +74,107 @@ public:
         	for(int j = 0;j<3;j++)
         		curr->axis_mapping.at(j) = make_pair(-1,-1);
         }
+        // update_distances(elems_on_diagonal1,elems_on_diagonal2,elems_on_vertical);
 	}
 
+  pair<int,int> common_on_axis(vector<pair<int,int>> axis1, vector<pair<int,int>> axis2)
+  {
+        pair<int,int> common = make_pair(-1,-1);
+
+        for(auto u : axis1)
+        {
+            for(auto v : axis2)
+            {
+                if(u == v)
+                {
+                    common = u;
+                }
+            }
+        }
+        return common;
+  }
+
+  int calculate_distance(pair<int,int> point1, pair<int,int> point2)
+  {
+        vector<pair<int,int>> axes1 = board.at(point1.first).at(point1.second)->axis_mapping;
+        vector<pair<int,int>> axes2 = board.at(point2.first).at(point2.second)->axis_mapping;
+        //axis.at.first = axis in that direction
+        //axis.at.second = position in that axis
+        int d1_1 = axes1.at(0).first, d2_1 = axes1.at(1).first, v_1 = axes1.at(2).first;
+        int d1_2 = axes2.at(0).first, d2_2 = axes2.at(1).first, v_2 = axes2.at(2).first;
+
+        if(d1_1 == d1_2 || d2_1 == d2_2 || v_1 == v_2)
+        {
+            return ((d1_1 == d1_2)*abs(axes1.at(0).second - axes2.at(0).second)  +  (d2_1 == d2_2)*abs(axes1.at(1).second - axes2.at(1).second)  +  (v_1 == v_2)*abs(axes1.at(2).second - axes2.at(2).second));
+        }
+        else
+        {
+            //taking d1 of first point and d2 and v of other points
+            int d1_d2 = -1, d1_v = -1;
+            vector<pair<int,int>> d1_p1 = elems_on_diagonal1.at(d1_1);
+            vector<pair<int,int>> d2_p2 = elems_on_diagonal2.at(d2_2);
+            vector<pair<int,int>> v_p2 = elems_on_vertical.at(v_2);
+
+            pair<int,int> common;
+            vector<pair<int,int>> axes_com;
+            common = common_on_axis(d1_p1,d2_p2);
+            axes_com = board.at(common.first).at(common.second)->axis_mapping;
+            if(common.first != -1 && common.second != -1)
+            {
+                d1_d2 = abs(axes1.at(0).second - axes_com.at(0).second) + abs(axes2.at(1).second - axes_com.at(1).second);
+            }
+            common = common_on_axis(d1_p1,v_p2);
+            axes_com = board.at(common.first).at(common.second)->axis_mapping;
+            if(common.first != -1 && common.second != -1)
+            {
+                d1_v = abs(axes1.at(0).second - axes_com.at(0).second) + abs(axes2.at(2).second - axes_com.at(2).second);
+            }
+
+            //taking d2 of first point and d1 and v of other points
+            int d2_d1 = -1, d2_v = -1;
+            vector<pair<int,int>> d2_p1 = elems_on_diagonal1.at(d2_1);
+            vector<pair<int,int>> d1_p2 = elems_on_diagonal2.at(d1_2);
+            // vector<pair<int,int>> v_p2 = elems_on_vertical.at(v_2);
+
+            // pair<int,int> common;
+            // vector<pair<int,int>> axes_com;
+            common = common_on_axis(d2_p1,d1_p2);
+            axes_com = board.at(common.first).at(common.second)->axis_mapping;
+            if(common.first != -1 && common.second != -1)
+            {
+                d2_d1 = abs(axes1.at(1).second - axes_com.at(1).second) + abs(axes2.at(0).second - axes_com.at(0).second);
+            }
+            common = common_on_axis(d2_p1,v_p2);
+            axes_com = board.at(common.first).at(common.second)->axis_mapping;
+            if(common.first != -1 && common.second != -1)
+            {
+                d2_v = abs(axes1.at(1).second - axes_com.at(1).second) + abs(axes2.at(2).second - axes_com.at(2).second);
+            }
+
+            //taking v of first point and d2 and d1 of other points
+            int v_d1 = -1, v_d2 = -1;
+            vector<pair<int,int>> v_p1 = elems_on_diagonal1.at(v_1);
+            // vector<pair<int,int>> d1_p2 = elems_on_diagonal2.at(d1_2);
+            // vector<pair<int,int>> d2_p2 = elems_on_vertical.at(d2_2);
+
+            // pair<int,int> common;
+            // vector<pair<int,int>> axes_com;
+            common = common_on_axis(v_p1,d1_p2);
+            axes_com = board.at(common.first).at(common.second)->axis_mapping;
+            if(common.first != -1 && common.second != -1)
+            {
+                v_d1 = abs(axes1.at(2).second - axes_com.at(2).second) + abs(axes2.at(0).second - axes_com.at(0).second);
+            }
+            common = common_on_axis(v_p1,d2_p2);
+            axes_com = board.at(common.first).at(common.second)->axis_mapping;
+            if(common.first != -1 && common.second != -1)
+            {
+                v_d2 = abs(axes1.at(2).second - axes_com.at(2).second) + abs(axes2.at(1).second - axes_com.at(1).second);
+            }
+            return min({d1_d2,d1_v,d2_d1,d2_v,v_d1,v_d2});
+        }
+
+  }
   void initialize_consecutive_weights(pair<vector<int>,vector<int>> &consecutive_weights)
   {
       vector<int> first,second;
@@ -201,8 +302,6 @@ public:
     }
     void update_direction_vectors(vector<pair<pair<int,int>,pair<int,int>>> &diagonal1, vector<pair<pair<int,int>,pair<int,int>>> &diagonal2, vector<pair<pair<int,int>,pair<int,int>>> &vertical)
 	{
-	    //Diagonal 1
-//	    cout << "Entered";
 	    diagonal1.push_back(make_pair(make_pair(n,1),make_pair(n,2)));
 	    diagonal1.push_back(make_pair(make_pair(n,6*n-1),make_pair(n-1,0)));
 	    for(int i=6*n-2;i>4*n;i--)
@@ -215,9 +314,7 @@ public:
 	        diagonal1.push_back(make_pair(make_pair(n,i),make_pair(n-1,i-5)));
 	    }
 	    diagonal1.push_back(make_pair(make_pair(n,4*n-1),make_pair(n,4*n-2)));
-	    //Diagonal 1
 
-	    //Diagonal 2
 	    diagonal2.push_back(make_pair(make_pair(n,6*n-1),make_pair(n,6*n-2)));
 	    for(int i=1;i<2*n;i++)
 	    {
@@ -229,9 +326,7 @@ public:
 	        diagonal2.push_back(make_pair(make_pair(n,i),make_pair(n-1,i-1)));
 	    }
 	    diagonal2.push_back(make_pair(make_pair(n,2*n+1),make_pair(n,2*n+2)));
-	    //Diagonal 2
 
-	    //Vertical
 	    vertical.push_back(make_pair(make_pair(n,5*n-1),make_pair(n,5*n-2)));
 	    for(int i = 5*n+1;i<6*n;i++)
 	        vertical.push_back(make_pair(make_pair(n,i),make_pair(n-1,i-6)));
@@ -242,9 +337,9 @@ public:
 	        vertical.push_back(make_pair(make_pair(n,i),make_pair(n-1,i)));
 
 	    vertical.push_back(make_pair(make_pair(n,n+1),make_pair(n,n+2)));
-	    //Vertical
-//	    cout << "Exited";
+
 	}
+
 	vector<vector<pair<int,int>>> elements_on_axis(vector<pair<pair<int,int>,pair<int,int>>> directions)
     {
         vector<vector<pair<int,int>>> on_axes;
