@@ -329,6 +329,20 @@ string random_place(Game game){
     return "";
 }
 
+string centre_place(Game game)
+{
+    if(game.get_data(0,0)==0)
+        return "P " + to_string(0) +" "+to_string(0);
+    for(int i =1;i<3;i++)
+    {
+        for(int j=0;j<i*6;j++)
+        {
+            if(game.get_data(i,j)==0)
+                return "P " + to_string(i) + " " + to_string(j);
+        }
+    }
+}
+
 
 int main(int argc, char** argv)
 {
@@ -401,8 +415,9 @@ int main(int argc, char** argv)
            // cout << "Move taken: " << move <<  endl;
            game.execute_move(move);
            // string mymove = random_place(game);
-           pair<int, int> mov = game.place_ring_heuristic();
-           string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
+           string mymove = centre_place(game);
+           // pair<int, int> mov = game.place_ring_heuristic();
+           // string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
            cerr << "Move " << mymove << endl;
            // cerr << mymove;
            cout << mymove << "\n";
@@ -412,9 +427,10 @@ int main(int argc, char** argv)
    else{
        for (int i=0; i<n; i++){
            // string mymove = random_place(game);
+           string mymove = centre_place(game);
            // cerr << mymove << endl;
-           pair<int, int> mov = game.place_ring_heuristic();
-           string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
+           // pair<int, int> mov = game.place_ring_heuristic();
+           // string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
 
            cout << mymove << endl;
            game.execute_move(mymove);

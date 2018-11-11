@@ -1232,7 +1232,7 @@ public:
         feat3.push_back(feat3.at(max_row-3) - streaks.at(0).first);
         feat4.push_back(streaks.at(0).second);
         // feat3.push_back(streaks.second.first);
-        feat4.push_back(feat4.at(max_row-3) - streaks.at(1).first);
+        feat3.push_back(feat4.at(max_row-3) - streaks.at(1).first);
         feat4.push_back(streaks.at(1).second);
 
         feat3.push_back(streaks.at(2).first);
@@ -1269,7 +1269,7 @@ public:
             for (int i=0; i<feat3.size(); i++) feat3.at(i)*=-1;
             features = make_pair(feat4,feat3);
         }
-
+        //
         int sum = 0;
         for(auto r:ring_mobilities.first)
         {
