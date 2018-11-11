@@ -1,2 +1,2 @@
 #!/bin/bash
-./the_old
+./pheuristic_d4

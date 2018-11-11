@@ -116,6 +116,9 @@ vector<pair<Game, string>> remove_rows(int k, vector<pair<pair<int, int>, pair<i
             vector<pair<Game, string>> future_possibilities;
             for (pair<Game, string> x: current_possibilities) {
                 if(x.first.get_removed1()>2 || x.first.get_removed0()>2){
+                    // current_possibilities.clear();
+                    // current_possibilities.push_back(x);
+                    // return current_possibilities;
                     future_possibilities.push_back(x);
                     continue;
                 }
@@ -242,19 +245,20 @@ pair<pair<double, Game>, string> minval(int k, pair<pair<double, Game>, vector<p
             break;
         }
     }
-    int num = (int)(drand48()*100);
-    // cerr << "num: " << num << " ";
-    if((double) num / 100 > abselen) {
-      // cerr << endl;
-      return besti;
-    }
-    else {
-      num = (int)(drand48() * successors.size());
-      // cerr << num << endl;
-      auto res = successors.at(num);
-      pair<pair<double, Game>, string> out = {res.first.first, res.second};
-      return out;
-    }
+    return besti;
+    // int num = (int)(drand48()*100);
+    // // cerr << "num: " << num << " ";
+    // if((double) num / 100 > abselen) {
+    //   // cerr << endl;
+    //   return besti;
+    // }
+    // else {
+    //   num = (int)(drand48() * successors.size());
+    //   // cerr << num << endl;
+    //   auto res = successors.at(num);
+    //   pair<pair<double, Game>, string> out = {res.first.first, res.second};
+    //   return out;
+    // }
 };
 
 pair<pair<double, Game>, string> maxval(int k, pair<pair<double, Game>, vector<pair<int, int> > > mygame, double alpha, double beta, int h, vector<double> weights, double abselen) {
@@ -297,17 +301,18 @@ pair<pair<double, Game>, string> maxval(int k, pair<pair<double, Game>, vector<p
             break;
         }
     }
-    int num = rand()%100;
-    if((double) num / 100 > abselen){
-      cerr << endl;
-      return besti;
-    }
-    else {
-      num = rand() % successors.size();
-      auto res = successors.at(num);
-      pair<pair<double, Game>, string> out = {res.first.first, res.second};
-      return out;
-    }
+    return besti;
+    // int num = rand()%100;
+    // if((double) num / 100 > abselen){
+    //   cerr << endl;
+    //   return besti;
+    // }
+    // else {
+    //   num = rand() % successors.size();
+    //   auto res = successors.at(num);
+    //   pair<pair<double, Game>, string> out = {res.first.first, res.second};
+    //   return out;
+    // }
 };
 
 string random_place(Game game){
@@ -438,7 +443,7 @@ int main(int argc, char** argv)
        int prev_removed = game.self_removed();
        pair<double, Game> inp = make_pair(game.heuristic(weights), game);
        pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
-       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, 3, weights, abselen);
+       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, ply, weights, abselen);
        // cerr << endl << endl;
        cout << mymove.second << endl;
        game.execute_move(mymove.second);
