@@ -1075,7 +1075,7 @@ public:
         return false;
     }
 
-    pair<pair<int,int>,pair<int,int>> analyse_streaks()//combines redeemable and breakable streaks
+    vector<pair<int,int>> analyse_streaks()//combines redeemable and breakable streaks
     {
         pair<vector<pair<pair<int,int>,pair<int,int>>>,vector<pair<pair<int,int>,pair<int,int>>>> d1 = find_consecutive_locations(util->elems_on_diagonal1);
         pair<vector<pair<pair<int,int>,pair<int,int>>>,vector<pair<pair<int,int>,pair<int,int>>>> d2 = find_consecutive_locations(util->elems_on_diagonal2);
@@ -1083,76 +1083,130 @@ public:
         //have to consider difference in breakability, i.e. along axis and cross axis
         int c3 = 0, c4 = 0;
         int r3 = 0, r4 = 0;
+        int nbc3 = 0, nbc4 = 0;
         //first values are for point 3, i.e opponent marker = 2
+        bool nb, c;
         for(auto w:d1.first)
         {
+            nb = true;
+            c = false;
             if(streak_breakable(util->between_points(w.first,w.second),2,1))
             {
                 c3++;
+                nb = false;
             }
             if(redeemable_streak(w.first,w.second,1))
             {
                 r3++;
+                c = true;
+            }
+            if(nb && c)
+            {
+                nbc3++;
             }
         }
         for(auto w:d2.first)
         {
+          nb = true;
+          c = false;
             if(streak_breakable(util->between_points(w.first,w.second),2,1))
             {
                 c3++;
+                nb = false;
             }
             if(redeemable_streak(w.first,w.second,1))
             {
                 r3++;
+                c = true;
+            }
+            if(nb && c)
+            {
+                nbc3++;
             }
         }
         for(auto w:v.first)
         {
+          nb = true;
+          c = false;
             if(streak_breakable(util->between_points(w.first,w.second),2,1))
             {
                 c3++;
+                nb = false;
             }
             if(redeemable_streak(w.first,w.second,1))
             {
                 r3++;
+                c = true;
+            }
+            if(nb && c)
+            {
+                nbc3++;
             }
         }
         //---------now for marker 4
         for(auto w:d1.second)
         {
+          nb = true;
+          c = false;
             if(streak_breakable(util->between_points(w.first,w.second),1,2))
             {
                 c4++;
+                nb = false;
             }
             if(redeemable_streak(w.first,w.second,1))
             {
                 r4++;
+                c = true;
+            }
+            if(nb && c)
+            {
+                nbc4++;
             }
         }
         for(auto w:d2.second)
         {
+          nb = true;
+          c = false;
             if(streak_breakable(util->between_points(w.first,w.second),1,2))
             {
                 c4++;
+                nb = false;
             }
             if(redeemable_streak(w.first,w.second,1))
             {
                 r4++;
+                c = true;
+            }
+            if(nb && c)
+            {
+                nbc4++;
             }
         }
         for(auto w:v.second)
         {
+          nb = true;
+          c = false;
             if(streak_breakable(util->between_points(w.first,w.second),1,2))
             {
                 c4++;
+                nb = false;
             }
             if(redeemable_streak(w.first,w.second,1))
             {
                 r4++;
+                c = true;
+            }
+            if(nb && c)
+            {
+                nbc4++;
             }
         }
 
-        return make_pair(make_pair(c3,c4),make_pair(r3,r4));
+        vector<pair<int,int>> streak_info;
+        streak_info.push_back(make_pair(c3,c4));
+        streak_info.push_back(make_pair(r3,r4));
+        streak_info.push_back(make_pair(nbc3,nbc4));
+        return streak_info;
     }
 
     pair<vector<int>,vector<int>> get_features()
@@ -1164,20 +1218,25 @@ public:
         pair<vector<int>,vector<int>> d2 = find_consecutives(util->elems_on_diagonal2);
         pair<vector<int>,vector<int>> v = find_consecutives(util->elems_on_vertical);
 
-        pair<pair<int,int>,pair<int,int>> streaks = analyse_streaks();
+        vector<pair<int,int>> streaks = analyse_streaks();
         pair<int,int> critical = critical_points();
         pair<vector<int>,vector<int>> ring_mobilities = ring_freedom();
 
-        for(int i =0 ; i < 9; i++)
+        for(int i = 0 ; i < 5; i++)
         {
             feat3.push_back(d1.first.at(i)+d2.first.at(i)+v.first.at(i));
             feat4.push_back(d1.second.at(i)+d2.second.at(i)+v.second.at(i));
         }
 
-        feat3.push_back(streaks.first.first);
-        feat4.push_back(streaks.first.second);
-        feat3.push_back(streaks.second.first);
-        feat4.push_back(streaks.second.second);
+        // feat3.push_back(streaks.first.first);  Replaced by non breakable
+        feat3.push_back(feat3.at(max_row-3) - streaks.at(0).first);
+        feat4.push_back(streaks.at(0).second);
+        // feat3.push_back(streaks.second.first);
+        feat3.push_back(feat4.at(max_row-3) - streaks.at(1).first);
+        feat4.push_back(streaks.at(1).second);
+
+        feat3.push_back(streaks.at(2).first);
+        feat4.push_back(streaks.at(2).second);
 
         feat3.push_back(critical.first);
         feat4.push_back(critical.second);
@@ -1200,8 +1259,6 @@ public:
         //   feat4.push_back(rings_removed1);
         // }
 
-
-
         if(my_marker == 3)
         {
             for (int i=0; i<feat4.size(); i++) feat4.at(i)*=-1;
@@ -1212,15 +1269,21 @@ public:
             for (int i=0; i<feat3.size(); i++) feat3.at(i)*=-1;
             features = make_pair(feat4,feat3);
         }
-
+        //
+        int sum = 0;
         for(auto r:ring_mobilities.first)
         {
-            features.first.push_back(r);
+            sum += r;
+            // features.first.push_back(r);
         }
+        features.first.push_back(sum);
+        sum = 0;
         for(auto r:ring_mobilities.second)
         {
-            features.second.push_back(r);
+            sum += r;
+            // features.second.push_back(r*-1);
         }
+        features.second.push_back(sum*-1);
 
         return features;
     }
