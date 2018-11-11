@@ -428,7 +428,7 @@ int main(int argc, char** argv)
    int ply=3;
    int t=0;
    ofstream myfile;
-   string filename = "logs"+to_string(starting.at(0))+".txt";
+   string filename = "logs_"+to_string(starting.at(0))+".txt";
    myfile.open(filename);
 
    while(true){

@@ -1194,12 +1194,15 @@ public:
         feat3.push_back(rings_removed0);
         feat4.push_back(rings_removed1);
 
+
         if(my_marker == 3)
         {
+            for (int i=0; i<feat4.size(); i++) feat4.at(i)*=-1;
             features = make_pair(feat3,feat4);
         }
         else
         {
+            for (int i=0; i<feat3.size(); i++) feat3.at(i)*=-1;
             features = make_pair(feat4,feat3);
         }
 
