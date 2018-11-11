@@ -479,21 +479,21 @@ public:
     }
 };
 
-// int main()
-// {
-// 	  Utility* use = new Utility();
-//     cout << "Weights 3:" << endl;
-//     for(auto w:use->consecutive_weights.first)
-//     {
-//         cout << w << "\t";
-//     }
-//     cout << endl;
-//     cout << "Weights 4:" << endl;
-//     for(auto w:use->consecutive_weights.second)
-//     {
-//         cout << w << "\t";
-//     }
-//     cout << endl;
+int main()
+{
+	  // Utility* use = new Utility();
+    // cout << "Weights 3:" << endl;
+    // for(auto w:use->consecutive_weights.first)
+    // {
+    //     cout << w << "\t";
+    // }
+    // cout << endl;
+    // cout << "Weights 4:" << endl;
+    // for(auto w:use->consecutive_weights.second)
+    // {
+    //     cout << w << "\t";
+    // }
+    // cout << endl;
     // cout << "n=5" << endl;
     // cout << "vertical :" << endl;
     // for (auto u: use->elems_on_vertical){
@@ -519,34 +519,34 @@ public:
     //     cout << endl;
     // }
     // cout << endl;
-    //
-    // use = new Utility(6);
-    // cout << "n=6" << endl;
-    // cout << "vertical :" << endl;
-    // for (auto u: use->elems_on_vertical){
-    //     for (auto v: u){
-    //         cout << v.first << " " << v.second << " ";
-    //     }
-    //     cout << endl;
-    // }
-    // cout << endl;
-    // cout << "diagonal1 :" << endl;
-    // for (auto u: use->elems_on_diagonal1){
-    //     for (auto v: u){
-    //         cout << v.first << " " << v.second << " ";
-    //     }
-    //     cout << endl;
-    // }
-    // cout << endl;
-    // cout << "diagonal2 :" << endl;
-    // for (auto u: use->elems_on_diagonal2){
-    //     for (auto v: u){
-    //         cout << v.first << " " << v.second << " ";
-    //     }
-    //     cout << endl;
-    // }
-    // cout << endl;
 
-//	cout << "works";
+    Utility* use = new Utility(5);
+  //   cout << "n=6" << endl;
+  //   cout << "vertical :" << endl;
+  //   for (auto u: use->elems_on_vertical){
+  //       for (auto v: u){
+  //           cout << v.first << " " << v.second << " ";
+  //       }
+  //       cout << endl;
+  //   }
+  //   cout << endl;
+  //   cout << "diagonal1 :" << endl;
+  //   for (auto u: use->elems_on_diagonal1){
+  //       for (auto v: u){
+  //           cout << v.first << " " << v.second << " ";
+  //       }
+  //       cout << endl;
+  //   }
+  //   cout << endl;
+  //   cout << "diagonal2 :" << endl;
+  //   for (auto u: use->elems_on_diagonal2){
+  //       for (auto v: u){
+  //           cout << v.first << " " << v.second << " ";
+  //       }
+  //       cout << endl;
+  //   }
+  //   cout << endl;
+  //
+	// cout << "works";
 
-// }
+}
