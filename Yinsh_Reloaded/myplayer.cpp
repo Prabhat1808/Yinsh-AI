@@ -461,9 +461,9 @@ int main(int argc, char** argv)
    int least_time;
    // if(n==5) least_time = 20;
    // else least_time = 50;
-   ofstream myfile;
-   string filename = "logs_"+to_string(starting.at(0))+".txt";
-   myfile.open(filename);
+   // ofstream myfile;
+   // string filename = "logs_"+to_string(starting.at(0))+".txt";
+   // myfile.open(filename);
    double time_taken = 0;
    while(true){
 
