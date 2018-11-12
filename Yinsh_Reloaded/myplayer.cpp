@@ -216,9 +216,11 @@ pair<pair<double, Game>, string> minval(int k, pair<pair<double, Game>, vector<p
 
     vector<pair<pair<pair<double, Game>, vector<pair<int, int> > >, string > > successors = get_successors(k, newboard, weights);
 
-    if(max_height == 4 && h==2 && (total_time - time_taken - (double)(clock() - ttime)/CLOCKS_PER_SEC) < least_time){
-       h=1;
+    if(h==2 && max_height > 1 && (total_time - time_taken - (double)(clock() - ttime)/CLOCKS_PER_SEC) < least_time){
+        // cerr << "Restricting tree search" << endl;
+       h-=1;
      }
+
 
 
     if(successors.size()==0){
@@ -282,8 +284,9 @@ pair<pair<double, Game>, string> maxval(int k, pair<pair<double, Game>, vector<p
     }
     vector<pair<pair<pair<double, Game>, vector<pair<int, int>>>, string>> successors = get_successors(k, newboard, weights);
 
-    if(max_height == 4 && h==2 && (total_time - time_taken - (double)(clock() - ttime)/CLOCKS_PER_SEC) < least_time){
-      h=1;
+    if(h==2 && max_height > 1 && (total_time - time_taken - (double)(clock() - ttime)/CLOCKS_PER_SEC) < least_time){
+      // cerr << "Restrcting tree search." << endl;
+      h-=1;
     }
 
      if(successors.size()==0){
@@ -383,7 +386,7 @@ int main(int argc, char** argv)
    int num = 44;
    double abselen = 0;
    // wfile >> abselen >> num;
-   // vector<double> weights;5
+   // vector<double> weights;
    // double tem;
    // while(num--){
    //   wfile >> tem;
@@ -414,7 +417,7 @@ int main(int argc, char** argv)
    // cin >> player_id >> board_size >> time_limit;
    Utility* util = new Utility(starting.at(1));
    Game game = Game(0, starting.at(0)+2, util, starting.at(1), starting.at(1), starting.at(3));
-   cerr << "k: " << starting.at(3) << endl;
+   // cerr << "k: " << starting.at(3) << endl;
 
 
    int n = starting.at(1);
@@ -430,7 +433,7 @@ int main(int argc, char** argv)
            string mymove = centre_place(game);
            // pair<int, int> mov = game.place_ring_heuristic();
            // string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
-           cerr << "Move " << mymove << endl;
+           // cerr << "Move " << mymove << endl;
            // cerr << mymove;
            cout << mymove << "\n";
            game.execute_move(mymove);
@@ -459,11 +462,7 @@ int main(int argc, char** argv)
    int ply=3;
    int t=0;
    int least_time;
-   // if(n==5) least_time = 20;
-   // else least_time = 50;
-   // ofstream myfile;
-   // string filename = "logs_"+to_string(starting.at(0))+".txt";
-   // myfile.open(filename);
+
    double time_taken = 0;
    while(true){
 
@@ -532,13 +531,15 @@ int main(int argc, char** argv)
        {
           if(t == 10)
           {
+              // cerr << "Increasing ply" << endl;
               ply = 4;
           }
        }
        else
        {
-            if(t == 15)
+            if(t == 20)
             {
+                // cerr << "Increasing ply" << endl;
                 ply = 4;
             }
        }
@@ -549,6 +550,7 @@ int main(int argc, char** argv)
        // cerr << "Our time remaining: " << total_time - time_taken << endl;
        if(total_time - time_taken < least_time)
        {
+            // cerr << "Decreasing ply back" << endl;
             ply = max(ply-1,1);
        }
        // else if(t==10) ply=4;
@@ -559,5 +561,6 @@ int main(int argc, char** argv)
        // cout << "Move taken: " << move <<  endl;
        changed = game.execute_move(move);
 
-   }
+     }
+
 }
