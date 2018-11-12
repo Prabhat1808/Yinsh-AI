@@ -116,9 +116,6 @@ vector<pair<Game, string>> remove_rows(int k, vector<pair<pair<int, int>, pair<i
             vector<pair<Game, string>> future_possibilities;
             for (pair<Game, string> x: current_possibilities) {
                 if(x.first.get_removed1()>2 || x.first.get_removed0()>2){
-                    // current_possibilities.clear();
-                    // current_possibilities.push_back(x);
-                    // return current_possibilities;
                     future_possibilities.push_back(x);
                     continue;
                 }
@@ -245,8 +242,20 @@ pair<pair<double, Game>, string> minval(int k, pair<pair<double, Game>, vector<p
             break;
         }
     }
+    int num = (int)(drand48()*100);
+    // cerr << "num: " << num << " ";
+    // if((double) num / 100 > abselen) {
+    //   // cerr << endl;
+    //   return besti;
+    // }
+    // else {
+    //   num = (int)(drand48() * successors.size());
+    //   // cerr << num << endl;
+    //   auto res = successors.at(num);
+    //   pair<pair<double, Game>, string> out = {res.first.first, res.second};
+    //   return out;
+    // }
     return besti;
-
 };
 
 pair<pair<double, Game>, string> maxval(int k, pair<pair<double, Game>, vector<pair<int, int> > > mygame, double alpha, double beta, int h, vector<double> weights, double abselen) {
@@ -289,8 +298,18 @@ pair<pair<double, Game>, string> maxval(int k, pair<pair<double, Game>, vector<p
             break;
         }
     }
+    // int num = rand()%100;
+    // if((double) num / 100 > abselen){
+    //   cerr << endl;
+    //   return besti;
+    // }
+    // else {
+    //   num = rand() % successors.size();
+    //   auto res = successors.at(num);
+    //   pair<pair<double, Game>, string> out = {res.first.first, res.second};
+    //   return out;
+    // }
     return besti;
-
 };
 
 string random_place(Game game){
@@ -444,8 +463,8 @@ int main(int argc, char** argv)
        reward+=(game.self_removed() - prev_removed);
        t++;
        // cerr << ply << endl;
-       if(t==10) ply=4;
-        // if(t==20) ply = 5;
+       if(t==15) ply=4;
+        // if(t==15) ply = 5;
         // if(t==30) ply=6;
        if(game.check_won()){
          reward+=7;
