@@ -217,9 +217,10 @@ pair<pair<double, Game>, string> minval(int k, pair<pair<double, Game>, vector<p
     vector<pair<pair<pair<double, Game>, vector<pair<int, int> > >, string > > successors = get_successors(k, newboard, weights);
 
     if(max_height - 2 == h && (total_time - time_taken - (double)(clock() - ttime)/CLOCKS_PER_SEC) < least_time){
-       h+=1;
+        cerr << "Restricting tree search" << endl; 
+       h-=1;
      }
-    
+
 
 
     if(successors.size()==0){
@@ -284,6 +285,7 @@ pair<pair<double, Game>, string> maxval(int k, pair<pair<double, Game>, vector<p
     vector<pair<pair<pair<double, Game>, vector<pair<int, int>>>, string>> successors = get_successors(k, newboard, weights);
 
     if(max_height - 2 == h && (total_time - time_taken - (double)(clock() - ttime)/CLOCKS_PER_SEC) < least_time){
+      cerr << "Restrcting tree search." << endl;
       h+=1;
     }
 
@@ -377,23 +379,23 @@ int main(int argc, char** argv)
   srand48(time(NULL));
   // for (int i=0; i<100; i++)
   //   int temp = rand();
-  // vector<double> weights_ply4 = {100 ,1000 ,50000 ,500000 ,500000 ,1000 ,5000 ,10000 ,10000 ,100000 ,10000 ,500000 ,1000000 ,5000000 ,10000000 ,2 ,4 ,6 ,8 ,10 ,50 ,20, 100 ,1000 ,50000 ,500000 ,500000 ,1000 ,5000 ,10000 ,10000 ,100000 ,10000 ,500000 ,1000000 ,5000000 ,10000000 ,2 ,4 ,6 ,8 ,10 ,50 ,20};
-  // vector<double> weights_ply3 = {100 ,1000 ,50000 ,500000 ,500000 ,1000 ,5000 ,10000 ,10000, 100000, 10000 ,500000 ,1000000, 5000000 ,10000000 ,2 ,4, 6, 8, 10, 50 ,20 ,100 ,1000, 50000 ,500000, 500000 ,1000, 5000 ,10000 ,10000, 100000, 10000, 500000 ,1000000, 5000000, 10000000, 2 ,4, 6 ,8, 10, 50 ,20};
-   ifstream wfile;
-   wfile.open("weights.txt");
+  vector<double> weights_ply4 = {100 ,1000 ,50000 ,500000 ,500000 ,1000 ,5000 ,10000 ,10000 ,100000 ,10000 ,500000 ,1000000 ,5000000 ,10000000 ,2 ,4 ,6 ,8 ,10 ,50 ,20, 100 ,1000 ,50000 ,500000 ,500000 ,1000 ,5000 ,10000 ,10000 ,100000 ,10000 ,500000 ,1000000 ,5000000 ,10000000 ,2 ,4 ,6 ,8 ,10 ,50 ,20};
+  vector<double> weights_ply3 = {100 ,1000 ,50000 ,500000 ,500000 ,1000 ,5000 ,10000 ,10000, 100000, 10000 ,500000 ,1000000, 5000000 ,10000000 ,2 ,4, 6, 8, 10, 50 ,20 ,100 ,1000, 50000 ,500000, 500000 ,1000, 5000 ,10000 ,10000, 100000, 10000, 500000 ,1000000, 5000000, 10000000, 2 ,4, 6 ,8, 10, 50 ,20};
+   // ifstream wfile;
+   // wfile.open("weights.txt");
    int num = 44;
    double abselen = 0;
-   wfile >> abselen >> num;
-   vector<double> weights;
-   double tem;
-   while(num--){
-     wfile >> tem;
-     // cerr << tem <<endl;
-     weights.push_back(tem);
-   }
-   // vector<vector<double>> weights;
-   // weights.push_back(weights_ply3);
-   // weights.push_back(weights_ply4);
+   // wfile >> abselen >> num;
+   // vector<double> weights;
+   // double tem;
+   // while(num--){
+   //   wfile >> tem;
+   //   // cerr << tem <<endl;
+   //   weights.push_back(tem);
+   // }
+   vector<vector<double>> weights;
+   weights.push_back(weights_ply3);
+   weights.push_back(weights_ply4);
    string move;
    string s;
    // cerr << "Staring game" << endl;
@@ -460,38 +462,105 @@ int main(int argc, char** argv)
    int ply=3;
    int t=0;
    int least_time;
-   
-   ofstream myfile;
-   string filename = "logs_"+to_string(starting.at(0))+".txt";
-   myfile.open(filename);
+
    double time_taken = 0;
-   if(n==5){
-     while(true){
+   while(true){
 
-         pair<double, Game> inp = make_pair(game.heuristic(weights), game);
-         pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
-         clock_t t_start = clock();
-         pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, 4, weights, abselen, t_start, 3, total_time, time_taken, least_time);
-         // cerr << "Ply: "<< ply << endl;
-         // cerr << endl << endl;
-         cout << mymove.second << endl;
-         game.execute_move(mymove.second);
-         reward+=(game.self_removed() - prev_removed);
-         t++;
-         // cerr << ply << endl;
+      if(n == 5)
+      {
+          if(ply == 4)
+          {
+              least_time = 20;
+          }
+          if(ply == 3)
+          {
+              least_time = 5;
+          }
+          if(ply == 2)
+          {
+              least_time = 3;
+          }
+      }
+      else
+      {
+          if(starting.at(3) == 6)
+          {
+              if(ply == 4)
+              {
+                  least_time = 80;
+              }
+              if(ply == 3)
+              {
+                  least_time = 10;
+              }
+              if(ply == 2)
+              {
+                  least_time = 5;
+              }
+          }
+          else
+          {
+              if(ply == 4)
+              {
+                  least_time = 50;
+              }
+              if(ply == 3)
+              {
+                  least_time = 8;
+              }
+              if(ply == 2)
+              {
+                  least_time = 4;
+              }
+          }
+      }
+
+       int reward = 0;
+       int prev_removed = game.self_removed();
+       pair<double, Game> inp = make_pair(game.heuristic(weights.at(0)), game);
+       pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
+       clock_t t_start = clock();
+       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, ply, weights.at(0), abselen, t_start, ply, total_time, time_taken, least_time);
+       cerr << "Ply: "<< ply << endl;
+       // cerr << endl << endl;
+       cout << mymove.second << endl;
+       game.execute_move(mymove.second);
+       reward+=(game.self_removed() - prev_removed);
+       t++;
+       if(n == 5)
+       {
+          if(t == 10)
+          {
+              cerr << "Increasing ply" << endl;
+              ply = 4;
+          }
+       }
+       else
+       {
+            if(t == 15)
+            {
+                cerr << "Increasing ply" << endl;
+                ply = 4;
+            }
+       }
+       // cerr << ply << endl;
 
 
-        time_taken += (double)(clock() - t_start)/CLOCKS_PER_SEC;
-         // cerr << "Our time remaining: " << total_time - time_taken << endl;
-         if(total_time - time_taken < least_time) ply = 3;
-         else if(t==10) ply=4;
-          // if(t==20) ply = 5;
-          // if(t==30) ply=6;
-         getline(cin, move);
-         // cerr<< "Checking final" << endl;
-         // cout << "Move taken: " << move <<  endl;
-         changed = game.execute_move(move);
+      time_taken += (double)(clock() - t_start)/CLOCKS_PER_SEC;
+       // cerr << "Our time remaining: " << total_time - time_taken << endl;
+       if(total_time - time_taken < least_time)
+       {
+            cerr << "Decreasing ply back" << endl;
+            ply = max(ply-1,1);
+       }
+       // else if(t==10) ply=4;
+        // if(t==20) ply = 5;
+        // if(t==30) ply=6;
+       getline(cin, move);
+       // cerr<< "Checking final" << endl;
+       // cout << "Move taken: " << move <<  endl;
+       changed = game.execute_move(move);
 
      }
- }
+
 }
