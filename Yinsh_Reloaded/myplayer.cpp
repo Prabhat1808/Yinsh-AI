@@ -378,19 +378,21 @@ int main(int argc, char** argv)
   //   int temp = rand();
   vector<double> weights_ply4 = {100 ,1000 ,50000 ,500000 ,500000 ,1000 ,5000 ,10000 ,10000 ,100000 ,10000 ,500000 ,1000000 ,5000000 ,10000000 ,2 ,4 ,6 ,8 ,10 ,50 ,20, 100 ,1000 ,50000 ,500000 ,500000 ,1000 ,5000 ,10000 ,10000 ,100000 ,10000 ,500000 ,1000000 ,5000000 ,10000000 ,2 ,4 ,6 ,8 ,10 ,50 ,20};
   vector<double> weights_ply3 = {100 ,1000 ,50000 ,500000 ,500000 ,1000 ,5000 ,10000 ,10000, 100000, 10000 ,500000 ,1000000, 5000000 ,10000000 ,2 ,4, 6, 8, 10, 50 ,20 ,100 ,1000, 50000 ,500000, 500000 ,1000, 5000 ,10000 ,10000, 100000, 10000, 500000 ,1000000, 5000000, 10000000, 2 ,4, 6 ,8, 10, 50 ,20};
-   ifstream wfile;
-   wfile.open("weights.txt");
-   int num;
-   double abselen;
-   wfile >> abselen >> num;
-   vector<double> weights;
-   double tem;
-   while(num--){
-     wfile >> tem;
-     // cerr << tem <<endl;
-     weights.push_back(tem);
-   }
-
+   // ifstream wfile;
+   // wfile.open("weights.txt");
+   int num = 44;
+   double abselen = 0;
+   // wfile >> abselen >> num;
+   // vector<double> weights;5
+   // double tem;
+   // while(num--){
+   //   wfile >> tem;
+   //   // cerr << tem <<endl;
+   //   weights.push_back(tem);
+   // }
+   vector<vector<double>> weights;
+   weights.push_back(weights_ply3);
+   weights.push_back(weights_ply4);
    string move;
    string s;
    // cerr << "Staring game" << endl;
@@ -467,10 +469,10 @@ int main(int argc, char** argv)
 
        int reward = 0;
        int prev_removed = game.self_removed();
-       pair<double, Game> inp = make_pair(game.heuristic(weights), game);
+       pair<double, Game> inp = make_pair(game.heuristic(weights.at(ply-3)), game);
        pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
        clock_t t_start = clock();
-       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, 3, weights, abselen, t_start, ply, total_time, time_taken, least_time);
+       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, ply, weights.at(ply-3), abselen, t_start, ply, total_time, time_taken, least_time);
        // cerr << "Ply: "<< ply << endl;
        // cerr << endl << endl;
        cout << mymove.second << endl;
