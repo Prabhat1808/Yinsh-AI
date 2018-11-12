@@ -846,7 +846,6 @@ public:
         int curr3 =0, curr4 =0;
 
         vector<int> counts3(20), counts4(20);
-        pair<int,int> st3,en3,st4,en4;
         int cn =0;
         for(int i = 1; i < directions.size() - 1; i++)
         {
@@ -856,57 +855,34 @@ public:
                 int data = board.at(w.first).at(w.second).get_data();
                 if(data == 3)
                 {
-                    if(curr3 == 0)
-                        st3 = w;
-                    en3 = w;
                     curr3++;
-                    if(curr4 > 1 && curr4 < 5)
-                    {
-                        if(!(streak_breakable(util->between_points(st4,en4),1,2)))
-                            counts4.at(curr4 - 2) += 1;
-                    }
+                    if(curr4 > 1)
+                        counts4.at(curr4 - 2) += 1;
                     curr4 = 0;
                 }
                 else if(data == 4)
                 {
-                    if(curr4 == 0)
-                        st4 = w;
-                    en4 = w;
+
                     curr4++;
-                    if(curr3 > 1 && curr3 < 5)
-                    {
-                      if(!(streak_breakable(util->between_points(st3,en3),2,1)))
-                          counts3.at(curr3 - 2) += 1;
-                    }
+                    if(curr3 > 1)
+                        counts3.at(curr3 - 2) += 1;
                     curr3 = 0;
                 }
                 else
                 {
-                    if(curr4 > 1 && curr4 < 5)
-                    {
-                        if(!(streak_breakable(util->between_points(st4,en4),1,2)))
-                            counts4.at(curr4 - 2) += 1;
-                    }
-                    if(curr3 > 1 && curr3 < 5)
-                    {
-                      if(!(streak_breakable(util->between_points(st3,en3),2,1)))
-                          counts3.at(curr3 - 2) += 1;
-                    }
+                    if(curr4 > 1)
+                        counts4.at(curr4 - 2) += 1;
+                    if(curr3 > 1)
+                        counts3.at(curr3 - 2) += 1;
                     curr3 =0;
                     curr4 =0;
                 }
             }
 
-            if(curr3 > 1 && curr3 < 5)
-            {
-              if(!(streak_breakable(util->between_points(st3,en3),2,1)))
-                  counts3.at(curr3 - 2) += 1;
-            }
-            if(curr4 > 1 && curr4 < 5)
-            {
-                if(!(streak_breakable(util->between_points(st4,en4),1,2)))
-                    counts4.at(curr4 - 2) += 1;
-            }
+            if(curr3 > 1)
+                counts3.at(curr3 - 2) +=1;
+            if(curr4 > 1)
+                counts4.at(curr4 - 2) += 1;
 
             curr3 = 0;
             curr4 = 0;
@@ -1348,30 +1324,11 @@ public:
         pair<vector<int>,vector<int>> spatial = spatial_distribution();
         pair<int,int> density = density_estimate();
 
-        pair<vector<int>,vector<int>> unbreakable_d1 = find_unbreakable_consecutives(util->elems_on_diagonal1);
-        pair<vector<int>,vector<int>> unbreakable_d2 = find_unbreakable_consecutives(util->elems_on_diagonal2);
-        pair<vector<int>,vector<int>> unbreakable_v = find_unbreakable_consecutives(util->elems_on_vertical);
-
         for(int i = 0 ; i < 5; i++)
         {
             feat3.push_back(d1.first.at(i)+d2.first.at(i)+v.first.at(i));
             feat4.push_back(d1.second.at(i)+d2.second.at(i)+v.second.at(i));
         }
-
-        //Handling unbreakables less that max_row
-        if(max_row == 5)
-        {
-            feat3.push_back(d1.first.at(0)+d2.first.at(0)+v.first.at(0));
-            feat4.push_back(d1.second.at(0)+d2.second.at(0)+v.second.at(0));
-        }
-        feat3.push_back(d1.first.at(1)+d2.first.at(1)+v.first.at(1));
-        feat4.push_back(d1.second.at(1)+d2.second.at(1)+v.second.at(1));
-        if(max_row == 6)
-        {
-          feat3.push_back(d1.first.at(2)+d2.first.at(2)+v.first.at(2));
-          feat4.push_back(d1.second.at(2)+d2.second.at(2)+v.second.at(2));
-        }
-        //Handling unbreakables less that max_row
 
         // feat3.push_back(streaks.first.first);  Replaced by non breakable
         feat3.push_back(feat3.at(max_row-3) - streaks.at(0).first);
@@ -1408,18 +1365,10 @@ public:
         int ss3 = 0, ss4 = 0;
         for(int i = 1; i < n+1; i++)
         {
+            feat3.push_back(spatial.first.at(i));
             ss3 += spatial.first.at(i);
+            feat4.push_back(spatial.second.at(i));
             ss4 += spatial.second.at(i);
-            if(n == 6 && i == 2)
-            {
-                feat3.at(feat3.size()-1) = feat3.at(feat3.size()-1) + spatial.first.at(i);
-                feat4.at(feat4.size()-1) = feat4.at(feat4.size()-1) + spatial.second.at(i);
-            }
-            else
-            {
-                feat3.push_back(spatial.first.at(i));
-                feat4.push_back(spatial.second.at(i));
-            }
         }
 
         if(density.first == 0)

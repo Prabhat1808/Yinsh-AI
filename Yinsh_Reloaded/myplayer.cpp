@@ -5,7 +5,7 @@
 
 using namespace std;
 
-pair<pair<double, Game>, string> maxval( int, pair<pair<double, Game>, vector<pair<int, int> > > , double , double , int, vector<double>, double, clock_t, int, int, double);
+pair<pair<double, Game>, string> maxval( int, pair<pair<double, Game>, vector<pair<int, int> > > , double , double , int, vector<double>, double, clock_t, int, int, double, int);
 
 void do_remove(int k, pair<Game, string> x, pair<pair<int, int>, pair<int, int> > option, vector<pair<Game, string>> &future_possibilities)
 {
@@ -116,9 +116,6 @@ vector<pair<Game, string>> remove_rows(int k, vector<pair<pair<int, int>, pair<i
             vector<pair<Game, string>> future_possibilities;
             for (pair<Game, string> x: current_possibilities) {
                 if(x.first.get_removed1()>2 || x.first.get_removed0()>2){
-                    // current_possibilities.clear();
-                    // current_possibilities.push_back(x);
-                    // return current_possibilities;
                     future_possibilities.push_back(x);
                     continue;
                 }
@@ -202,7 +199,7 @@ bool operat(pair<pair<pair<double, Game>, vector<pair<int, int> > >, string > a,
     return a.first.first.first >= b.first.first.first;
 }
 
-pair<pair<double, Game>, string> minval(int k, pair<pair<double, Game>, vector<pair<int, int> > > mygame, double alpha, double beta, int h, vector<double> weights, double abselen, clock_t ttime, int max_height, int total_time, double time_taken) {
+pair<pair<double, Game>, string> minval(int k, pair<pair<double, Game>, vector<pair<int, int> > > mygame, double alpha, double beta, int h, vector<double> weights, double abselen, clock_t ttime, int max_height, int total_time, double time_taken, int least_time) {
 
 
     // vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.check5(mygame.second, mygame.first.second.get_player() + 3);
@@ -219,7 +216,7 @@ pair<pair<double, Game>, string> minval(int k, pair<pair<double, Game>, vector<p
 
     vector<pair<pair<pair<double, Game>, vector<pair<int, int> > >, string > > successors = get_successors(k, newboard, weights);
 
-    if(max_height == 4 && h==2 && (total_time - time_taken - (double)(clock() - ttime)/CLOCKS_PER_SEC) < 10){
+    if(max_height == 4 && h==2 && (total_time - time_taken - (double)(clock() - ttime)/CLOCKS_PER_SEC) < least_time){
        h=1;
      }
 
@@ -244,7 +241,7 @@ pair<pair<double, Game>, string> minval(int k, pair<pair<double, Game>, vector<p
 
     for(pair<double, int> v: forcomp){
         auto u = successors.at(v.second);
-        pair<pair<int, Game>, string> child = maxval(k, u.first, alpha, beta, h - 1, weights, abselen, ttime, max_height, total_time, time_taken);
+        pair<pair<int, Game>, string> child = maxval(k, u.first, alpha, beta, h - 1, weights, abselen, ttime, max_height, total_time, time_taken, least_time);
         if(besti.first.first>=child.first.first){
             besti.first.first = child.first.first;
             besti.first.second = u.first.first.second;
@@ -255,11 +252,23 @@ pair<pair<double, Game>, string> minval(int k, pair<pair<double, Game>, vector<p
             break;
         }
     }
+    int num = (int)(drand48()*100);
+    // cerr << "num: " << num << " ";
+    // if((double) num / 100 > abselen) {
+    //   // cerr << endl;
+    //   return besti;
+    // }
+    // else {
+    //   num = (int)(drand48() * successors.size());
+    //   // cerr << num << endl;
+    //   auto res = successors.at(num);
+    //   pair<pair<double, Game>, string> out = {res.first.first, res.second};
+    //   return out;
+    // }
     return besti;
-
 };
 
-pair<pair<double, Game>, string> maxval(int k, pair<pair<double, Game>, vector<pair<int, int> > > mygame, double alpha, double beta, int h, vector<double> weights, double abselen, clock_t ttime, int max_height, int total_time, double time_taken) {
+pair<pair<double, Game>, string> maxval(int k, pair<pair<double, Game>, vector<pair<int, int> > > mygame, double alpha, double beta, int h, vector<double> weights, double abselen, clock_t ttime, int max_height, int total_time, double time_taken, int least_time) {
 
     // vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.check5(mygame.second, mygame.first.second.player + 3);
     vector<pair<pair<int, int>, pair<int, int>>> before_removal = mygame.first.second.checkN(mygame.second, mygame.first.second.player + 3,k);
@@ -273,7 +282,7 @@ pair<pair<double, Game>, string> maxval(int k, pair<pair<double, Game>, vector<p
     }
     vector<pair<pair<pair<double, Game>, vector<pair<int, int>>>, string>> successors = get_successors(k, newboard, weights);
 
-    if(max_height == 4 && h==2 && (total_time - time_taken - (double)(clock() - ttime)/CLOCKS_PER_SEC) < 10){
+    if(max_height == 4 && h==2 && (total_time - time_taken - (double)(clock() - ttime)/CLOCKS_PER_SEC) < least_time){
       h=1;
     }
 
@@ -301,7 +310,7 @@ pair<pair<double, Game>, string> maxval(int k, pair<pair<double, Game>, vector<p
     pair<pair<double, Game>, string> besti = make_pair(make_pair(INT_MIN, successors.at(0).first.first.second), "");
     for(pair<double, int> v: forcomp){
         pair<pair<pair<double, Game>, vector<pair<int, int>>>, string> u =  successors.at(v.second);
-        pair<pair<double, Game>, string> child = minval(k, u.first, alpha, beta, h - 1, weights, abselen, ttime, max_height, total_time, time_taken);
+        pair<pair<double, Game>, string> child = minval(k, u.first, alpha, beta, h - 1, weights, abselen, ttime, max_height, total_time, time_taken, least_time);
         if(besti.first.first<=child.first.first){
             besti.first.first = child.first.first;
             besti.first.second = u.first.first.second;
@@ -312,8 +321,18 @@ pair<pair<double, Game>, string> maxval(int k, pair<pair<double, Game>, vector<p
             break;
         }
     }
+    // int num = rand()%100;
+    // if((double) num / 100 > abselen){
+    //   cerr << endl;
+    //   return besti;
+    // }
+    // else {
+    //   num = rand() % successors.size();
+    //   auto res = successors.at(num);
+    //   pair<pair<double, Game>, string> out = {res.first.first, res.second};
+    //   return out;
+    // }
     return besti;
-
 };
 
 string random_place(Game game){
@@ -368,7 +387,7 @@ int main(int argc, char** argv)
    double tem;
    while(num--){
      wfile >> tem;
-     cerr << tem <<endl;
+     // cerr << tem <<endl;
      weights.push_back(tem);
    }
 
@@ -395,118 +414,11 @@ int main(int argc, char** argv)
    Game game = Game(0, starting.at(0)+2, util, starting.at(1), starting.at(1), starting.at(3));
    cerr << "k: " << starting.at(3) << endl;
 
-//    game.execute_move("P 0 0");
-// game.execute_move("P 3 16");
-// game.execute_move("P 1 0");
-// game.execute_move("P 3 3");
-// game.execute_move("P 1 1");
-// game.execute_move("P 4 11");
-// game.execute_move("P 1 2");
-// game.execute_move("P 4 5");
-// game.execute_move("P 1 3");
-// game.execute_move("P 3 12");
-// game.execute_move("S 1 1 M 3 1");
-// game.execute_move("S 4 11 M 3 8");
-// game.execute_move("S 1 2 M 2 5");
-// game.execute_move("S 3 12 M 5 13");
-// game.execute_move("S 3 1 M 2 1");
-// game.execute_move("S 3 3 M 3 0");
-// game.execute_move("S 2 5 M 3 7");
-// game.execute_move("S 5 13 M 4 10");
-// game.execute_move("S 3 7 M 2 4");
-// game.execute_move("S 3 0 M 4 1");
-// game.execute_move("S 2 1 M 3 2");
-// game.execute_move("S 4 10 M 5 12");
-// game.execute_move("S 3 2 M 4 23 RS 3 1 RE 2 5 X 0 0");
-// game.execute_move("S 5 12 M 5 11");
-// game.execute_move("S 1 3 M 2 5");
-// game.execute_move("S 5 11 M 4 9");
-// game.execute_move("S 2 4 M 3 6");
-// game.execute_move("S 4 1 M 1 1");
-// game.execute_move("S 4 23 M 1 4");
-// game.execute_move("S 4 5 M 2 7");
-// game.execute_move("S 2 5 M 2 6");
-// game.execute_move("S 3 8 M 5 14");
-// game.execute_move("S 2 6 M 3 10");
-// game.execute_move("S 4 9 M 4 8");
-// game.execute_move("S 3 10 M 4 14");
-// game.execute_move("S 2 7 M 4 13");
-// game.execute_move("S 4 14 M 3 11");
-// game.execute_move("S 5 14 M 1 2");
-// game.execute_move("S 3 11 M 3 9");
-// game.execute_move("S 4 8 M 4 7");
-// game.execute_move("S 3 9 M 0 0");
-// game.execute_move("S 3 16 M 5 17");
-// game.execute_move("S 0 0 M 1 5");
-// game.execute_move("S 4 13 M 4 12");
-// game.execute_move("S 3 6 M 3 5");
-// game.execute_move("S 5 17 M 5 16");
-// game.execute_move("S 1 4 M 2 8");
-// game.execute_move("S 5 16 M 5 18");
-// game.execute_move("S 1 0 M 2 0");
-// game.execute_move("S 1 1 M 2 11");
-// game.execute_move("S 2 8 M 4 16");
-// game.execute_move("S 5 18 M 3 13");
-// game.execute_move("S 1 5 M 2 9");
-// game.execute_move("S 4 7 M 5 9");
-// game.execute_move("S 2 9 M 2 1");
-// game.execute_move("S 2 11 M 2 3");
-// game.execute_move("S 3 5 M 3 4");
-// game.execute_move("S 5 9 M 5 7");
-// game.execute_move("S 3 4 M 5 6");
-// game.execute_move("S 5 7 M 4 6");
-// game.execute_move("S 5 6 M 4 4");
-// game.execute_move("S 1 2 M 2 10");
-// game.execute_move("S 4 16 M 4 15");
-// game.execute_move("S 2 10 M 3 14");
-// game.execute_move("S 4 15 M 5 19");
-// game.execute_move("S 3 14 M 4 18");
-// game.execute_move("S 5 19 M 4 17");
-// game.execute_move("S 4 18 M 5 22");
-// game.execute_move("S 4 17 M 4 19");
-// game.execute_move("S 3 13 M 5 23");
-// game.execute_move("S 2 1 M 5 21");
-// game.execute_move("S 5 23 M 5 24");
-// game.execute_move("S 4 19 M 3 17");
-// game.execute_move("S 5 24 M 4 20");
-// game.execute_move("S 2 0 M 4 0");
-// game.execute_move("S 4 6 M 2 2");
-// game.execute_move("S 4 0 M 4 2");
-// game.execute_move("S 4 20 M 3 15");
-// game.execute_move("S 5 21 M 4 3");
-// game.execute_move("S 3 15 M 5 27");
-// game.execute_move("S 3 17 M 4 22");
-// game.execute_move("S 5 27 M 5 26");
-// game.execute_move("S 4 3 M 5 3");
-// auto changed = game.execute_move("S 5 26 M 4 21");
-// game.print_board();
-// pair<double, Game> inp = make_pair(game.heuristic(weights), game);
-// pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
-// pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, 4, weights, abselen);
-// game.execute_move(mymove.second);
-// cout << mymove.second << endl;
-// game.print_board();
 
-   // if(player_id==2){
-   //     cin >> move;
-   //     game->execute_move(move);
-
-   // }
-
-
-   // game->execute_move("P 0 0");
-   // game->execute_move("P 1 0");
-   // game->execute_move("P 1 1");
-   // game->execute_move("P 1 2");
-   // game->execute_move("P 1 3");
-   // game->execute_move("P 1 4");
-   // game->execute_move("P 1 5");
-   // game->execute_move("P 2 0");
-   // game->execute_move("P 2 1");
-   // game->execute_move("P 2 2");
    int n = starting.at(1);
    vector<pair<int, int>> changed;
    int total_time = starting.at(2);
+
    if(starting.at(0)==2){
        for (int i=0; i<n; i++){
            getline(cin, move);
@@ -544,6 +456,9 @@ int main(int argc, char** argv)
    }
    int ply=3;
    int t=0;
+   int least_time;
+   if(n==5) least_time = 10;
+   else least_time = 40;
    ofstream myfile;
    string filename = "logs_"+to_string(starting.at(0))+".txt";
    myfile.open(filename);
@@ -555,8 +470,8 @@ int main(int argc, char** argv)
        pair<double, Game> inp = make_pair(game.heuristic(weights), game);
        pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
        clock_t t_start = clock();
-       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, ply, weights, abselen, t_start, ply, total_time, time_taken);
-       cerr << "Ply: "<< ply << endl;
+       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, ply, weights, abselen, t_start, ply, total_time, time_taken, least_time);
+       // cerr << "Ply: "<< ply << endl;
        // cerr << endl << endl;
        cout << mymove.second << endl;
        game.execute_move(mymove.second);
@@ -566,8 +481,8 @@ int main(int argc, char** argv)
       
        
       time_taken += (double)(clock() - t_start)/CLOCKS_PER_SEC;
-       cerr << "Our time remaining: " << total_time - time_taken << endl;
-       if(total_time - time_taken < 10) ply = 3;
+       // cerr << "Our time remaining: " << total_time - time_taken << endl;
+       if(total_time - time_taken < least_time) ply = 3;
        else if(t==10) ply=4;
         // if(t==20) ply = 5;
         // if(t==30) ply=6;
@@ -577,5 +492,4 @@ int main(int argc, char** argv)
        changed = game.execute_move(move);
        
    }
-
 }
