@@ -218,6 +218,10 @@ pair<pair<double, Game>, string> minval(int k, pair<pair<double, Game>, vector<p
     }
 
     vector<pair<pair<pair<double, Game>, vector<pair<int, int> > >, string > > successors = get_successors(k, newboard, weights);
+    if(successors.size()==0){
+      mygame.first.first = 10000000000;
+      return make_pair(mygame.first, "");
+    }
     vector<pair<double, int>> forcomp;
     for(int i=0; i<successors.size(); i++){
         pair<double, int> topush = make_pair(successors.at(i).first.first.first, i);
@@ -262,11 +266,20 @@ pair<pair<double, Game>, string> maxval(int k, pair<pair<double, Game>, vector<p
         newboard.push_back(curr_game);
     }
     vector<pair<pair<pair<double, Game>, vector<pair<int, int>>>, string>> successors = get_successors(k, newboard, weights);
+
+     if(successors.size()==0){
+      mygame.first.first = -10000000000;
+      return make_pair(mygame.first, "");
+    }
+
+
     vector<pair<double, int>> forcomp;
     for(int i=0; i<successors.size(); i++){
         pair<double, int> topush = make_pair(successors.at(i).first.first.first, i);
         forcomp.push_back(topush);
     }
+
+
     if(h==1) {
 
         auto out = *std::max_element(forcomp.begin(), forcomp.end());
@@ -371,6 +384,99 @@ int main(int argc, char** argv)
    Utility* util = new Utility(starting.at(1));
    Game game = Game(0, starting.at(0)+2, util, starting.at(1), starting.at(1), starting.at(3));
    cerr << "k: " << starting.at(3) << endl;
+
+   game.execute_move("P 0 0");
+game.execute_move("P 3 16");
+game.execute_move("P 1 0");
+game.execute_move("P 3 3");
+game.execute_move("P 1 1");
+game.execute_move("P 4 11");
+game.execute_move("P 1 2");
+game.execute_move("P 4 5");
+game.execute_move("P 1 3");
+game.execute_move("P 3 12");
+game.execute_move("S 1 1 M 3 1");
+game.execute_move("S 4 11 M 3 8");
+game.execute_move("S 1 2 M 2 5");
+game.execute_move("S 3 12 M 5 13");
+game.execute_move("S 3 1 M 2 1");
+game.execute_move("S 3 3 M 3 0");
+game.execute_move("S 2 5 M 3 7");
+game.execute_move("S 5 13 M 4 10");
+game.execute_move("S 3 7 M 2 4");
+game.execute_move("S 3 0 M 4 1");
+game.execute_move("S 2 1 M 3 2");
+game.execute_move("S 4 10 M 5 12");
+game.execute_move("S 3 2 M 4 23 RS 3 1 RE 2 5 X 0 0");
+game.execute_move("S 5 12 M 5 11");
+game.execute_move("S 1 3 M 2 5");
+game.execute_move("S 5 11 M 4 9");
+game.execute_move("S 2 4 M 3 6");
+game.execute_move("S 4 1 M 1 1");
+game.execute_move("S 4 23 M 1 4");
+game.execute_move("S 4 5 M 2 7");
+game.execute_move("S 2 5 M 2 6");
+game.execute_move("S 3 8 M 5 14");
+game.execute_move("S 2 6 M 3 10");
+game.execute_move("S 4 9 M 4 8");
+game.execute_move("S 3 10 M 4 14");
+game.execute_move("S 2 7 M 4 13");
+game.execute_move("S 4 14 M 3 11");
+game.execute_move("S 5 14 M 1 2");
+game.execute_move("S 3 11 M 3 9");
+game.execute_move("S 4 8 M 4 7");
+game.execute_move("S 3 9 M 0 0");
+game.execute_move("S 3 16 M 5 17");
+game.execute_move("S 0 0 M 1 5");
+game.execute_move("S 4 13 M 4 12");
+game.execute_move("S 3 6 M 3 5");
+game.execute_move("S 5 17 M 5 16");
+game.execute_move("S 1 4 M 2 8");
+game.execute_move("S 5 16 M 5 18");
+game.execute_move("S 1 0 M 2 0");
+game.execute_move("S 1 1 M 2 11");
+game.execute_move("S 2 8 M 4 16");
+game.execute_move("S 5 18 M 3 13");
+game.execute_move("S 1 5 M 2 9");
+game.execute_move("S 4 7 M 5 9");
+game.execute_move("S 2 9 M 2 1");
+game.execute_move("S 2 11 M 2 3");
+game.execute_move("S 3 5 M 3 4");
+game.execute_move("S 5 9 M 5 7");
+game.execute_move("S 3 4 M 5 6");
+game.execute_move("S 5 7 M 4 6");
+game.execute_move("S 5 6 M 4 4");
+game.execute_move("S 1 2 M 2 10");
+game.execute_move("S 4 16 M 4 15");
+game.execute_move("S 2 10 M 3 14");
+game.execute_move("S 4 15 M 5 19");
+game.execute_move("S 3 14 M 4 18");
+game.execute_move("S 5 19 M 4 17");
+game.execute_move("S 4 18 M 5 22");
+game.execute_move("S 4 17 M 4 19");
+game.execute_move("S 3 13 M 5 23");
+game.execute_move("S 2 1 M 5 21");
+game.execute_move("S 5 23 M 5 24");
+game.execute_move("S 4 19 M 3 17");
+game.execute_move("S 5 24 M 4 20");
+game.execute_move("S 2 0 M 4 0");
+game.execute_move("S 4 6 M 2 2");
+game.execute_move("S 4 0 M 4 2");
+game.execute_move("S 4 20 M 3 15");
+game.execute_move("S 5 21 M 4 3");
+game.execute_move("S 3 15 M 5 27");
+game.execute_move("S 3 17 M 4 22");
+game.execute_move("S 5 27 M 5 26");
+game.execute_move("S 4 3 M 5 3");
+auto changed = game.execute_move("S 5 26 M 4 21");
+game.print_board();
+pair<double, Game> inp = make_pair(game.heuristic(weights), game);
+pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
+pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, 4, weights, abselen);
+game.execute_move(mymove.second);
+cout << mymove.second << endl;
+game.print_board();
+
    // if(player_id==2){
    //     cin >> move;
    //     game->execute_move(move);
@@ -388,107 +494,107 @@ int main(int argc, char** argv)
    // game->execute_move("P 2 0");
    // game->execute_move("P 2 1");
    // game->execute_move("P 2 2");
-   int n = starting.at(1);
-   vector<pair<int, int>> changed;
-   if(starting.at(0)==2){
-       for (int i=0; i<n; i++){
-           getline(cin, move);
-           // cout << "Move taken: " << move <<  endl;
-           game.execute_move(move);
-           // string mymove = random_place(game);
-           string mymove = centre_place(game);
-           // pair<int, int> mov = game.place_ring_heuristic();
-           // string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
-           cerr << "Move " << mymove << endl;
-           // cerr << mymove;
-           cout << mymove << "\n";
-           game.execute_move(mymove);
-       }
-   }
-   else{
-       for (int i=0; i<n; i++){
-           // string mymove = random_place(game);
-           string mymove = centre_place(game);
-           // cerr << mymove << endl;
-           // pair<int, int> mov = game.place_ring_heuristic();
-           // string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
+   // int n = starting.at(1);
+   // vector<pair<int, int>> changed;
+   // if(starting.at(0)==2){
+   //     for (int i=0; i<n; i++){
+   //         getline(cin, move);
+   //         // cout << "Move taken: " << move <<  endl;
+   //         game.execute_move(move);
+   //         // string mymove = random_place(game);
+   //         string mymove = centre_place(game);
+   //         // pair<int, int> mov = game.place_ring_heuristic();
+   //         // string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
+   //         cerr << "Move " << mymove << endl;
+   //         // cerr << mymove;
+   //         cout << mymove << "\n";
+   //         game.execute_move(mymove);
+   //     }
+   // }
+   // else{
+   //     for (int i=0; i<n; i++){
+   //         // string mymove = random_place(game);
+   //         string mymove = centre_place(game);
+   //         // cerr << mymove << endl;
+   //         // pair<int, int> mov = game.place_ring_heuristic();
+   //         // string mymove = "P " + to_string(mov.first) + " " + to_string(mov.second);
 
-           cout << mymove << endl;
-           game.execute_move(mymove);
-           getline(cin, move);
-           changed = game.execute_move(move);
-       }
-   }
+   //         cout << mymove << endl;
+   //         game.execute_move(mymove);
+   //         getline(cin, move);
+   //         changed = game.execute_move(move);
+   //     }
+   // }
 
-   // cerr << endl;
-   if(starting.at(0)==2){
-       getline(cin, move);
-       changed = game.execute_move(move);
-   }
-   int ply=3;
-   int t=0;
-   ofstream myfile;
-   string filename = "logs_"+to_string(starting.at(0))+".txt";
-   myfile.open(filename);
+   // // cerr << endl;
+   // if(starting.at(0)==2){
+   //     getline(cin, move);
+   //     changed = game.execute_move(move);
+   // }
+   // int ply=3;
+   // int t=0;
+   // ofstream myfile;
+   // string filename = "logs_"+to_string(starting.at(0))+".txt";
+   // myfile.open(filename);
 
-   while(true){
+   // while(true){
 
-       int reward = 0;
-       int prev_removed = game.self_removed();
-       pair<double, Game> inp = make_pair(game.heuristic(weights), game);
-       pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
-       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, ply, weights, abselen);
-       // cerr << endl << endl;
-       cout << mymove.second << endl;
-       game.execute_move(mymove.second);
-       reward+=(game.self_removed() - prev_removed);
-       t++;
-       // cerr << ply << endl;
-       if(t==10) ply=4;
-        // if(t==20) ply = 5;
-        // if(t==30) ply=6;
-       if(game.check_won()){
-         reward+=7;
-         pair<vector<int>, vector<int>> features = game.get_features();
-         for(auto u: features.first) {
-           myfile << u << " ";
-         }
-         for(auto u: features.second) {
-           myfile << u << " ";
-         }
+   //     int reward = 0;
+   //     int prev_removed = game.self_removed();
+   //     pair<double, Game> inp = make_pair(game.heuristic(weights), game);
+   //     pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
+   //     pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, ply, weights, abselen);
+   //     // cerr << endl << endl;
+   //     cout << mymove.second << endl;
+   //     game.execute_move(mymove.second);
+   //     reward+=(game.self_removed() - prev_removed);
+   //     t++;
+   //     // cerr << ply << endl;
+   //     if(t==10) ply=4;
+   //      // if(t==20) ply = 5;
+   //      // if(t==30) ply=6;
+   //     if(game.check_won()){
+   //       reward+=7;
+   //       pair<vector<int>, vector<int>> features = game.get_features();
+   //       for(auto u: features.first) {
+   //         myfile << u << " ";
+   //       }
+   //       for(auto u: features.second) {
+   //         myfile << u << " ";
+   //       }
 
-         myfile << reward << endl;
-         break;
-       }
-       getline(cin, move);
-       // cerr<< "Checking final" << endl;
-       // cout << "Move taken: " << move <<  endl;
-       prev_removed = game.opp_removed();
-       changed = game.execute_move(move);
-       reward-=(game.opp_removed() - prev_removed);
-       if(game.check_won()){
-         reward+=3;
-         auto features = game.get_features();
-         for(auto u: features.first) {
-           myfile << u << " ";
-         }
-         for(auto u: features.second) {
-           myfile << u << " ";
-         }
+   //       myfile << reward << endl;
+   //       break;
+   //     }
+   //     getline(cin, move);
+   //     // cerr<< "Checking final" << endl;
+   //     // cout << "Move taken: " << move <<  endl;
+   //     prev_removed = game.opp_removed();
+   //     changed = game.execute_move(move);
+   //     reward-=(game.opp_removed() - prev_removed);
+   //     if(game.check_won()){
+   //       reward+=3;
+   //       auto features = game.get_features();
+   //       for(auto u: features.first) {
+   //         myfile << u << " ";
+   //       }
+   //       for(auto u: features.second) {
+   //         myfile << u << " ";
+   //       }
 
-         myfile << reward << endl;
-         break;
-       }
-       auto features = game.get_features();
-       for(auto u: features.first) {
-         myfile << u << " ";
-       }
-        for(auto u: features.second) {
-           myfile << u << " ";
-         }
+   //       myfile << reward << endl;
+   //       break;
+   //     }
+   //     auto features = game.get_features();
+   //     for(auto u: features.first) {
+   //       myfile << u << " ";
+   //     }
+   //      for(auto u: features.second) {
+   //         myfile << u << " ";
+   //       }
 
-       myfile << reward << endl;
-   }
-   myfile.close();
+   //     myfile << reward << endl;
+   // }
+   // myfile.close();
 
 }
