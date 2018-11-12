@@ -215,6 +215,10 @@ pair<pair<double, Game>, string> minval(int k, pair<pair<double, Game>, vector<p
     }
 
     vector<pair<pair<pair<double, Game>, vector<pair<int, int> > >, string > > successors = get_successors(k, newboard, weights);
+    if(successors.size()==0){
+      mygame.first.first = 10000000000;
+      return make_pair(mygame.first, "");
+    }
     vector<pair<double, int>> forcomp;
     for(int i=0; i<successors.size(); i++){
         pair<double, int> topush = make_pair(successors.at(i).first.first.first, i);
@@ -271,11 +275,20 @@ pair<pair<double, Game>, string> maxval(int k, pair<pair<double, Game>, vector<p
         newboard.push_back(curr_game);
     }
     vector<pair<pair<pair<double, Game>, vector<pair<int, int>>>, string>> successors = get_successors(k, newboard, weights);
+
+     if(successors.size()==0){
+      mygame.first.first = -10000000000;
+      return make_pair(mygame.first, "");
+    }
+
+
     vector<pair<double, int>> forcomp;
     for(int i=0; i<successors.size(); i++){
         pair<double, int> topush = make_pair(successors.at(i).first.first.first, i);
         forcomp.push_back(topush);
     }
+
+
     if(h==1) {
 
         auto out = *std::max_element(forcomp.begin(), forcomp.end());
@@ -390,6 +403,8 @@ int main(int argc, char** argv)
    Utility* util = new Utility(starting.at(1));
    Game game = Game(0, starting.at(0)+2, util, starting.at(1), starting.at(1), starting.at(3));
    cerr << "k: " << starting.at(3) << endl;
+
+
    // if(player_id==2){
    //     cin >> move;
    //     game->execute_move(move);
@@ -505,9 +520,77 @@ int main(int argc, char** argv)
         for(auto u: features.second) {
            myfile << u << " ";
          }
+    }
 
-       myfile << reward << endl;
-   }
-   myfile.close();
+   // // cerr << endl;
+   // if(starting.at(0)==2){
+   //     getline(cin, move);
+   //     changed = game.execute_move(move);
+   // }
+   // int ply=3;
+   // int t=0;
+   // ofstream myfile;
+   // string filename = "logs_"+to_string(starting.at(0))+".txt";
+   // myfile.open(filename);
+
+   // while(true){
+
+   //     int reward = 0;
+   //     int prev_removed = game.self_removed();
+   //     pair<double, Game> inp = make_pair(game.heuristic(weights), game);
+   //     pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
+   //     pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, ply, weights, abselen);
+   //     // cerr << endl   << endl;
+   //     cout << mymove.second << endl;
+   //     game.execute_move(mymove.second);
+   //     reward+=(game.self_removed() - prev_removed);
+   //     t++;
+   //     // cerr << ply << endl;
+   //     if(t==10) ply=4;
+   //      // if(t==20) ply = 5;
+   //      // if(t==30) ply=6;
+   //     if(game.check_won()){
+   //       reward+=7;
+   //       pair<vector<int>, vector<int>> features = game.get_features();
+   //       for(auto u: features.first) {
+   //         myfile << u << " ";
+   //       }
+   //       for(auto u: features.second) {
+   //         myfile << u << " ";
+   //       }
+
+   //       myfile << reward << endl;
+   //       break;
+   //     }
+   //     getline(cin, move);
+   //     // cerr<< "Checking final" << endl;
+   //     // cout << "Move taken: " << move <<  endl;
+   //     prev_removed = game.opp_removed();
+   //     changed = game.execute_move(move);
+   //     reward-=(game.opp_removed() - prev_removed);
+   //     if(game.check_won()){
+   //       reward+=3;
+   //       auto features = game.get_features();
+   //       for(auto u: features.first) {
+   //         myfile << u << " ";
+   //       }
+   //       for(auto u: features.second) {
+   //         myfile << u << " ";
+   //       }
+
+   //       myfile << reward << endl;
+   //       break;
+   //     }
+   //     auto features = game.get_features();
+   //     for(auto u: features.first) {
+   //       myfile << u << " ";
+   //     }
+   //      for(auto u: features.second) {
+   //         myfile << u << " ";
+   //       }
+
+   //     myfile << reward << endl;
+   // }
+   // myfile.close();
 
 }
