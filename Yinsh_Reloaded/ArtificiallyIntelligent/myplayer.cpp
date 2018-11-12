@@ -457,8 +457,8 @@ int main(int argc, char** argv)
    int ply=3;
    int t=0;
    int least_time;
-   if(n==5) least_time = 20;
-   else least_time = 50;
+   if(n==5) least_time = 10;
+   else least_time = 40;
    ofstream myfile;
    string filename = "logs_"+to_string(starting.at(0))+".txt";
    myfile.open(filename);
@@ -470,7 +470,7 @@ int main(int argc, char** argv)
        pair<double, Game> inp = make_pair(game.heuristic(weights), game);
        pair<pair<int, Game>, vector<pair<int, int>>> taken = make_pair(inp, changed);
        clock_t t_start = clock();
-       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, 3, weights, abselen, t_start, ply, total_time, time_taken, least_time);
+       pair<pair<int, Game>, string> mymove = maxval(starting.at(3), taken, INT_MIN, INT_MAX, ply, weights, abselen, t_start, ply, total_time, time_taken, least_time);
        // cerr << "Ply: "<< ply << endl;
        // cerr << endl << endl;
        cout << mymove.second << endl;
