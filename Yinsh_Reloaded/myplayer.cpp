@@ -216,7 +216,7 @@ pair<pair<double, Game>, string> minval(int k, pair<pair<double, Game>, vector<p
 
     vector<pair<pair<pair<double, Game>, vector<pair<int, int> > >, string > > successors = get_successors(k, newboard, weights);
 
-    if(max_height - 2 == h && (total_time - time_taken - (double)(clock() - ttime)/CLOCKS_PER_SEC) < least_time){
+    if(h==2 && max_height > 1 && (total_time - time_taken - (double)(clock() - ttime)/CLOCKS_PER_SEC) < least_time){
         cerr << "Restricting tree search" << endl; 
        h-=1;
      }
@@ -284,9 +284,9 @@ pair<pair<double, Game>, string> maxval(int k, pair<pair<double, Game>, vector<p
     }
     vector<pair<pair<pair<double, Game>, vector<pair<int, int>>>, string>> successors = get_successors(k, newboard, weights);
 
-    if(max_height - 2 == h && (total_time - time_taken - (double)(clock() - ttime)/CLOCKS_PER_SEC) < least_time){
+    if(h==2 && max_height > 1 && (total_time - time_taken - (double)(clock() - ttime)/CLOCKS_PER_SEC) < least_time){
       cerr << "Restrcting tree search." << endl;
-      h+=1;
+      h-=1;
     }
 
      if(successors.size()==0){
