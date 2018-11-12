@@ -1,3 +1,4 @@
 #!/bin/bash
-./pheuristic_d4
+# ./pheuristic_d4
+./main
 # ./code
